@@ -1,0 +1,21 @@
+CPPFLAGS = -DCPU_TIME
+
+#Fortran compiler on Linux
+FC       = gfortran
+FFLAGS   = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
+
+#Remove command
+RM       = /bin/rm
+
+#Program to build library
+AR       = ar
+OPTAR    = cru
+
+#Make program
+MAKE     = make
+
+#Makefile for creating libraries, relative path
+MKLIB    = $(MAKE) -f ../libs.mk
+
+#Directory where call-tree is generated using ftnchek: this is relative to src
+CTDIR    = ../docs/tree/src-flo

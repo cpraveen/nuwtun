@@ -1,0 +1,56 @@
+-------------------------------------------------------------------------------
+Changes between ISAAC 4.2 and Revision 1
+-------------------------------------------------------------------------------
+
+NOTE: These are the changes between ISAAC 4.2 and the first version in SVN.
+For subsequent changelog, consult the svn log on the nuwtun website or using
+the following command
+
+svn log <file/directory name>
+
+
+makefile: 
+
+Makefile has been rewritten. Important values are passed to makefile through
+makefile.in.
+
+Dynamic memory allocation: 
+
+All large real variables are allocated dynamically.  Integer variables are
+still allocated statically since these do not occupy much memory. Just set the
+max dimensions in header/maxdim.h to sufficiently large values and it should
+work.
+
+The code in main/main.F which saves the solution in PLOT3D format has been
+moved into a separate subroutine WRTP3D in file io/wrtp3d.F.
+
+CUT3D is modified to average both Q and PROPS. A new subroutine COREDG is
+added to assign solution to corner and edge points of a block for PLOT3D
+output.
+
+A large number of subroutines have been put into separate files.
+
+Boundary conditions in rhs/bc.F has been moved into separate directory "bc".
+
+Directory structure of "turb" has been changed, there are no sub-directories
+now.
+
+Subroutine LIMITR has been modified; a subroutine is added for each limiter in
+a new file limfun.F
+
+Subroutine FROE has been modified; it is now called FLUROE and takes only one
+left state and one right state. Looping over faces is now in subroutine FDS.
+
+Some code in subroutine BCFAR/BCFR2D has been uncommented; this relates to
+turbulence quantities.
+
+In subroutine BCWALL, the Wilcox model is uncommented and Menter model is
+commented out.
+
+There is a new include file header/maxdim.h
+
+Convergence history is stored in files
+fort.17  : Flow residue history
+fort.18  : Cl and Cd history
+The file units are determined by the variables IRESID and ICLCD.
+

@@ -1,0 +1,150 @@
+ISAAC Public Source License
+Version 1.0
+October 2001
+
+Copyright (c) 2001 Joseph H. Morrison
+
+Everyone is hereby permitted to copy and distribute verbatim copies of 
+this license.
+
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTING, AND MODIFYING THE PROGRAM
+
+0. This License applies to the ISAAC (Integrated Solution Algorithm for 
+   Arbitrary Configurations) computational fluid dynamics code, its related 
+   documentation, and related sample cases and helper applications. The 
+   "Author" below refers to Joseph H. Morrison, the original author of 
+   the ISAAC source code, documentation, sample cases, and helper 
+   applications. The "Program" below refers to the ISAAC source code and 
+   associated helper applications that are distributed with ISAAC by the 
+   Author. Each licensee is referred to as "You".
+
+1. You may use, reproduce, and distribute verbatim copies of the Program 
+   source code provided that You retain and reproduce intact all of the 
+   copyright notices, references to this license, notices of absence of 
+   any warranty, and disclaimers; give any other recipients of the Program 
+   a copy of this License along with the Program.
+
+2. You may modify Your copy or copies of the Program or any portion therof 
+   and copy and distribute Your modifications under the terms of Section 1, 
+   provided that:
+
+	a) You must include a prominent notice in the modified files stating 
+           that you changed the files and the date of the changes
+
+	b) You must make Source Code of changes that you distribute publicly 
+           available under the terms of this license.
+
+3. You may copy and distribute the Program or a modified version of the 
+   Program in object code or executable form under the terms of Sections 1 
+   and 2 provided that:
+
+	a) You accompany it with the complete corresponding machine 
+           readable source code distributed under the terms of Section 1 
+           and 2 above; OR
+
+	b) You include a prominent notice in the code itself, the executable 
+           form of the code, and the related documentation, stating that the 
+           source code is available under the terms of this License with 
+           information on how and where to obtain the source code of 
+           the Program.
+
+4. You may only copy, modify, sublicense, or distribute the Program as 
+   expressly provided by this License. Any attempt to copy, modify, 
+   sublicense, or distribute the Program in a manner not expressly 
+   provided by this License is void and will automatically terminate 
+   Your rights under this License. However, parties who have received 
+   copies of the Program from You but remain in compliance with this 
+   License will not have their licenses terminated.
+
+5. You are not required to accept the terms of this License. However, by 
+   downloading, using, modifying, or distributing the Program, You 
+   acknowledge that you have read this License Agreement, that you 
+   understand it, and that you agree to be bound by its terms.
+
+6. Any recipient of the Program from You automatically receives a license 
+   from the original licensor to copy, modify, or distribute the Program 
+   subject to these terms and conditions. You may not impose additional 
+   restrictions on the recipient's rights granted herein.
+
+7. If any part of this License is found invalid or unenforceable by a 
+   court of competent jurisdiction, the remainder of this License shall 
+   be interpreted so as to reasonably effect the intentions of the parties. 
+   If you cannot distribute the Program so as to satisfy the terms of this 
+   License, then You may not distribute the Program at all.
+
+8. The Author of this License may publish revised and/or new versions of 
+   the License from time to time. Each new version will be given a 
+   distinguishing version number. Once a version of the Program has 
+   been published under a particular version of the License, You can 
+   continue to use the Program under that version of the License or 
+   You may choose to use the Program under the terms of any subsequent 
+   version of the License published by the Author.
+
+10. If you wish to incorporate parts of the Program into other free 
+    programs whose distribution conditions differ from this License, 
+    contact the Author to ask for permission. ALL distributions of the 
+    Program require copmpliance with Sections 11, 12, 13, and 14 below.
+
+NO SALE TO U.S. GOVERNMENT
+
+11. The PROGRAM, and/or any modified version thereof, shall not, in 
+    any manner, be offered for sale to the U.S. Government, without 
+    the written consent of the U.S. Government. The U.S. Government 
+    shall not pay a second time for the PROGRAM or any enhanced/modified 
+    version therof. The PROGRAM may be used in contract with the 
+    U.S. Government, but no charge may be made for its use. If the 
+    PROGRAM is modified using or enhanced using U.S. Government funds, 
+    the Government will be provided the complete source code of that 
+    modified/enhanced version and the intellectual property rights of 
+    the resulting modification/enhancement shall be controlled by such 
+    funding agreement.
+
+NO WARRANTY
+
+12. THE AUTHOR AND NASA MAKE NO REPRESENTATIONS REGARDING THE PROGRAM 
+    AND EXTENDS NO WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, 
+    OR STATUTORY, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE 
+    PROGRAM WILL CONFORM TO SPECIFICATIONS, ANY WARRANTY OF MERCHANTABILITY 
+    OR FITNESS FOR A PARTICULAR PURPOSE, ANY WARRANTY THAT THE DOCUMENTATION 
+    WILL CONFORM TO THE PROGRAM, AND ANY WARRANTY THAT THE PROGRAM WILL 
+    BE ERROR-FREE, WHETHER OR NOT THE ERROR IS DISCOVERABLE, AND ASSUMES 
+    NO RESPONSIBILITY WHATSOEVER WITH RESPECT TO USE, SALE, OR OTHER 
+    DISPOSITION BY UNDERSIGNED OR ITS VENDEES OR OTHER TRANSFEREES OF 
+    PRODUCTS INCORPORATING OR MADE BY THE USE OF PROGRAM OR INFORMATION, 
+    IF ANY, FURNISHED UNDER THIS AGREEMENT. NOTHING IN THIS AGREEMENT 
+    SHALL BE CONSTRUED AS A REPRESENTATION MADE OR WARRANTY GIVEN BY 
+    NASA OR THE AUTHOR THAT THE PRACTICE BY UNDERSIGNED OF THE USE GRANTED 
+    HEREUNDER SHALL NOT INFRINGE THE COPYRIGHT OR PATENT RIGHTS OF ANY 
+    THIRD PARTY. IN NO EVENT SHALL NASA OR THE AUTHOR BE LIABLE FOR ANY 
+    DAMAGES, INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, SPECIAL, 
+    OR CONSEQUENTIAL DAMAGES ARISING OUT OF, RESULTING FROM, OR IN ANY 
+    WAY CONNECTED WITH THE USE OF THE PROGRAM, WHETHER OR NOT BASED 
+    UPON WARRANTY, CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY 
+    WAS ECONOMIC, LOST PROFITS OR SUSTAINED BY PERSONS OR PROPERTY 
+    OR OTHERWISE, WHETHER OR NOT DAMAGES ARE BASED ON A THIRD PARTY 
+    CLAIM, WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF, 
+    THE RESULTS OR USE OF THE PROGRAM, AND REGARDLESS OF WHETHER NASA 
+    OR THE AUTHOR SHALL BE ADVISED, SHALL HAVE OTHER REASON TO KNOW, 
+    OR IN FACT SHALL KNOW OF THE POSSIBILITY OF THE FOREGOING.
+
+13. UNDERSIGNED SHALL INDEMNIFY AND HOLD THE AUTHOR, THE U.S. GOVERNMENT 
+    AND ITS OFFICERS AND EMPLOYEES, HARMLESS AGAINST ALL CLAIMS, 
+    PROCEEDINGS, LIABILITIES, DEMANDS, DAMAGES, EXPENSES, OR LOSSES, 
+    INCLUDING LEGAL EXPENSES AND ATTORNEY'S FEES, ARISING (1) OUT OF 
+    THE USE BY UNDERSIGNED OR ITS TRANSFEREES OF THE PROGRAM OR ANY 
+    TECHNICAL DATA DERIVED FROM THE USE OF THE PROGRAM OR (2) OUT OF 
+    ANY USE, SALE, LEASE, OR OTHER DISPOSITION BY UNDERSIGNED OR ITS 
+    TRANFEREES OF PRODUCTS MADE BY USE OF SUCH PROGRAM OR TECHNICAL DATA 
+    DERIVED FROM USE OF THE PROGRAM.
+
+14. The conditions imposed by this Agreement shall also apply to any 
+    software developed by UNDERSIGNED that incorporates any portion 
+    of the PROGRAM SOURCE CODE.
+
+This Agreement constitutes the entire understanding and agreement 
+between the parties hereto relating to release of the Program and 
+may not be superseeded, modified, or ammended except by further 
+written agreement duly executed by the parties.
+
+END OF TERMS AND CONDITIONS
+

@@ -1,0 +1,55 @@
+Dimensions:
+
+Q(MXPTS*MAXQ)          -> Q(IOFFQT*NQ)
+QN(MXQNPT*MAXQ*MXTMLV) -> QN(IOFQNT*NQ*NTMLVL)
+PROPS(MXPPTS*MAXP)     -> PROPS(IOFFPT*NP)
+S(MXPTS*4*3)           -> S(IOFFQT*4*3)
+VOL(MXPTS)             -> VOL(IOFFQT)
+DTJ(MXPTS)             -> DTJ(IOFFQT)
+R(MXNODE*3)            -> R(IOFFQT*3)
+QBC(MXBCPT*MAXQ)       -> QBC(NDBCPT*NQ)
+
+W(MXRKPT*MAXQ)         -> W(IOFFQT*NQ)
+QCRS(MXCRS*MAXQ)       -> QCRS(NDCRS*NQ)
+RESCRS(MXCRS*MAXQ)     -> RESCRS(NDCRS*NF)
+
+RES(MXSIZE*MAXF)       -> RES(NDSIZE*NF)
+FHAT(MXSIZ4*MAXF)      -> FHAT(NDSIZE*NF)
+
+DQP   (MXSECT*MAXQ) -> NDSECT*NQ
+DQM   (MXSECT*MAXQ) -> NDSECT*NQ
+QP    (MXSECT*MAXQ) -> NDSECT*NQ
+QM    (MXSECT*MAXQ) -> NDSECT*NQ
+TAU   (MXSECT*6)    -> NDSECT*6
+F     (MXSECT*MAXF) -> NDSECT*NF
+FM    (MXSECT*MAXF) -> NDSECT*NF
+STEMP (MXSECT*4)    -> NDSECT*4
+WORKX (MXSECT*MAXW) -> NDSECT*MAXW or NDECT*NW
+
+ABC(MXABC*MXRANK*MXRANK*3) -> NDSECT*NQ*NQ*3
+RTEMP(MXABC*MXRANK)        -> NDSECT*NQ
+AT(MXABC*MXRANK*MXRANK*3)  -> NDSECT*NQ*NQ*3
+
+RM(MXRM*MXRANK*MXRANK)     -> NDRM*NQ*NQ
+
+AI(MXRANK*MXRANK)          -> NRANK*NRANK
+
+Subroutine MASFLO is never used. Inside this, the call to FDS has wrong
+arguments.
+
+In each block, variables are stored in Q(0:JDIM+2, 0:KDIM+2, 0:IDIM+2). The values Q(1,:,:), Q(JDIM+1,:,:) etc correspond to boundary faces. But what about  Q(1,:,:), Q(JDIM+1,:,:) etc. ? What do they represent ?
+
+How are cyclic indices handled ?
+
+Routines for 2-d inviscid:
+
+resid
+fds
+fluxi
+fluxj
+muscli
+musclj
+limitr
+bctan
+bcfar
+bcext
