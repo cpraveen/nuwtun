@@ -258,9 +258,9 @@ C
 C 0.  PRELIMINARIES
 C     Output Version Number
 C
-      VERSN  = '$Revision: 4.7 $ - Modified by Praveen. C'
-      WRITE (IOUT,1200) VERSN
- 1200 FORMAT (' ','ISAAC - ',A48,/)
+C     VERSN  = '$Revision: xxx$'
+C     WRITE (IOUT,1200) VERSN
+C1200 FORMAT (' ','NUWTUN Flow Solver - ',A48,/)
 C
 C     Set switch to test for storage errors
 C
