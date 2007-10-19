@@ -1,0 +1,27 @@
+# Set your compiler and flags here. You should not have to change any other
+# file.
+# You must also defined a shell variable NUWTUN_HOME which contains the 
+# absolute path to the present directory
+
+# Fortran compiler on Linux
+FC       = gfortran
+FFLAGS   = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
+
+# C compiler on Linux
+CC       = gcc
+
+CPPFLAGS = -DCPU_TIME
+
+# Remove command
+RM       = /bin/rm
+
+# Program to build library
+AR       = ar
+OPTAR    = cru
+
+# Make program
+MAKE     = make
+
+# Tapenade executable; TAPENADE_HOME must already be defined in your shell
+# This is only required if you want to build the adjoint solver.
+TPN      = $(TAPENADE_HOME)/bin/tapenade

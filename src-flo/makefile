@@ -1,7 +1,7 @@
 include makefile.in
 
 #Executable program
-PGM  = nuwtun
+PGM  = nuwtun_flo
 
 #Object files
 OBJS = main/main.o
@@ -15,10 +15,15 @@ LIBS = rhs/.lib.a      \
        march/.lib.a    \
        turb/.lib.a
 
-all: nuwtun
+all: nuwtun_flo
 
-nuwtun: $(OBJS) $(LIBS)
+#Build the executable
+nuwtun_flo: $(OBJS) $(LIBS)
 	$(FC) -o $(PGM) $(OBJS) $(LIBS)
+
+#Just build the libraries
+libs: $(LIBS)
+	@echo "All libraries are updated"
 
 ##############################################################################
 #Rule to make individual .lib.a files

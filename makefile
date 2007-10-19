@@ -1,7 +1,8 @@
 #List of files/directories to make tgz file
-FILES=nuwtun/src-flo  \
-		nuwtun/docs     \
-		nuwtun/makefile \
+FILES=nuwtun/src-flo     \
+		nuwtun/docs        \
+		nuwtun/makefile    \
+		nuwtun/makefile.in \
 		nuwtun/README
 
 #Things to exclude in the above list
@@ -10,10 +11,10 @@ EXCLU=nuwtun/docs/tree
 #Name of tgz file
 TGZFILE=nuwtun.tgz
 
-all: flo tgz
+all: flo
 
 flo:
-	cd src-flo && make
+	@cd src-flo && make
 
 tgz:
 	cd src-flo && make cleanall

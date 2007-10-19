@@ -1,21 +1,13 @@
-CPPFLAGS = -DCPU_TIME
+#Root directory of nuwtun; NUWTUN_HOME must be defined in your shell, for
+#example in bash, add the following to your .bashrc file
+#   export NUWTUN_HOME=/path/to/nuwtun
+ROOT     = $(NUWTUN_HOME)
 
-#Fortran compiler on Linux
-FC       = gfortran
-FFLAGS   = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
-
-#Remove command
-RM       = /bin/rm
-
-#Program to build library
-AR       = ar
-OPTAR    = cru
-
-#Make program
-MAKE     = make
+#Include global variables file
+include $(ROOT)/makefile.in
 
 #Makefile for creating libraries, relative path
 MKLIB    = $(MAKE) -f ../libs.mk
 
-#Directory where call-tree is generated using ftnchek: this is relative to src
-CTDIR    = ../docs/tree/src-flo
+#Directory where call-tree is generated using ftnchek
+CTDIR    = $(ROOT)/docs/tree/src-flo

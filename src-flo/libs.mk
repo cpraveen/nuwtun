@@ -1,3 +1,4 @@
+#This will be executed inside the sub-directories
 include ../makefile.in
 
 SRCF = $(wildcard *.F)

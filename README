@@ -12,16 +12,22 @@ Compiling
 
 You will need a fortran 90 compiler since dynamic memory allocation is used.
 Compilation has been tested with gfortran. Set your compiler and flags in
-makefile.in and then just type "make". Compilation requires "ar", a program to
-create, modify and extract from archives.
+makefile.in and define a shell variable called NUWTUN_HOME which contains the
+absolute path to the root directory. You also need the archive tool "ar"; this
+should be available on most systems. To compile the flow solver execute the
+following commands at the shell prompt:
+
+$ cd $NUWTUN_HOME/src-flo
+$ make
 
 -------------------------------------------------------------------------------
 Call-tree
 
-If you have ftnchek, then you can generate a call-tree inside the docs/src-flo
-directory. Type "make tree" to generate the tree. This has been tested to work
-only on GNU/Linux. You can change the location where the call-tree is stored
-by changing the CTDIR variable in makefile.in to appropriate value.
+If you have ftnchek, then you can generate a call-tree inside the
+docs/tree/src-flo directory. Inside the directory src-flo type "make tree" to
+generate the tree. This has been tested to work only on GNU/Linux. You can
+change the location where the call-tree is stored by changing the CTDIR
+variable in makefile.in to appropriate value.
 
 -------------------------------------------------------------------------------
 Visualization

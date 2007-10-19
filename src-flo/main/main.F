@@ -1896,8 +1896,8 @@ C
      1                                  JDIM(IBLK,ILVL),KDIM(IBLK,ILVL),
      2                                  IPSTRT, IPEND,
      3                                  RES, VOL(IV), RESMAX, IRESMX)
-         ENDIF
-      ENDIF
+                                    ENDIF
+                                 ENDIF
                               ENDIF
 C
 C     For MG: i. For the first residual evaluation after coarsening,
