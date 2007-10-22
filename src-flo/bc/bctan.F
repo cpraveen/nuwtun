@@ -135,50 +135,8 @@ C
       DO 120 I3 = ISTRT(IC3), IEND(IC3)
 CDIR$ IVDEP
          DO 110 I2 = ISTRT(IC2), IEND(IC2)
-C
-            IBC  = IBCPT *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JBC  = IBCPT *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KBC  = IBCPT *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IBC2 = IBCPT2*IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JBC2 = IBCPT2*IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KBC2 = IBCPT2*IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IN   = IBCN  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JN   = IBCN  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KN   = IBCN  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IN2  = IBCN2 *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JN2  = IBCN2 *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KN2  = IBCN2 *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IM   = IBCM  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JM   = IBCM  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KM   = IBCM  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            RHON  = Q(JN ,KN ,IN ,1)
-            PN    = Q(JN ,KN ,IN ,5)
-            PN2   = Q(JN2,KN2,IN2,5)
-C
-c-1st order PW    = PN
-            PW    = (9.E0 * PN - PN2) / 8.E0
-            RHOW  = ( PW / (PN/RHON**GAMMA) )**(1.E0/GAMMA)
-C
-            UBAR  = Q(JN,KN,IN,2) * S(JM,KM,IM,1,IDIR)
-     1            + Q(JN,KN,IN,3) * S(JM,KM,IM,2,IDIR)
-     2            + Q(JN,KN,IN,4) * S(JM,KM,IM,3,IDIR)
-C
-            Q(JBC ,KBC ,IBC ,1) = RHOW
-            Q(JBC ,KBC ,IBC ,2) = Q(JN,KN,IN,2)-UBAR*S(JM,KM,IM,1,IDIR)
-            Q(JBC ,KBC ,IBC ,3) = Q(JN,KN,IN,3)-UBAR*S(JM,KM,IM,2,IDIR)
-            Q(JBC ,KBC ,IBC ,4) = Q(JN,KN,IN,4)-UBAR*S(JM,KM,IM,3,IDIR)
-            Q(JBC ,KBC ,IBC ,5) = PW
-C
-            Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
-            Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
-            Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
-            Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
-            Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
+            CALL BCTINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+     1                  IBCN2, IBCM, IC1, IC2, IC3, I2, I3, Q, S)
   110    CONTINUE
   120 CONTINUE
 C
@@ -305,6 +263,63 @@ C
       ENDIF
 C
 C Finished with TANGENCY boundary condition
+C
+      RETURN
+      END
+
+C
+C     Apply inviscid wall boundary condition for given face
+C
+      SUBROUTINE BCTINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+     1                  IBCN2, IBCM, IC1, IC2, IC3, I2, I3, Q, S)
+      INCLUDE '../header/common.h'
+C
+      DIMENSION Q     (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ),
+     1          S     (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3)
+C
+      IBC  = IBCPT *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JBC  = IBCPT *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KBC  = IBCPT *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IBC2 = IBCPT2*IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JBC2 = IBCPT2*IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KBC2 = IBCPT2*IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IN   = IBCN  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JN   = IBCN  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KN   = IBCN  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IN2  = IBCN2 *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JN2  = IBCN2 *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KN2  = IBCN2 *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IM   = IBCM  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JM   = IBCM  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KM   = IBCM  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      RHON  = Q(JN ,KN ,IN ,1)
+      PN    = Q(JN ,KN ,IN ,5)
+      PN2   = Q(JN2,KN2,IN2,5)
+C
+c-1st order PW    = PN
+      PW    = (9.E0 * PN - PN2) / 8.E0
+      RHOW  = ( PW / (PN/RHON**GAMMA) )**(1.E0/GAMMA)
+C
+      UBAR  = Q(JN,KN,IN,2) * S(JM,KM,IM,1,IDIR)
+     1      + Q(JN,KN,IN,3) * S(JM,KM,IM,2,IDIR)
+     2      + Q(JN,KN,IN,4) * S(JM,KM,IM,3,IDIR)
+C
+      Q(JBC ,KBC ,IBC ,1) = RHOW
+      Q(JBC ,KBC ,IBC ,2) = Q(JN,KN,IN,2)-UBAR*S(JM,KM,IM,1,IDIR)
+      Q(JBC ,KBC ,IBC ,3) = Q(JN,KN,IN,3)-UBAR*S(JM,KM,IM,2,IDIR)
+      Q(JBC ,KBC ,IBC ,4) = Q(JN,KN,IN,4)-UBAR*S(JM,KM,IM,3,IDIR)
+      Q(JBC ,KBC ,IBC ,5) = PW
+C
+      Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
+      Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
+      Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
+      Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
+      Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
 C
       RETURN
       END

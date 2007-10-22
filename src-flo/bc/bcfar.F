@@ -139,124 +139,8 @@ C
       DO 120 I3 = ISTRT(IC3), IEND(IC3)
 CDIR$ IVDEP
          DO 110 I2 = ISTRT(IC2), IEND(IC2)
-C
-            IBC  = IBCPT *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JBC  = IBCPT *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KBC  = IBCPT *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IBC2 = IBCPT2*IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JBC2 = IBCPT2*IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KBC2 = IBCPT2*IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IN   = IBCN  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JN   = IBCN  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KN   = IBCN  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-            IM   = IBCM  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
-            JM   = IBCM  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
-            KM   = IBCM  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
-C
-C Check U (dot) n for inflow/outflow determination
-C       U (dot) n > 0  for inflow  to   domain
-C                 < 0  for outflow from domain
-C The use of the SGNM variable sets up one set of logic
-C to handle both the inner and outer boundary cases.
-C
-            SX    = S(JM,KM,IM,1,IDIR) * SGNM
-            SY    = S(JM,KM,IM,2,IDIR) * SGNM
-            SZ    = S(JM,KM,IM,3,IDIR) * SGNM
-C
-            QEXT  = Q(JN,KN,IN,2) * SX + Q(JN,KN,IN,3) * SY 
-     1            + Q(JN,KN,IN,4) * SZ
-            QINF  = UINF * SX + VINF * SY + WINF * SZ
-            RHON  = Q(JN,KN,IN,1)
-            PN    = Q(JN,KN,IN,5)
-C
-C One Dimensional Riemann invariants
-C - the sign of U dot n handles the sign change in the Riemann invariants
-C
-            AEXT  = SQRT (GAMMA * PN / RHON)
-            REXT  = QEXT - 2.E0 * AEXT / GAMM1
-            RINF  = QINF + 2.E0 * AINF / GAMM1
-            QDOTN = 0.5E0 * (REXT + RINF)
-            A     = 0.25E0 * GAMM1 * (RINF - REXT)
-            RMACH = QDOTN / A
-            SEXT  = PN   / RHON  **GAMMA
-C
-C Inflow
-C
-            IF (QDOTN .GT. 0.E0) THEN
-C
-C     Supersonic Inflow - Data Specified
-C
-               IF (ABS(RMACH) .GE. 1.0E0) THEN
-                  Q(JBC ,KBC ,IBC ,1) = RHOINF
-                  Q(JBC ,KBC ,IBC ,2) = UINF
-                  Q(JBC ,KBC ,IBC ,3) = VINF
-                  Q(JBC ,KBC ,IBC ,4) = WINF
-                  Q(JBC ,KBC ,IBC ,5) = PREF
-C
-                  Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
-                  Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
-                  Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
-                  Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
-                  Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
-               ELSE
-C
-C     Subsonic Inflow - One Dimensional Riemann Problem
-C     From Jameson and Baker, AIAA 83-1929 
-C
-                  RHOBC  = (A*A / (GAMMA*SINF))**(1.E0/GAMM1)
-                  Q(JBC ,KBC ,IBC ,1) = RHOBC
-                  Q(JBC ,KBC ,IBC ,2) = UINF + (QDOTN-QINF)*SX
-                  Q(JBC ,KBC ,IBC ,3) = VINF + (QDOTN-QINF)*SY
-                  Q(JBC ,KBC ,IBC ,4) = WINF + (QDOTN-QINF)*SZ
-                  Q(JBC ,KBC ,IBC ,5) = RHOBC * A * A / GAMMA
-C
-                  Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
-                  Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
-                  Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
-                  Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
-                  Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
-               ENDIF
-C
-C Outflow
-C
-            ELSE
-C
-C     Supersonic Outflow - Data Extrapolated
-C
-               IF (ABS(RMACH) .GE. 1.0E0) THEN
-                  Q(JBC ,KBC ,IBC ,1) = Q(JN  ,KN  ,IN  ,1)
-                  Q(JBC ,KBC ,IBC ,2) = Q(JN  ,KN  ,IN  ,2)
-                  Q(JBC ,KBC ,IBC ,3) = Q(JN  ,KN  ,IN  ,3)
-                  Q(JBC ,KBC ,IBC ,4) = Q(JN  ,KN  ,IN  ,4)
-                  Q(JBC ,KBC ,IBC ,5) = Q(JN  ,KN  ,IN  ,5)
-C
-                  Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
-                  Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
-                  Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
-                  Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
-                  Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
-               ELSE
-C
-C     Subsonic Outflow - One Dimensional Riemann Problem
-C     From Jameson and Baker, AIAA 83-1929
-C
-                  RHOBC  = (A*A / (GAMMA*SEXT))**(1.E0/GAMM1)
-                  Q(JBC ,KBC ,IBC ,1) = RHOBC
-                  Q(JBC ,KBC ,IBC ,2) = Q(JN,KN,IN,2) + (QDOTN-QEXT)*SX
-                  Q(JBC ,KBC ,IBC ,3) = Q(JN,KN,IN,3) + (QDOTN-QEXT)*SY
-                  Q(JBC ,KBC ,IBC ,4) = Q(JN,KN,IN,4) + (QDOTN-QEXT)*SZ
-                  Q(JBC ,KBC ,IBC ,5) = RHOBC * A * A / GAMMA
-C
-                  Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
-                  Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
-                  Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
-                  Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
-                  Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
-               ENDIF
-            ENDIF
+            CALL BCFINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+     1                  IBCM, SGNM, SINF, IC1, IC2, IC3, I2, I3, Q, S)
   110    CONTINUE
   120 CONTINUE
 C
@@ -486,5 +370,135 @@ C
 C
 C Finished with FARFIELD boundary condition
 C
+      RETURN
+      END
+
+C
+C     Apply inviscid far-field boundary condition for given face
+C
+      SUBROUTINE BCFINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+     1                  IBCM, SGNM, SINF, IC1, IC2, IC3, I2, I3, Q, S)
+      include '../header/common.h'
+      DIMENSION Q     (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ),
+     1          S     (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3)
+C
+      IBC  = IBCPT *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JBC  = IBCPT *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KBC  = IBCPT *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IBC2 = IBCPT2*IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JBC2 = IBCPT2*IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KBC2 = IBCPT2*IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IN   = IBCN  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JN   = IBCN  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KN   = IBCN  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IM   = IBCM  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JM   = IBCM  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KM   = IBCM  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+C Check U (dot) n for inflow/outflow determination
+C       U (dot) n > 0  for inflow  to   domain
+C                 < 0  for outflow from domain
+C The use of the SGNM variable sets up one set of logic
+C to handle both the inner and outer boundary cases.
+C
+      SX    = S(JM,KM,IM,1,IDIR) * SGNM
+      SY    = S(JM,KM,IM,2,IDIR) * SGNM
+      SZ    = S(JM,KM,IM,3,IDIR) * SGNM
+C
+      QEXT  = Q(JN,KN,IN,2) * SX + Q(JN,KN,IN,3) * SY 
+     1      + Q(JN,KN,IN,4) * SZ
+      QINF  = UINF * SX + VINF * SY + WINF * SZ
+      RHON  = Q(JN,KN,IN,1)
+      PN    = Q(JN,KN,IN,5)
+C
+C One Dimensional Riemann invariants
+C - the sign of U dot n handles the sign change in the Riemann invariants
+C
+      AEXT  = SQRT (GAMMA * PN / RHON)
+      REXT  = QEXT - 2.E0 * AEXT / GAMM1
+      RINF  = QINF + 2.E0 * AINF / GAMM1
+      QDOTN = 0.5E0 * (REXT + RINF)
+      A     = 0.25E0 * GAMM1 * (RINF - REXT)
+      RMACH = QDOTN / A
+      SEXT  = PN   / RHON  **GAMMA
+C
+C Inflow
+C
+      IF (QDOTN .GT. 0.E0) THEN
+C
+C     Supersonic Inflow - Data Specified
+C
+         IF (ABS(RMACH) .GE. 1.0E0) THEN
+            Q(JBC ,KBC ,IBC ,1) = RHOINF
+            Q(JBC ,KBC ,IBC ,2) = UINF
+            Q(JBC ,KBC ,IBC ,3) = VINF
+            Q(JBC ,KBC ,IBC ,4) = WINF
+            Q(JBC ,KBC ,IBC ,5) = PREF
+C
+            Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
+            Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
+            Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
+            Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
+            Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
+         ELSE
+C
+C     Subsonic Inflow - One Dimensional Riemann Problem
+C     From Jameson and Baker, AIAA 83-1929 
+C
+            RHOBC  = (A*A / (GAMMA*SINF))**(1.E0/GAMM1)
+            Q(JBC ,KBC ,IBC ,1) = RHOBC
+            Q(JBC ,KBC ,IBC ,2) = UINF + (QDOTN-QINF)*SX
+            Q(JBC ,KBC ,IBC ,3) = VINF + (QDOTN-QINF)*SY
+            Q(JBC ,KBC ,IBC ,4) = WINF + (QDOTN-QINF)*SZ
+            Q(JBC ,KBC ,IBC ,5) = RHOBC * A * A / GAMMA
+C
+            Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
+            Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
+            Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
+            Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
+            Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
+         ENDIF
+C
+C Outflow
+C
+      ELSE
+C
+C     Supersonic Outflow - Data Extrapolated
+C
+         IF (ABS(RMACH) .GE. 1.0E0) THEN
+            Q(JBC ,KBC ,IBC ,1) = Q(JN  ,KN  ,IN  ,1)
+            Q(JBC ,KBC ,IBC ,2) = Q(JN  ,KN  ,IN  ,2)
+            Q(JBC ,KBC ,IBC ,3) = Q(JN  ,KN  ,IN  ,3)
+            Q(JBC ,KBC ,IBC ,4) = Q(JN  ,KN  ,IN  ,4)
+            Q(JBC ,KBC ,IBC ,5) = Q(JN  ,KN  ,IN  ,5)
+C
+            Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
+            Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
+            Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
+            Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
+            Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
+         ELSE
+C
+C     Subsonic Outflow - One Dimensional Riemann Problem
+C     From Jameson and Baker, AIAA 83-1929
+C
+            RHOBC  = (A*A / (GAMMA*SEXT))**(1.E0/GAMM1)
+            Q(JBC ,KBC ,IBC ,1) = RHOBC
+            Q(JBC ,KBC ,IBC ,2) = Q(JN,KN,IN,2) + (QDOTN-QEXT)*SX
+            Q(JBC ,KBC ,IBC ,3) = Q(JN,KN,IN,3) + (QDOTN-QEXT)*SY
+            Q(JBC ,KBC ,IBC ,4) = Q(JN,KN,IN,4) + (QDOTN-QEXT)*SZ
+            Q(JBC ,KBC ,IBC ,5) = RHOBC * A * A / GAMMA
+C
+            Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
+            Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
+            Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
+            Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
+            Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
+         ENDIF
+      ENDIF
+
       RETURN
       END
