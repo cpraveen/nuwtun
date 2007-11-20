@@ -9,10 +9,10 @@ OBJS = main/main.o
 #Libraries
 LIBS = rhs/.lib.a      \
        bc/.lib.a       \
+       march/.lib.a    \
        explicit/.lib.a \
        implicit/.lib.a \
        io/.lib.a       \
-       march/.lib.a    \
        turb/.lib.a
 
 all: nuwtun_flo

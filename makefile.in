@@ -3,21 +3,21 @@
 # You must also defined a shell variable NUWTUN_HOME which contains the 
 # absolute path to the present directory
 
-# Fortran compiler on Linux
+# Fortran compiler: These work for Linux and gcc/gfortran
+# CFLAGS is assumed to be set in your shell, otherwise define it here
 FC       = gfortran
+CPPFLAGS = -DCPU_TIME
 FFLAGS   = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
 
 # C compiler on Linux
 CC       = gcc
-
-CPPFLAGS = -DCPU_TIME
 
 # Remove command
 RM       = /bin/rm
 
 # Program to build library
 AR       = ar
-OPTAR    = cru
+OPTAR    = crus
 
 # Make program
 MAKE     = make
