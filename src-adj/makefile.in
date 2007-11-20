@@ -1,0 +1,25 @@
+# Root directory of nuwtun; NUWTUN_HOME must be defined in your shell, for
+# example in bash, add the following to your .bashrc file
+#   export NUWTUN_HOME=/path/to/nuwtun
+ROOT     = $(NUWTUN_HOME)
+
+# Include global variables file
+include $(ROOT)/makefile.in
+
+# Uncomment this line to run dot-product test; make clean && make
+#CFLAGS += -D_DPTEST
+
+# Makefile for creating libraries, relative path
+MKLIB    = $(MAKE) -s -f ../libs.mk
+
+# Directory where call-tree is generated using ftnchek: this is relative to src
+CTDIR    = $(ROOT)/docs/tree/src-adj
+
+# Flow solver directory
+SRCFLO   = $(ROOT)/src-flo
+
+# Adjoint solver directory
+SRCADJ   = $(ROOT)/src-adj
+
+# Tapenade executable
+TPN      = $(TAPENADE_HOME)/bin/tapenade
