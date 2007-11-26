@@ -1568,7 +1568,7 @@ C
 C     Set up control parameter for calculating maximum residual
 C
                RESMAX = 0.E0
-               IF (ISTAGE .EQ. 1 .AND. MOD((ITER),ITRSMX).EQ.0) THEN
+               IF(ISTAGE .EQ. NSTAGE .AND. MOD((ITER),ITRSMX).EQ.0) THEN
                    IFRSMX = IYES
                ELSE
                    IFRSMX = INO
@@ -1712,7 +1712,7 @@ C                          call l2max  to calculate maximum residual
 C
                   IPSTRT = 2
                   IPEND  = IDIM(IBLK,ILVL)
-                  IF (ISTAGE .EQ. 1) THEN
+                  IF (ISTAGE .EQ. NSTAGE) THEN
                      CALL L2NRM1(IDIM(IBLK,ILVL), 
      1                            JDIM(IBLK,ILVL),KDIM(IBLK,ILVL),
      2                            IPSTRT, IPEND,
