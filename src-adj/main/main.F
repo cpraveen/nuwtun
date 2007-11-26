@@ -1722,7 +1722,17 @@ C
      1                        KDIM(IBLK,ILVL), ISTAGE, RKALPH(ISTAGE),
      2                        QB(IQ), DTJ(ID), QA(IQ), W)
                   ELSE IF (ISOLVR .EQ. IAF3F) THEN
-                     STOP "AF3F not finished"
+                     CALL AF3F_ADJ (IBLK, IDIM(IBLK,ILVL), 
+     1                       JDIM(IBLK,ILVL), KDIM(IBLK,ILVL), NXSECT, 
+     2                       NXABC, Q(IQ), QN(IQN), QA(IQ), NQNPTS,
+     3                       PROPS(IP), NPPTS, S(IS), VOL(IV), 
+     4                       R(IR), DTJ(ID), QB(IQ), FHAT, DQP, DQM, 
+     5                       QP, QM, TAU, F, FM, STEMP, WORKX,
+     6                       IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK),
+     7                       ITORDR, LIMIT(1,IBLK), RKAP(1,IBLK),
+     8                       IFLUX(IBLK), VISCOS(1,IBLK), DIAG(1,IBLK),
+     9                       IMODEL, IFDELQ, ABC, RTEMP, AT, AI,
+     A                       QMIN, NFIXQ, NRELIZ, NPRLIM, NPRNEG,IERRCD)
                   ENDIF
  520           CONTINUE
 #ifdef _DPTEST
