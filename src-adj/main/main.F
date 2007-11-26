@@ -1430,10 +1430,12 @@ c end testing part
 c
 C     Force use of RK3
 C
-      NSTAGE    = 3
-      RKALPH(1) = 0.0
-      RKALPH(2) = 3.0/4.0
-      RKALPH(3) = 1.0/3.0
+      if(ISOLVR.EQ.IRKN) THEN
+         NSTAGE    = 3
+         RKALPH(1) = 0.0
+         RKALPH(2) = 3.0/4.0
+         RKALPH(3) = 1.0/3.0
+      ENDIF
 C
 C     Loop over coarse to fine sequences
 C
@@ -1442,31 +1444,6 @@ C
       DO 900 ICFS = 1, NCFS
          LVLONE = NCFS - ICFS + 1
          ILVL   = LVLONE
-C  
-C     Update time step. We only need to compute this once unless we use
-C     inreasing CFL number.
-C     Use DQP as temporary storage for PFACTR.
-C  
-         DTMIN =  999.E0
-         DTMAX = -999.E0
-         ITER  =  10000000
-         DO 400 IBLK = 1, NBLKS
-            IQ    = IOFFQ(IBLK,ILVL) * NQ    + 1
-            IP    = IOFFP(IBLK,ILVL) * NP    + 1
-            ID    = IOFF (IBLK,ILVL)         + 1
-            IV    = IOFFS(IBLK,ILVL)         + 1
-            IS    = IOFFS(IBLK,ILVL) * 4 * 3 + 1
-            CALL DELTAT (IBLK,        IDIM(IBLK,ILVL), 
-     1                   JDIM(IBLK,ILVL), KDIM(IBLK,ILVL), 
-     2                   2, IDIM(IBLK,ILVL),
-     3                   Q(IQ), PROPS(IP), DTJ(ID), VOL(IV),
-     4                   S(IS), DQP,
-     5                   VISCOS(1,IBLK), ITURB, ITER, CFLCUR,
-     6                   DTMIN,IBLKMN,IDTMIN,JDTMIN,KDTMIN,
-     7                   DTMAX,IBLKMX,IDTMAX,JDTMAX,KDTMAX)
- 400     CONTINUE
-         WRITE(IOUT,*)'DTMIN =', DTMIN
-         WRITE(IOUT,*)'DTMAX =', DTMAX
 C
 C     Compute gradient of cost function wrt Q
 C
@@ -1557,6 +1534,32 @@ C     Reset norms to zero
 C
             R2NORM(1:NF+1) = 0.E0
             R2DQDT(1:NF+1) = 0.E0
+C  
+C     Update time step. We only need to compute this once unless we use
+C     inreasing CFL number.
+C     Use DQP as temporary storage for PFACTR.
+C  
+            IF( ITER.EQ.1 .OR. (CFLFNL.NE.0 .AND. ITER.LE.ITDFNL)) THEN
+               DTMIN =  999.E0
+               DTMAX = -999.E0
+               DO 400 IBLK = 1, NBLKS
+                  IQ    = IOFFQ(IBLK,ILVL) * NQ    + 1
+                  IP    = IOFFP(IBLK,ILVL) * NP    + 1
+                  ID    = IOFF (IBLK,ILVL)         + 1
+                  IV    = IOFFS(IBLK,ILVL)         + 1
+                  IS    = IOFFS(IBLK,ILVL) * 4 * 3 + 1
+                  CALL DELTAT (IBLK,        IDIM(IBLK,ILVL), 
+     1                         JDIM(IBLK,ILVL), KDIM(IBLK,ILVL), 
+     2                         2, IDIM(IBLK,ILVL),
+     3                         Q(IQ), PROPS(IP), DTJ(ID), VOL(IV),
+     4                         S(IS), DQP,
+     5                         VISCOS(1,IBLK), ITURB, ITER, CFLCUR,
+     6                         DTMIN,IBLKMN,IDTMIN,JDTMIN,KDTMIN,
+     7                         DTMAX,IBLKMX,IDTMAX,JDTMAX,KDTMAX)
+ 400           CONTINUE
+               WRITE(IOUT,*)'DTMIN =', DTMIN
+               WRITE(IOUT,*)'DTMAX =', DTMAX
+            ENDIF
 C
 C     Perform NSTAGE stages of multistage scheme
 C
