@@ -7,6 +7,20 @@ C     Check gfile, qfile for the input files
      1          rc(jdim+1, kdim+1, idim+1, 3)
       character*32 ofile
 
+C     Set boundary values to values in adjacent cell
+      k = 2
+      do j=2,jdim
+         q(j, k, 1,      :) = q(j, k, 2,    :)
+         q(j, k, idim+1, :) = q(j, k, idim, :)
+      enddo
+      do i=2,idim
+         q(1,      k, i, :) = q(2,    k, i, :)
+         q(jdim+1, k, i, :) = q(jdim, k, i, :)
+      enddo
+
+C     Set values for corner points
+      call coredg(idim, jdim, kdim, q, nq)
+
       ofile = 'out.vtk'
 
       ibeg = 1
