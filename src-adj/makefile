@@ -12,19 +12,19 @@ LIBS = $(foreach dir,$(DIRS),$(addsuffix /.lib.a,$(dir)))
 
 # Some object files
 OBJS = main/main.o     \
-		 main/cpavar.o   \
-		 main/fvres.o    \
-		 main/intqa1.o   \
-		 main/adddpt.o   \
-		 main/adBuffer.o \
-		 main/adStack.o
+       main/cpavar.o   \
+       main/fvres.o    \
+       main/intqa1.o   \
+       main/adddpt.o   \
+       main/adBuffer.o \
+       main/adStack.o
 
 # Library files from src-flo
 FLOLIB   = $(SRCFLO)/rhs/.lib.a      \
-			  $(SRCFLO)/bc/.lib.a       \
-			  $(SRCFLO)/io/.lib.a       \
-			  $(SRCFLO)/turb/.lib.a     \
-			  $(SRCFLO)/implicit/.lib.a
+           $(SRCFLO)/bc/.lib.a       \
+           $(SRCFLO)/io/.lib.a       \
+           $(SRCFLO)/turb/.lib.a     \
+           $(SRCFLO)/implicit/.lib.a
 
 # This is executed for every make
 all:

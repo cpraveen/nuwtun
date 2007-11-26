@@ -1,5 +1,6 @@
 #List of files/directories to make tgz file
 FILES=nuwtun/src-flo     \
+		nuwtun/src-adj     \
 		nuwtun/docs        \
 		nuwtun/makefile    \
 		nuwtun/makefile.in \
@@ -18,5 +19,6 @@ flo:
 
 tgz:
 	cd src-flo && make cleanall
-	cd .. && tar zcvf $(TGZFILE) $(FILES) --exclude "$(EXCLU)"
+	cd src-adj && make clean
+	cd .. && tar zcvf $(TGZFILE) $(FILES) --exclude "$(EXCLU)" --exclude ".svn"
 	@echo "TGZ file is ../$(TGZFILE)"

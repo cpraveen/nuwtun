@@ -32,7 +32,7 @@ bcfinv_bq.f: $(SRCP)/bcfar.F
 		$<
 ##############################################################################
 clean:
-	$(RM) -f .lib.a *.o
+	$(RM) -f .lib.a *.o *.msg *~
 #Remove everything
 cleanall:
 	$(RM) -f .lib.a *.o $(BQ) *.msg *~
