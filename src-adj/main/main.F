@@ -1400,7 +1400,7 @@ c
      9                      IOFF, IOFFS, IOFFQ, IOFFP, IOFFQN, IOFFQC,
      A                      IOFQBC, ICUTS, NCUTS, NXPROF, NPROFL,
      B                      EPS, QD, RESD, NSIZEQ, ITER, NITFO)
-      EPS    = 1.0e-10
+      EPS    = 1.0e-8
       call FVRESID  (NCFS, NBLKS, IDIM, JDIM, KDIM, NXSECT, Q, QN, 
      1               NQNPTS,
      4                      PROPS, NPPTS, S, VOL, R, DTJ, RES, 
@@ -1428,7 +1428,12 @@ c     LHS and RHS of dot-product test
 c
 c end testing part
 c
+C     Force use of RK3
 C
+      NSTAGE    = 3
+      RKALPH(1) = 0.0
+      RKALPH(2) = 3.0/4.0
+      RKALPH(3) = 1.0/3.0
 C
 C     Loop over coarse to fine sequences
 C

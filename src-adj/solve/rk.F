@@ -88,15 +88,15 @@ C     Perform one stage of Runge-Kutta integration
 C
 C     Set Q = Q(t=n) 
 C
-      DO 540 L = 1, NQ
-         DO 530 I = 2, IDIM
-            DO 520 K = 2, KDIM
-               DO 510 J = 2, JDIM
-                  QA(J,K,I,L)   = W(J,K,I,L) 
-  510          CONTINUE
-  520       CONTINUE
-  530    CONTINUE
-  540 CONTINUE
+c-    DO 540 L = 1, NQ
+c-       DO 530 I = 2, IDIM
+c-          DO 520 K = 2, KDIM
+c-             DO 510 J = 2, JDIM
+c-                QA(J,K,I,L)   = W(J,K,I,L) 
+c-510          CONTINUE
+c-520       CONTINUE
+c-530    CONTINUE
+c-540 CONTINUE
 C
 C     Update adjoint Variables
 C
@@ -104,8 +104,11 @@ C
          DO 630 I = 2, IDIM
             DO 620 K = 2, KDIM
                DO 610 J = 2, JDIM
-                  DRESB       = - RKALPH * DTJ(J,K,I) * QB(J,K,I,L)
-                  QA(J,K,I,L) = QA(J,K,I,L) + DRESB
+c-                DRESB       = - RKALPH * DTJ(J,K,I) * QB(J,K,I,L)
+c-                QA(J,K,I,L) = QA(J,K,I,L) + DRESB
+                  DRESB       = - DTJ(J,K,I) * QB(J,K,I,L)
+                  QA(J,K,I,L) = RKALPH*W(J,K,I,L) + 
+     1                          (1.0-RKALPH)*(QA(J,K,I,L) + DRESB)
   610          CONTINUE
   620       CONTINUE
   630    CONTINUE
