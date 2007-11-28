@@ -224,10 +224,10 @@ C
                   DTTERM  = 1.0E0 /
      1                      ( TDPDTJ / (TDTHET*DTJ(J,K,I))
      2                      + TDPDEL * VOL(J,K,I) / TIMEDT )
-                  A (J,I) = - DTTERM * EIGENP(J,I-1,M)
+                  A (J,I) =   DTTERM * EIGENM(J,I,M)
                   B (J,I) =   1.0E0  + DTTERM * 
      1                                 (EIGENP(J,I,M) - EIGENM(J,I,M))
-                  C (J,I) =   DTTERM * EIGENM(J,I+1,M)
+                  C (J,I) = - DTTERM * EIGENP(J,I,M)
                   RT(J,I) =   RTEMP(J,I,L)
   420          CONTINUE
   430       CONTINUE
