@@ -12,10 +12,13 @@ EXCLU=nuwtun/docs/tree
 #Name of tgz file
 TGZFILE=nuwtun.tgz
 
-all: flo
+all: flo adj
 
 flo:
 	@cd src-flo && make
+
+adj:
+	@cd src-adj && make
 
 tgz:
 	cd src-flo && make cleanall

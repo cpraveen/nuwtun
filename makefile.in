@@ -1,6 +1,6 @@
 # Set your compiler and flags here. You should not have to change any other
 # file.
-# You must also defined a shell variable NUWTUN_HOME which contains the 
+# You must also define a shell variable NUWTUN_HOME which contains the 
 # absolute path to the present directory
 
 # Fortran compiler: These work for Linux and gcc/gfortran
