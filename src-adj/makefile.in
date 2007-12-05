@@ -7,7 +7,7 @@ ROOT     = $(NUWTUN_HOME)
 include $(ROOT)/makefile.in
 
 # Uncomment this line to run dot-product test; make clean && make
-#CFLAGS += -D_DPTEST
+CFLAGS += -D_DPTEST
 
 # Makefile for creating libraries, relative path
 MKLIB    = $(MAKE) -s -f ../libs.mk

@@ -1,5 +1,5 @@
       SUBROUTINE BCFAR_Q(ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
-     1                   Q, QB, PROPS, S, IBCDAT)
+     1                   Q, QB, PROPS, S, SB, IBCDAT)
 C
 C Routine to do FARFIELD (1-dimensional Riemann invariants) boundary condition.
 C
@@ -42,7 +42,8 @@ C
      1          PROPS (0:JDIM+2,0:KDIM+2,0:IDIM+2,NP),
      2          S     (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3)
 C
-      DIMENSION QB    (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ)
+      DIMENSION QB    (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ),
+     1          SB    (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3)
 C
       DIMENSION IBCDAT(10)
 C
@@ -124,7 +125,7 @@ CDIR$ IVDEP
          DO 110 I2 = ISTRT(IC2), IEND(IC2)
             CALL BCFINV_BQ (IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN,
      1                      IBCM, SGNM, SINF, IC1, IC2, IC3, I2, I3, 
-     2                      Q, QB, S)
+     2                      Q, QB, S, SB)
   110    CONTINUE
   120 CONTINUE
 C

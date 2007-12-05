@@ -160,6 +160,10 @@ C
       REAL,DIMENSION(:),ALLOCATABLE:: DQP, DQM, QP, QM, TAU, F, FM,
      1                                STEMP, WORKX
 C
+C     Variable to store grid coordinates since it is overwritten
+C
+      REAL,DIMENSION(:),ALLOCATABLE:: RG
+C
 C     Temporary storage for implicit terms
 C          For (RK)         : not needed
 C          For (AF3F)       : NPL * max(IDIM*JDIM, JDIM*KDIM)
@@ -211,7 +215,7 @@ C
 C     Memory for adjoint solution
 C
       REAL,DIMENSION(:),ALLOCATABLE:: QB0, QB, RESB, DQPB, DQMB, 
-     1                                QPB, QMB, FB, QA
+     1                                QPB, QMB, FB, QA, SB, RB
 C
 C     Memory for checking derivatives by dot product test
 C
@@ -666,6 +670,9 @@ C
       ALLOCATE( QMB    (NDSECT*NQ)        )
       ALLOCATE( FB     (NDSECT*NF)        )
       ALLOCATE( QA     (IOFFQT*NQ)        )
+      ALLOCATE( SB     (IOFFQT*4*3)       )
+      ALLOCATE( RB     (IOFFQT*3)         )
+      ALLOCATE( RG     (IOFFQT*3)         )
 C
 C     Used by subroutine WRREST and others
 C
@@ -778,6 +785,10 @@ C
       IF (IERRCD .NE. INO) THEN
          STOP
       ENDIF
+C
+C Copy R into RG - only done in adjoint
+C
+      RG(:) = R(:)
 C
 C 6.  INITIALIZATION
 C     Initialize each block and each grid level to freestream.
@@ -1373,6 +1384,7 @@ C     Initialize QB0, gradient of cost function to zero
 C
       QA  (:) = 0.0E0
       QB0 (:) = 0.0E0
+      SB  (:) = 0.0E0
 c
 c begin testing part
 c
@@ -1447,6 +1459,7 @@ C
 C
 C     Compute gradient of cost function wrt Q
 C
+         SB(:) = 0.0E0
          CLB = 1.0E0
          CDB = 0.0E0
          CALL FRCINT_BQ (ITURB,NBLKS,IDIM(1,ILVL), 
@@ -1477,7 +1490,7 @@ C
             CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
      1                KDIM(IBLK,ILVL), 1, 
      2                IDIM(IBLK,ILVL)+1,Q(IQ),QB0(IQ),PROPS(IP),
-     3                NPPTS, S(IS), VOL(IV), R(IR),
+     3                NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
      4                NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
      5                NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
      6                VISCOS(1,IBLK),IMODEL,QP, NXSECT,
@@ -1575,7 +1588,10 @@ C
                ENDIF
 C
 C     Loop over all blocks.
+C     SB not required at this stage, but set it to zero to avoid
+C     possible overflow
 C
+               SB(:) = 0.0E0
                DO 500 IBLK = 1, NBLKS
                   IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
                   IQN  = IOFFQN(IBLK,ILVL) * NQ * NTMLVL + 1
@@ -1660,7 +1676,7 @@ C
                   CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
      1                    KDIM(IBLK,ILVL), 1, 
      2                    IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
-     3                    NPPTS, S(IS), VOL(IV), R(IR),
+     3                    NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
      4                    NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
      5                    NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
      6                    VISCOS(1,IBLK),IMODEL,QP, NXSECT,
@@ -1928,6 +1944,199 @@ C     Jump here if STOP file is encountered
 C
   905 CONTINUE
 C
+C     Compute dJ/dX - This is on the finest level ILVL=1
+C
+      ILVL  = 1
+      CLB   = 1.0
+      CDB   = 0.0
+      QB(:) = 0.0
+      SB(:) = 0.0
+      CALL FRCINT_BX (ITURB,NBLKS,IDIM(1,ILVL),
+     1               JDIM(1,ILVL),  KDIM(1,ILVL),
+     2               IOFF(1,ILVL),  IOFFS(1,ILVL),
+     3               IOFFQ(1,ILVL), IOFFP(1,ILVL),
+     4               Q, QB, PROPS, S, SB, R, NXBCS, NBCS,
+     5               IBCDAT(1,1,1,ILVL), FORCE, CL, CLB, CD, CDB)
+      DO 860 IBLK = 1, NBLKS
+         IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
+         IQN  = IOFFQN(IBLK,ILVL) * NQ * NTMLVL + 1
+         IP   = IOFFP (IBLK,ILVL) * NP          + 1
+         IS   = IOFFS (IBLK,ILVL) * 4 * 3       + 1
+         IV   = IOFFS (IBLK,ILVL)               + 1
+         IR   = IOFFS (IBLK,ILVL) * 3           + 1
+         ID   = IOFF  (IBLK,ILVL)               + 1
+         IABC = IOFF  (IBLK,ILVL)*NRANK*NRANK*3*3+1
+C
+C     Storage for PROPS
+C
+         IF (ITURB .GE. ITLMNR) THEN
+             NPPTS = (IDIM(IBLK,ILVL)+3) * 
+     1               (JDIM(IBLK,ILVL)+3) *
+     2               (KDIM(IBLK,ILVL)+3)
+         ELSE
+             NPPTS = NXPPTS
+         ENDIF
+         CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
+     1             KDIM(IBLK,ILVL), 1, 
+     2             IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
+     3             NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
+     4             NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
+     5             NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
+     6             VISCOS(1,IBLK),IMODEL,QP, NXSECT,
+     7             CL, RCNTR)
+  860    CONTINUE
+C
+C     Now compute v^T * dR/dX
+C
+         QB(:) = 0.0
+C
+C     Loop over all blocks.
+C
+               DO 865 IBLK = 1, NBLKS
+                  IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
+                  IQN  = IOFFQN(IBLK,ILVL) * NQ * NTMLVL + 1
+                  IP   = IOFFP (IBLK,ILVL) * NP          + 1
+                  IS   = IOFFS (IBLK,ILVL) * 4 * 3       + 1
+                  IV   = IOFFS (IBLK,ILVL)               + 1
+                  IR   = IOFFS (IBLK,ILVL) * 3           + 1
+                  ID   = IOFF  (IBLK,ILVL)               + 1
+                  IABC = IOFF  (IBLK,ILVL)*NRANK*NRANK*3*3+1
+C
+C     Storage for QN, calculate L2 norm of dQ/dt only if first stage of
+C     multistage scheme and on the finest mesh level
+                  NQNPTS = NXQNPT
+                  IFL2DQ = .FALSE.
+C
+C     Storage for PROPS
+C
+                  IF (ITURB .GE. ITLMNR) THEN
+                      NPPTS = (IDIM(IBLK,ILVL)+3) * 
+     1                        (JDIM(IBLK,ILVL)+3) *
+     2                        (KDIM(IBLK,ILVL)+3)
+                  ELSE
+                      NPPTS = NXPPTS
+                  ENDIF
+C
+C     Set up switch from first order scheme to higher order
+C
+                  ITORDR(1) = IORDER(1,IBLK,ILVL,ICFS)
+                  ITORDR(2) = IORDER(2,IBLK,ILVL,ICFS)
+                  ITORDR(3) = IORDER(3,IBLK,ILVL,ICFS)
+                  IF (ITER .LE. NITFO) THEN
+                     ITORDR(1) = 1
+                     ITORDR(2) = 1
+                     ITORDR(3) = 1
+                  ENDIF
+C
+C     Set up use of algebraic turbulent eddy viscosity with higher order
+C     models for the initial transient
+C
+                  MUTALG = .FALSE.
+C
+C     If running a viscous case, calculate the PROPS array
+C     Use QP, QM, F and DQP as temporary storage.
+C
+                  IF (ITURB  .GE. ITLMNR .AND. ISTAGE .EQ. 1) THEN
+                     STOP "PRPRTY not finished"
+                     CALL PRPRTY (IDIM(IBLK,ILVL),
+     1                            JDIM(IBLK,ILVL), KDIM(IBLK,ILVL),
+     2                            1, IDIM(IBLK,ILVL)+1, NXSECT,
+     3                            Q(IQ), PROPS(IP), S(IS), VOL(IV),
+     4                            IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK),
+     5                            IMODEL, IFDELQ,
+     6                            STEMP, QP, F, FM, QM, DQP,DQM,WORKX)
+                  ENDIF
+C
+C      Copy adjoint variable for level=ILVL, block=IBLK into RESB
+C
+                  CALL CPAVAR(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+     1                        KDIM(IBLK,ILVL), QA(IQ), RESB)
+C
+C      Calculate the Residual for the current block and level
+C
+                  INITRS = .TRUE.
+                  IPSTRT = 2
+                  IPEND  = IDIM(IBLK,ILVL)
+                  CALL RESID_Q (IDIM(IBLK,ILVL), 
+     1                        JDIM(IBLK,ILVL),KDIM(IBLK,ILVL), 
+     2                        IPSTRT, IPEND, NXSECT,
+     3                        Q(IQ), QB(IQ), QN(IQN), NQNPTS,
+     4                        PROPS(IP), NPPTS, S(IS), 
+     5                        VOL(IV), R(IR), DTJ(ID), RES, RESB,
+     6                        FHAT, DQP, DQPB, DQM, DQMB, QP, QPB, 
+     7                        QM, QMB, TAU, F, FB, FM, STEMP, WORKX,
+     8                        IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK), 
+     9                        ITORDR, LIMIT(1,IBLK), RKAP(1,IBLK), 
+     B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
+     C                        INITRS, IFDELQ, MRCHNG, VGNRN,SIGMA,
+     D                        NPRLIM, NPRNEG, IFL2DQ, R2DQDT)
+                  CALL RESID_X (IDIM(IBLK,ILVL), 
+     1                        JDIM(IBLK,ILVL),KDIM(IBLK,ILVL), 
+     2                        IPSTRT, IPEND, NXSECT,
+     3                        Q(IQ), QN(IQN), NQNPTS,
+     4                        PROPS(IP), NPPTS, S(IS), SB(IS),
+     5                        VOL(IV), R(IR), DTJ(ID), RES, RESB,
+     6                        FHAT, DQP, DQM, QP,
+     7                        QM, TAU, F, FB, FM, STEMP, WORKX,
+     8                        IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK), 
+     9                        ITORDR, LIMIT(1,IBLK), RKAP(1,IBLK), 
+     B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
+     C                        INITRS, IFDELQ, MRCHNG, VGNRN,SIGMA,
+     D                        NPRLIM, NPRNEG, IFL2DQ, R2DQDT)
+C
+C     Update Boundary Conditions
+C
+                  CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
+     1                    KDIM(IBLK,ILVL), 1, 
+     2                    IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
+     3                    NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
+     4                    NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
+     5                    NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
+     6                    VISCOS(1,IBLK),IMODEL,QP, NXSECT,
+     7                    CL, RCNTR)
+  865          CONTINUE
+C
+C Differentiate wrt grid coordinates
+C
+      RB(:) = 0.0
+      IERRCD = INO
+      DO IBLK = 1, NBLKS
+         IR   = IOFFS(IBLK,ILVL) * 3     + 1
+         IS   = IOFFS(IBLK,ILVL) * 4 * 3 + 1
+         IV   = IOFFS(IBLK,ILVL)         + 1
+         CALL METBC_BX (IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+     1                KDIM(IBLK,ILVL), S(IS), SB(IS), VOL(IV), 
+     2                NBCS(IBLK), IBCDAT(1,1,IBLK,ILVL))
+         CALL METRIC_BX(IBLK, ILVL, IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+     1                KDIM(IBLK,ILVL), RG(IR), RB(IR), S(IS), SB(IS),
+     2                VOL(IV), IERRCD)
+      ENDDO
+
+      DO ICUT = 1, NCUTS
+         IBLK1 = ICUTS( 1,ICUT,ILVL)
+         IBLK2 = ICUTS(10,ICUT,ILVL)
+         IR1   = IOFFS(IBLK1,ILVL) * 3    + 1
+         IR2   = IOFFS(IBLK2,ILVL) * 3    + 1
+         CALL GRDCUT_BX (IDIM(IBLK1,ILVL), JDIM(IBLK1,ILVL), 
+     1                KDIM(IBLK1,ILVL), RG(IR1), RB(IR1),
+     2                IDIM(IBLK2,ILVL), JDIM(IBLK2,ILVL), 
+     3                KDIM(IBLK2,ILVL), RG(IR2), RB(IR2), 
+     4                ICUTS(1,ICUT,ILVL))
+      ENDDO
+
+      DO IBLK = 1, NBLKS
+         IR   = IOFFS(IBLK,ILVL) * 3     + 1
+         CALL GDXTND_BX (IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+     1                KDIM(IBLK,ILVL), RG(IR), RB(IR))
+      ENDDO
+
+c-    grad = 0.0
+c-    DO IBLK = 1, NBLKS
+c-       IR   = IOFFS(IBLK,ILVL) * 3     + 1
+c-       call sumgrad(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+c-   1                KDIM(IBLK,ILVL), RG(IR), RB(IR), grad)
+c-    ENDDO
+C
 C     Calculate execution time of run
 C
 #ifdef CPU_TIME
@@ -1964,6 +2173,7 @@ c$$$      CALL WRTP3D (IFPLT3, BINPLT, FPLT3G, FPLT3Q, FPLT3F, FPLT3FN,
 c$$$     1             FERROR, NBLKS, IDIM, JDIM, KDIM, IOFFS, IOFFQ,
 c$$$     2             IOFFP, ITURB, NPRINT, IPRINT, NCUTS, ICUTS,
 c$$$     3             ILVL, Q, PROPS, R)
+          ILVL = 1
           DO IBLK = 1, NBLKS
             IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
             IR   = IOFFS (IBLK,ILVL) * 3           + 1

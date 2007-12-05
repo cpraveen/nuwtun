@@ -1,5 +1,5 @@
       SUBROUTINE BC_Q   (IDIM, JDIM, KDIM, IPSTRT, IPEND, 
-     1                   Q, QB, PROPS, NPPTS, S, VOL, RC,
+     1                   Q, QB, PROPS, NPPTS, S, SB, VOL, RC,
      2                   NBCS, IBCDAT, NXPROF, NPROFL, IOFQBC, QBC, 
      3                   VISCOS, IMODEL, WORK, MXSECT, CL, RCNTR)
 C
@@ -58,7 +58,8 @@ C
      3          VOL   (0:JDIM+1,0:KDIM+1,0:IDIM+1),
      4          RC    (1:JDIM+1,1:KDIM+1,1:IDIM+1,3)
 C
-      DIMENSION QB    (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ)
+      DIMENSION QB    (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ),
+     1          SB    (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3)
 C
       DIMENSION IBCDAT(10,NBCS)
 C
@@ -107,13 +108,13 @@ C     Tangency boundary condition
 C
          ELSE IF (IBCTYP .EQ. ITAN) THEN
             CALL BCTAN_Q  (ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
-     1                     Q, QB, PROPS, S, IBCDAT(1,IBC))
+     1                     Q, QB, PROPS, S, SB, IBCDAT(1,IBC))
 C
 C     Farfield boundary condition
 C
          ELSE IF (IBCTYP .EQ. IFAR) THEN
             CALL BCFAR_Q  (ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
-     1                     Q, QB, PROPS, S, IBCDAT(1,IBC))
+     1                     Q, QB, PROPS, S, SB, IBCDAT(1,IBC))
 C
 C     2D Farfield boundary condition with point vortex correction
 C

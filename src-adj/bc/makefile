@@ -4,6 +4,7 @@ SRCP = $(SRCFLO)/bc
 SRCD = $(SRCADJ)/bc
 
 TPNBQ    = $(TPN) -b -difffuncname "_bq" -O $(SRCD)
+TPNBX    = $(TPN) -b -difffuncname "_bx" -O $(SRCD)
 
 #Backward diff routines wrt state Q
 BQ = bctinv_bq.f \
@@ -19,16 +20,16 @@ bctinv_bq.f: $(SRCP)/bctan.F
 	$(RM) -f $@
 	cd $(SRCP) && $(TPNBQ) \
 		-head    bctinv     \
-		-vars    "Q"        \
-		-outvars "Q"        \
+		-vars    "Q S"      \
+		-outvars "Q S"      \
 		$<
 #-----------------------------------------------------------------------------
 bcfinv_bq.f: $(SRCP)/bcfar.F
 	$(RM) -f $@
 	cd $(SRCP) && $(TPNBQ) \
 		-head    bcfinv     \
-		-vars    "Q"        \
-		-outvars "Q"        \
+		-vars    "Q S"      \
+		-outvars "Q S"      \
 		$<
 ##############################################################################
 clean:
