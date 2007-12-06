@@ -1557,7 +1557,7 @@ C
                            IPSTRT = 1
                            IPEND  = IDIM(IBLK,ILVL) + 1
 C
-                           CALL BC     (IDIM(IBLK,ILVL),JDIM(IBLK,ILVL), 
+                           CALL BC     (IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
      1                           KDIM(IBLK,ILVL), IPSTRT, IPEND, 
      2                           Q(IQ), PROPS(IP), NPPTS, 
      3                           S(IS), VOL(IV), R(IR),
@@ -1955,7 +1955,7 @@ C     Update Boundary Conditions
 C
                               CALL BC(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
      1                                KDIM(IBLK,ILVL), 1, 
-     2                                IDIM(IBLK,ILVL)+1,Q(IQ),PROPS(IP), 
+     2                                IDIM(IBLK,ILVL)+1,Q(IQ),PROPS(IP),
      3                                NPPTS, S(IS), VOL(IV), R(IR),
      4                                NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
      5                                NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
@@ -1983,18 +1983,18 @@ C
                               IQ1   = IOFFQ(IBLK1,ILVL) * NQ    + 1
                               IQ2   = IOFFQ(IBLK2,ILVL) * NQ    + 1
                               CALL CUT 
-     1                              (IDIM(IBLK1,ILVL), JDIM(IBLK1,ILVL), 
+     1                              (IDIM(IBLK1,ILVL), JDIM(IBLK1,ILVL),
      2                               KDIM(IBLK1,ILVL), Q(IQ1),
-     3                               IDIM(IBLK2,ILVL), JDIM(IBLK2,ILVL), 
+     3                               IDIM(IBLK2,ILVL), JDIM(IBLK2,ILVL),
      4                               KDIM(IBLK2,ILVL), Q(IQ2), 
      5                               ICUTS(1,ICUT,ILVL), NQ)
                               IF (ITURB .GE. ITLMNR) THEN
                                  IP1   = IOFFP(IBLK1,ILVL) * NP    + 1
                                  IP2   = IOFFP(IBLK2,ILVL) * NP    + 1
                                  CALL CUT 
-     1                              (IDIM(IBLK1,ILVL), JDIM(IBLK1,ILVL), 
+     1                              (IDIM(IBLK1,ILVL), JDIM(IBLK1,ILVL),
      2                               KDIM(IBLK1,ILVL), PROPS(IP1),
-     3                               IDIM(IBLK2,ILVL), JDIM(IBLK2,ILVL), 
+     3                               IDIM(IBLK2,ILVL), JDIM(IBLK2,ILVL),
      4                               KDIM(IBLK2,ILVL), PROPS(IP2), 
      5                               ICUTS(1,ICUT,ILVL), NP)
                               ENDIF
@@ -2247,9 +2247,9 @@ C
                         IF (ITURB .GE. ITLMNR) THEN
                            IP1   = IOFFP(IBLK1,LVLF) * NP    + 1
                            IP2   = IOFFP(IBLK2,LVLF) * NP    + 1
-                           CALL CUT (IDIM(IBLK1,LVLF), JDIM(IBLK1,LVLF), 
+                           CALL CUT (IDIM(IBLK1,LVLF), JDIM(IBLK1,LVLF),
      1                               KDIM(IBLK1,LVLF), PROPS(IP1),
-     2                               IDIM(IBLK2,LVLF), JDIM(IBLK2,LVLF), 
+     2                               IDIM(IBLK2,LVLF), JDIM(IBLK2,LVLF),
      3                               KDIM(IBLK2,LVLF), PROPS(IP2), 
      4                               ICUTS(1,ICUT,LVLF), NP)
                         ENDIF
@@ -2457,6 +2457,10 @@ C 16.   Close output and finish
 C
   999 CONTINUE
       CLOSE (IOUT)
+C
+C     Write global result
+C
+      CALL RESULT(ITCUR, R2NORM, CL, CD)
 C
 C     Finished with ISAAC run.
 C

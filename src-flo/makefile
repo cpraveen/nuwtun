@@ -4,7 +4,8 @@ include makefile.in
 PGM  = nuwtun_flo
 
 #Object files
-OBJS = main/main.o
+MAINF = $(wildcard main/*.F)
+OBJS  = $(patsubst %.F,%.o,$(MAINF))
 
 #Libraries
 LIBS = rhs/.lib.a      \
@@ -79,3 +80,4 @@ info:
 	@echo "CFLAGS =" $(CFLAGS)
 	@echo "FFLAGS =" $(FFLAGS)
 	@echo "PGM    =" $(PGM)
+	@echo "MAINO  =" $(MAINO)

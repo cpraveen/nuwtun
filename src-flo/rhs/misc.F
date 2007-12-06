@@ -47,9 +47,10 @@ C
      7     IPLT3F /13/,
      8     IPLT3FN/14/,
      9     IRDBC  /15/,
-     A     ISTOPFL/16/
-     B     IRESID /17/
-     C     ICLCD  /18/
+     A     ISTOPFL/16/,
+     B     IRESID /17/,
+     C     ICLCD  /18/,
+     C     IRESULT/19/
 C
 C     Data statements to set up the file types supported for grids
 C

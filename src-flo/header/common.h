@@ -33,7 +33,7 @@ C     RSMASQ : Square of small number used as RSMALL but when need a square
 C
       COMMON /UNITS/  INPUT, IOUT, IRDRST, IWRRST, IGRID, 
      1                IPLT3G, IPLT3Q, IPLT3F, IPLT3FN, IRDBC,
-     2                ISTOPFL, IRESID, ICLCD
+     2                ISTOPFL, IRESID, ICLCD, IRESULT
 C Units to read/write from:
 C     INPUT  : Unit to read input
 C     IOUT   : Unit for standard output
