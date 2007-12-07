@@ -16,6 +16,7 @@ OBJS = main/main.o     \
        main/fvres.o    \
        main/intqa1.o   \
        main/adddpt.o   \
+       main/sumgrad.o  \
        main/adBuffer.o \
        main/adStack.o
 

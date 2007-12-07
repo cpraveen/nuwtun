@@ -80,5 +80,5 @@ c     Write pressure
       enddo
       close(ivtk)
 
-      stop
+      return
       end

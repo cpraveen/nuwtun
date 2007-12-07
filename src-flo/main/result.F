@@ -9,8 +9,8 @@
 
    10 format('Iterations ', I8)
    11 format('Residue    ', 12E12.4)
-   12 format('CL         ', E25.20)
-   13 format('CD         ', E25.20)
+   12 format('CL         ', E28.20)
+   13 format('CD         ', E28.20)
 
       return
       end

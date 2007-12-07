@@ -121,6 +121,10 @@ C
             DO 180 L = 1, NF
                DO 160 I = IPSTRT, IPEND
                   DO 140 J = 2, JDIM
+                     FB (I,J,L)       = FB (I,J,L)    +
+     1                                  RESB(J,K,I,L) * S(J,K,I,4,1) 
+                     FB (I-1,J,L)     = FB (I-1,J,L)  -
+     1                                  RESB(J,K,I,L) * S(J,K,I-1,4,1) 
                      SB (J,K,I,4,1)   = SB (J,K,I,4,1) +
      1                                  F(I,J,L) * RESB(J,K,I,L)
                      SB (J,K,I-1,4,1) = SB (J,K,I-1,4,1) -

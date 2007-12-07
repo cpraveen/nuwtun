@@ -140,6 +140,10 @@ C
             DO 180 L = 1, NF
                DO 160 K = 2, KDIM
                   DO 140 J = 2, JDIM
+                     FB(J,K,L)       = FB(J,K,L)     + 
+     1                                 RESB(J,K,I,L) * S(J,K,I,4,2)
+                     FB(J-1,K,L)     = FB(J-1,K,L)   - 
+     1                                 RESB(J,K,I,L) * S(J-1,K,I,4,2)
                      SB(J,K,I,4,2)   = SB(J,K,I,4,2)   +
      1                                 F(J,K,L) * RESB(J,K,I,L)
                      SB(J-1,K,I,4,2) = SB(J-1,K,I,4,2) -

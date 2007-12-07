@@ -215,7 +215,7 @@ C
 C     Memory for adjoint solution
 C
       REAL,DIMENSION(:),ALLOCATABLE:: QB0, QB, RESB, DQPB, DQMB, 
-     1                                QPB, QMB, FB, QA, SB, RB
+     1                                QPB, QMB, FB, QA, SB, RB, STEMPB
 C
 C     Memory for checking derivatives by dot product test
 C
@@ -673,6 +673,7 @@ C
       ALLOCATE( SB     (IOFFQT*4*3)       )
       ALLOCATE( RB     (IOFFQT*3)         )
       ALLOCATE( RG     (IOFFQT*3)         )
+      ALLOCATE( STEMPB (NDSECT*4)         )
 C
 C     Used by subroutine WRREST and others
 C
@@ -1412,7 +1413,7 @@ c
      9                      IOFF, IOFFS, IOFFQ, IOFFP, IOFFQN, IOFFQC,
      A                      IOFQBC, ICUTS, NCUTS, NXPROF, NPROFL,
      B                      EPS, QD, RESD, NSIZEQ, ITER, NITFO)
-      EPS    = 1.0e-8
+      EPS    = 1.0e-10
       call FVRESID  (NCFS, NBLKS, IDIM, JDIM, KDIM, NXSECT, Q, QN, 
      1               NQNPTS,
      4                      PROPS, NPPTS, S, VOL, R, DTJ, RES, 
@@ -1985,6 +1986,7 @@ C
      6             VISCOS(1,IBLK),IMODEL,QP, NXSECT,
      7             CL, RCNTR)
   860    CONTINUE
+c        goto 1234
 C
 C     Now compute v^T * dR/dX
 C
@@ -2077,7 +2079,7 @@ C
      4                        PROPS(IP), NPPTS, S(IS), SB(IS),
      5                        VOL(IV), R(IR), DTJ(ID), RES, RESB,
      6                        FHAT, DQP, DQM, QP,
-     7                        QM, TAU, F, FB, FM, STEMP, WORKX,
+     7                        QM, TAU, F, FB, FM, STEMP, STEMPB, WORKX,
      8                        IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK), 
      9                        ITORDR, LIMIT(1,IBLK), RKAP(1,IBLK), 
      B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
@@ -2098,6 +2100,7 @@ C
 C
 C Differentiate wrt grid coordinates
 C
+1234  continue
       RB(:) = 0.0
       IERRCD = INO
       DO IBLK = 1, NBLKS
@@ -2129,13 +2132,13 @@ C
          CALL GDXTND_BX (IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
      1                KDIM(IBLK,ILVL), RG(IR), RB(IR))
       ENDDO
-
-c-    grad = 0.0
-c-    DO IBLK = 1, NBLKS
-c-       IR   = IOFFS(IBLK,ILVL) * 3     + 1
-c-       call sumgrad(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
-c-   1                KDIM(IBLK,ILVL), RG(IR), RB(IR), grad)
-c-    ENDDO
+      grad = 0.0
+      DO IBLK = 1, NBLKS
+         IR   = IOFFS(IBLK,ILVL) * 3     + 1
+         call sumgrad(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+     1                KDIM(IBLK,ILVL), RG(IR), RB(IR), grad)
+      ENDDO
+      print*,'GRADIENT =',grad
 C
 C     Calculate execution time of run
 C
@@ -2177,8 +2180,11 @@ c$$$     3             ILVL, Q, PROPS, R)
           DO IBLK = 1, NBLKS
             IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
             IR   = IOFFS (IBLK,ILVL) * 3           + 1
-         	CALL WRTVTK2(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
-     1                   KDIM(IBLK,ILVL), R(IR), QA(IQ), NQ)
+            IS   = IOFFS (IBLK,ILVL) * 4 * 3       + 1
+            CALL WRTVTK2(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
+     1                   KDIM(IBLK,ILVL), R(IR), QB(IQ), NQ)
+            CALL WRTVTK3(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
+     1                   KDIM(IBLK,ILVL), RG(IR), RB(IR), SB(IS))
          ENDDO
       GO TO 999
 C
