@@ -2177,6 +2177,18 @@ c$$$     1             FERROR, NBLKS, IDIM, JDIM, KDIM, IOFFS, IOFFQ,
 c$$$     2             IOFFP, ITURB, NPRINT, IPRINT, NCUTS, ICUTS,
 c$$$     3             ILVL, Q, PROPS, R)
           ILVL = 1
+          OPEN(55, FILE='rb.dat')
+          WRITE(55,*) NBLKS
+          IF(THREED)THEN
+             DO IBLK = 1, NBLKS
+                WRITE(55,*) IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
+     1                      KDIM(IBLK,ILVL)
+             ENDDO
+          ELSE
+             DO IBLK = 1, NBLKS
+                WRITE(55,*) IDIM(IBLK,ILVL), JDIM(IBLK,ILVL)
+             ENDDO
+          ENDIF
           DO IBLK = 1, NBLKS
             IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
             IR   = IOFFS (IBLK,ILVL) * 3           + 1
@@ -2185,7 +2197,10 @@ c$$$     3             ILVL, Q, PROPS, R)
      1                   KDIM(IBLK,ILVL), R(IR), QB(IQ), NQ)
             CALL WRTVTK3(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
      1                   KDIM(IBLK,ILVL), RG(IR), RB(IR), SB(IS))
+            CALL WRTRB (55, IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
+     1                   KDIM(IBLK,ILVL), RB(IR))
          ENDDO
+         CLOSE(55)
       GO TO 999
 C
 C 15.   Error Handling Section
