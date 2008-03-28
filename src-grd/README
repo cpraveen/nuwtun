@@ -1,0 +1,23 @@
+-------------------------------------------------------------------------------
+param.in: Description of moving and fixed surfaces
+
+Number_of_surfaces
+Block    IBeg  JBeg  IEnd  JEnd  NParam
+Block    IBeg  JBeg  IEnd  JEnd  NParam
+.
+.
+
+
+NParam = Number of Hicks-Henne parameters for that surface. 
+If the surfaces should be fixed, then put NParam=0
+
+Note: Make sure that IEnd >= IBeg and JEnd >= JBeg
+-------------------------------------------------------------------------------
+grid.0: Base grid file in plot3d format
+
+Number_of_blocks
+IDIM  JDIM
+.
+.
+x coordinates
+y coordinates
