@@ -9,7 +9,7 @@ c-----------------------------------------------------------------------------
 
       integer fid, i, ir
 
-      print*,'Reading grid file'
+      print*,'Reading base grid from file grid.0'
 
       fid = 10
       open(fid, file='grid.0')

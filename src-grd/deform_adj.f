@@ -4,8 +4,8 @@ c     Deformation is interpolated to interior nodes using Thin-Plate Spline RBF
 c     interpolation
 c
 c     Input files:
-c       param.in  : Defines fixed and moving surfaces
-c       param.dat : Hicks-Henne parameters
+c       shape.in  : Defines fixed and moving surfaces
+c       hicks.in  : Hicks-Henne parameters
 c       grid.0    : Base grid
 c       rb.dat    : Gradient wrt grid coordinates, given by flow adjoint solver
 c
@@ -21,6 +21,7 @@ c-----------------------------------------------------------------------------
       integer,allocatable:: idx(:,:)
 
       integer i, j, ioffrt, iblk, npts, nwp, ir, di, dj, mn
+      integer fid
 
 c     Read input file defining moving and fixed surfaces
       call readin()
@@ -121,6 +122,18 @@ c     Construct RBF interpolant
             print*,j,xwb(j,i)
          enddo
       enddo
+
+c     Save gradients
+      fid = 15
+      mn  = 0 ! Counter for parameter number
+      open(fid, file='gradient.dat')
+      do i=1,nsurf
+         do j=1,nhhp(i)
+            mn = mn + 1
+            write(fid,*) mn, xwb(j,i)
+         enddo
+      enddo
+      close(fid)
 
       stop
       end

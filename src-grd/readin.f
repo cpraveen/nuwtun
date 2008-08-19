@@ -9,8 +9,8 @@ c-----------------------------------------------------------------------------
 
       fid = 10
 
-      print*,'Reading surfaces from param.in'
-      open(fid, file='param.in')
+      print*,'Reading surfaces from shape.in'
+      open(fid, file='shape.in', status='old')
       read(fid,*) nsurf
       print*,'Number of surfaces =',nsurf
       do i=1,nsurf
@@ -19,8 +19,8 @@ c-----------------------------------------------------------------------------
       enddo
       close(fid)
 
-      print*,'Reading Hicks-Henne parameters from param.dat'
-      open(fid, file='param.dat')
+      print*,'Reading Hicks-Henne parameters from hicks.in'
+      open(fid, file='hicks.in', status='old')
       do i=1,nsurf
          do j=1,nhhp(i)
             read(fid,*) xw(j,i)

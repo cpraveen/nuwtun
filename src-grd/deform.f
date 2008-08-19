@@ -4,8 +4,8 @@ c     Deformation is interpolated to interior nodes using Thin-Plate Spline RBF
 c     interpolation
 c
 c     Input files:
-c       param.in  : Defines fixed and moving surfaces
-c       param.dat : Hicks-Henne parameters
+c       shape.in  : Defines fixed and moving surfaces
+c       hicks.in  : Hicks-Henne parameters
 c       grid.0    : Base grid
 c
 c     Output files:
@@ -116,6 +116,6 @@ c        ir   = ioffr(iblk)*NDIM + 1
 c        call testfun(idim(i), jdim(i), r(ir), fun)
 c     enddo
 c     print*,'Function =',fun
-      
+
       stop
       end
