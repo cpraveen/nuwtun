@@ -149,9 +149,8 @@ C     Symmetry boundary condition
 C
          ELSE IF (IBCTYP .EQ. ISYMXY .OR. IBCTYP .EQ. ISYMXZ
      1                               .OR. IBCTYP .EQ. ISYMYZ) THEN
-            STOP "BCSYM not finished"
-            CALL BCSYM  (ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
-     1                   Q, PROPS, S, IBCDAT(1,IBC), WORK)
+            CALL BCSYM_Q(ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
+     1                   Q, QB, PROPS, S, IBCDAT(1,IBC), WORK)
 C     
 C     Periodic boundary condition
 C
