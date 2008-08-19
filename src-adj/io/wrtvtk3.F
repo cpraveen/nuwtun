@@ -63,7 +63,50 @@ c     Write u velocity
       enddo
 
 c     Write u velocity
-      write(ivtk,'("SCALARS J_si1 float 1")')
+      write(ivtk,'("SCALARS J_s11 float 1")')
+      write(ivtk,'("LOOKUP_TABLE default")')
+      do k=kbeg,kend
+      do j=jbeg,jend
+         do i=ibeg,iend
+            write(ivtk,*) sb(j,k,i,1,1)
+         enddo
+      enddo
+      enddo
+
+c     Write u velocity
+      write(ivtk,'("SCALARS J_s21 float 1")')
+      write(ivtk,'("LOOKUP_TABLE default")')
+      do k=kbeg,kend
+      do j=jbeg,jend
+         do i=ibeg,iend
+            write(ivtk,*) sb(j,k,i,2,1)
+         enddo
+      enddo
+      enddo
+
+c     Write u velocity
+      write(ivtk,'("SCALARS J_s31 float 1")')
+      write(ivtk,'("LOOKUP_TABLE default")')
+      do k=kbeg,kend
+      do j=jbeg,jend
+         do i=ibeg,iend
+            write(ivtk,*) sb(j,k,i,3,1)
+         enddo
+      enddo
+      enddo
+
+c     Write u velocity
+      write(ivtk,'("SCALARS J_s41 float 1")')
+      write(ivtk,'("LOOKUP_TABLE default")')
+      do k=kbeg,kend
+      do j=jbeg,jend
+         do i=ibeg,iend
+            write(ivtk,*) sb(j,k,i,4,1)
+         enddo
+      enddo
+      enddo
+c     Write u velocity
+      write(ivtk,'("SCALARS J_s12 float 1")')
       write(ivtk,'("LOOKUP_TABLE default")')
       do k=kbeg,kend
       do j=jbeg,jend
@@ -74,7 +117,7 @@ c     Write u velocity
       enddo
 
 c     Write u velocity
-      write(ivtk,'("SCALARS J_si2 float 1")')
+      write(ivtk,'("SCALARS J_s22 float 1")')
       write(ivtk,'("LOOKUP_TABLE default")')
       do k=kbeg,kend
       do j=jbeg,jend
@@ -85,7 +128,7 @@ c     Write u velocity
       enddo
 
 c     Write u velocity
-      write(ivtk,'("SCALARS J_si3 float 1")')
+      write(ivtk,'("SCALARS J_s32 float 1")')
       write(ivtk,'("LOOKUP_TABLE default")')
       do k=kbeg,kend
       do j=jbeg,jend
@@ -96,7 +139,7 @@ c     Write u velocity
       enddo
 
 c     Write u velocity
-      write(ivtk,'("SCALARS J_si4 float 1")')
+      write(ivtk,'("SCALARS J_s42 float 1")')
       write(ivtk,'("LOOKUP_TABLE default")')
       do k=kbeg,kend
       do j=jbeg,jend
