@@ -1986,6 +1986,7 @@ C
      6             VISCOS(1,IBLK),IMODEL,QP, NXSECT,
      7             CL, RCNTR)
   860    CONTINUE
+c        goto 9999
 c        goto 1234
 C
 C     Now compute v^T * dR/dX
@@ -2072,6 +2073,17 @@ C
      B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
      C                        INITRS, IFDELQ, MRCHNG, VGNRN,SIGMA,
      D                        NPRLIM, NPRNEG, IFL2DQ, R2DQDT)
+C
+C     Update Boundary Conditions
+C
+                  CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
+     1                    KDIM(IBLK,ILVL), 1, 
+     2                    IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
+     3                    NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
+     4                    NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
+     5                    NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
+     6                    VISCOS(1,IBLK),IMODEL,QP, NXSECT,
+     7                    CL, RCNTR)
                   CALL RESID_X (IDIM(IBLK,ILVL), 
      1                        JDIM(IBLK,ILVL),KDIM(IBLK,ILVL), 
      2                        IPSTRT, IPEND, NXSECT,
@@ -2085,17 +2097,6 @@ C
      B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
      C                        INITRS, IFDELQ, MRCHNG, VGNRN,SIGMA,
      D                        NPRLIM, NPRNEG, IFL2DQ, R2DQDT)
-C
-C     Update Boundary Conditions
-C
-                  CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
-     1                    KDIM(IBLK,ILVL), 1, 
-     2                    IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
-     3                    NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
-     4                    NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
-     5                    NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
-     6                    VISCOS(1,IBLK),IMODEL,QP, NXSECT,
-     7                    CL, RCNTR)
   865          CONTINUE
 C
 C Differentiate wrt grid coordinates
@@ -2176,6 +2177,17 @@ c$$$      CALL WRTP3D (IFPLT3, BINPLT, FPLT3G, FPLT3Q, FPLT3F, FPLT3FN,
 c$$$     1             FERROR, NBLKS, IDIM, JDIM, KDIM, IOFFS, IOFFQ,
 c$$$     2             IOFFP, ITURB, NPRINT, IPRINT, NCUTS, ICUTS,
 c$$$     3             ILVL, Q, PROPS, R)
+9999      continue
+c     Check if gradient in 2d are correct
+      ILVL=1
+      IF(.NOT.THREED) THEN
+          DO IBLK = 1, NBLKS
+            IR   = IOFFS (IBLK,ILVL) * 3           + 1
+            CALL CHK2DGRAD (IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
+     1                   KDIM(IBLK,ILVL), RB(IR))
+         ENDDO
+      ENDIF
+c     Save solution to file; vtk format only
           ILVL = 1
           OPEN(55, FILE='rb.dat')
           WRITE(55,*) NBLKS

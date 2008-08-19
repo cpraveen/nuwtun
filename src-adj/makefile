@@ -12,6 +12,7 @@ LIBS = $(foreach dir,$(DIRS),$(addsuffix /.lib.a,$(dir)))
 
 # Some object files
 OBJS = main/main.o     \
+       main/chk2dgrad.o\
        main/cpavar.o   \
        main/fvres.o    \
        main/intqa1.o   \
@@ -36,13 +37,17 @@ all:
 nuwtun_adj: $(OBJS) $(LIBS) $(FLOLIB)
 	$(FC) -o $(PGM) $(OBJS) $(LIBS) $(FLOLIB)
 
+dptest:
+	cd main; $(FC) -D_DPTEST $(FFLAGS) -c main.F
+	@make nuwtun_adj
+
 main/%.o: main/%.F
 	@echo "Compiling " $<; cd main; $(FC) $(FFLAGS) -c $*.F
 
-main/adBuffer.o: $(TAPENADE_HOME)/lib/adBuffer.f
+main/adBuffer.o: $(TAPENADE_HOME)/ADFirstAidKit/adBuffer.f
 	@echo "Compiling " $<; cd main; $(FC) $(FFLAGS) -c $<
 
-main/adStack.o: $(TAPENADE_HOME)/lib/adStack.c
+main/adStack.o: $(TAPENADE_HOME)/ADFirstAidKit/adStack.c
 	@echo "Compiling " $<; cd main; $(CC) -c $<
 
 # Remove object, library and executable files
