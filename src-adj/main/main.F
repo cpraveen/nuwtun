@@ -1593,6 +1593,7 @@ C     SB not required at this stage, but set it to zero to avoid
 C     possible overflow
 C
                SB(:) = 0.0E0
+               QB(:) = 0.0E0
                DO 500 IBLK = 1, NBLKS
                   IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
                   IQN  = IOFFQN(IBLK,ILVL) * NQ * NTMLVL + 1
@@ -1829,7 +1830,7 @@ C
                RESMAX = SQRT (RESMAX)
                WRITE (IOUT,2350) RESMAX, (IRESMX(L),L=0,3)
             ENDIF
- 2350       FORMAT (23X,' Max Res = ',1PE12.5,
+ 2350       FORMAT (10X,' Max Res = ',1PE12.5,
      1            ' At BLOCK:I,J,K=(',I3,':',I4,',',I4,',',I4,')')
 c$$$C
 c$$$C     Output intermediate restart file - but not on the last iteration
@@ -2060,6 +2061,19 @@ C
                   INITRS = .TRUE.
                   IPSTRT = 2
                   IPEND  = IDIM(IBLK,ILVL)
+                  CALL RESID_X (IDIM(IBLK,ILVL), 
+     1                        JDIM(IBLK,ILVL),KDIM(IBLK,ILVL), 
+     2                        IPSTRT, IPEND, NXSECT,
+     3                        Q(IQ), QN(IQN), NQNPTS,
+     4                        PROPS(IP), NPPTS, S(IS), SB(IS),
+     5                        VOL(IV), R(IR), DTJ(ID), RES, RESB,
+     6                        FHAT, DQP, DQM, QP,
+     7                        QM, TAU, F, FB, FM, STEMP, STEMPB, WORKX,
+     8                        IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK), 
+     9                        ITORDR, LIMIT(1,IBLK), RKAP(1,IBLK), 
+     B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
+     C                        INITRS, IFDELQ, MRCHNG, VGNRN,SIGMA,
+     D                        NPRLIM, NPRNEG, IFL2DQ, R2DQDT)
                   CALL RESID_Q (IDIM(IBLK,ILVL), 
      1                        JDIM(IBLK,ILVL),KDIM(IBLK,ILVL), 
      2                        IPSTRT, IPEND, NXSECT,
@@ -2077,26 +2091,13 @@ C
 C     Update Boundary Conditions
 C
                   CALL BC_Q(IDIM(IBLK,ILVL),JDIM(IBLK,ILVL),
-     1                    KDIM(IBLK,ILVL), 1, 
-     2                    IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
-     3                    NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
-     4                    NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
-     5                    NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
-     6                    VISCOS(1,IBLK),IMODEL,QP, NXSECT,
-     7                    CL, RCNTR)
-                  CALL RESID_X (IDIM(IBLK,ILVL), 
-     1                        JDIM(IBLK,ILVL),KDIM(IBLK,ILVL), 
-     2                        IPSTRT, IPEND, NXSECT,
-     3                        Q(IQ), QN(IQN), NQNPTS,
-     4                        PROPS(IP), NPPTS, S(IS), SB(IS),
-     5                        VOL(IV), R(IR), DTJ(ID), RES, RESB,
-     6                        FHAT, DQP, DQM, QP,
-     7                        QM, TAU, F, FB, FM, STEMP, STEMPB, WORKX,
-     8                        IBCDAT(1,1,IBLK,ILVL), NBCS(IBLK), 
-     9                        ITORDR, LIMIT(1,IBLK), RKAP(1,IBLK), 
-     B                        IFLUX(IBLK), VISCOS(1,IBLK), IMODEL,
-     C                        INITRS, IFDELQ, MRCHNG, VGNRN,SIGMA,
-     D                        NPRLIM, NPRNEG, IFL2DQ, R2DQDT)
+     1                     KDIM(IBLK,ILVL), 1, 
+     2                     IDIM(IBLK,ILVL)+1,Q(IQ),QB(IQ),PROPS(IP),
+     3                     NPPTS, S(IS), SB(IS), VOL(IV), R(IR),
+     4                     NBCS(IBLK),IBCDAT(1,1,IBLK,ILVL), 
+     5                     NXPROF,NPROFL,IOFQBC(1,ILVL),QBC,
+     6                     VISCOS(1,IBLK),IMODEL,QP, NXSECT,
+     7                     CL, RCNTR)
   865          CONTINUE
 C
 C Differentiate wrt grid coordinates
@@ -2206,7 +2207,7 @@ c     Save solution to file; vtk format only
             IR   = IOFFS (IBLK,ILVL) * 3           + 1
             IS   = IOFFS (IBLK,ILVL) * 4 * 3       + 1
             CALL WRTVTK2(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
-     1                   KDIM(IBLK,ILVL), R(IR), QB(IQ), NQ)
+     1                   KDIM(IBLK,ILVL), R(IR), QA(IQ), NQ)
             CALL WRTVTK3(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
      1                   KDIM(IBLK,ILVL), RG(IR), RB(IR), SB(IS))
             CALL WRTRB (55, IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 

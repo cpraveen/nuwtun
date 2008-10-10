@@ -127,10 +127,10 @@ C
 C
 C 1.  If INITRS then zero residuals
 C
-      INITRS = .true.
-      IF (INITRS) THEN
-         SB  (:,:,:,:,:) = 0.0E0
-      ENDIF
+C       INITRS = .true.
+C       IF (INITRS) THEN
+C          SB  (:,:,:,:,:) = 0.0E0
+C       ENDIF
 C
 C 3.  Residual in I direction - Add dF/dx term
 C

@@ -137,10 +137,10 @@ C
 C
 C 1.  If INITRS then zero residuals
 C
-      INITRS = .true.
-      IF (INITRS) THEN
-         QB  (:,:,:,:) = 0.0E0
-      ENDIF
+C       INITRS = .true.
+C       IF (INITRS) THEN
+C          QB  (:,:,:,:) = 0.0E0
+C       ENDIF
 
 c$$$      eps = 1.0e-10
 c$$$      RES (:,:,:,:) = 0.0E0

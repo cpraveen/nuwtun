@@ -22,4 +22,4 @@ SRCFLO   = $(ROOT)/src-flo
 SRCADJ   = $(ROOT)/src-adj
 
 # Tapenade executable
-TPN      = $(TAPENADE_HOME)/bin/tapenade
+TPN      = $(TAPENADE_HOME)/bin/tapenade -r8
