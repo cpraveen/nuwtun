@@ -37,15 +37,23 @@ all:
 nuwtun_adj: $(OBJS) $(LIBS) $(FLOLIB)
 	$(FC) -o $(PGM) $(OBJS) $(LIBS) $(FLOLIB)
 
+normal:
+	cd main; $(FC) $(FFLAGS) -c main.F
+	@make nuwtun_adj
+
 dptest:
 	cd main; $(FC) -D_DPTEST $(FFLAGS) -c main.F
+	@make nuwtun_adj
+
+clalpha:
+	cd main; $(FC) -D_CL_ALPHA $(FFLAGS) -c main.F
 	@make nuwtun_adj
 
 main/%.o: main/%.F
 	@echo "Compiling " $<; cd main; $(FC) $(FFLAGS) -c $*.F
 
 main/adBuffer.o: $(TAPENADE_HOME)/ADFirstAidKit/adBuffer.f
-	@echo "Compiling " $<; cd main; $(FC) $(FFLAGS) -c $<
+	@echo "Compiling " $<; cd main; $(FC) -c $<
 
 main/adStack.o: $(TAPENADE_HOME)/ADFirstAidKit/adStack.c
 	@echo "Compiling " $<; cd main; $(CC) -c $<

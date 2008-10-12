@@ -301,6 +301,8 @@ C
      B             CONTRB, IMODLX, QMIN, ITRSMX, IFFORC, IFRCPR, 
      C             YNCALC, NXTRSG, NTRSEG, ITRSEG, RCNTR)
 C
+      CALL RDADJ(RESTRT, NCFS, FRDRST, FWRRST, ICFTYP)
+C
       ITURB = IMODEL( 1)
       IASM  = IMODEL(10)
 C
@@ -1461,8 +1463,13 @@ C
 C     Compute gradient of cost function wrt Q
 C
          SB(:) = 0.0E0
-         CLB = 1.0E0
-         CDB = 0.0E0
+         IF(ICFTYP.EQ.1)THEN
+            CLB = 1.0E0
+            CDB = 0.0E0
+         ELSE IF(ICFTYP.EQ.2)THEN
+            CLB = 0.0E0
+            CDB = 1.0E0
+         ENDIF
          CALL FRCINT_BQ (ITURB,NBLKS,IDIM(1,ILVL), 
      1                JDIM(1,ILVL),  KDIM(1,ILVL), 
      2                IOFF(1,ILVL),  IOFFS(1,ILVL),
@@ -1949,8 +1956,13 @@ C
 C     Compute dJ/dX - This is on the finest level ILVL=1
 C
       ILVL  = 1
-      CLB   = 1.0
-      CDB   = 0.0
+      IF(ICFTYP.EQ.1)THEN
+         CLB = 1.0E0
+         CDB = 0.0E0
+      ELSE IF(ICFTYP.EQ.2)THEN
+         CLB = 0.0E0
+         CDB = 1.0E0
+      ENDIF
       QB(:) = 0.0
       SB(:) = 0.0
       CALL FRCINT_BX (ITURB,NBLKS,IDIM(1,ILVL),
@@ -2134,6 +2146,14 @@ C
          CALL GDXTND_BX (IDIM(IBLK,ILVL), JDIM(IBLK,ILVL),
      1                KDIM(IBLK,ILVL), RG(IR), RB(IR))
       ENDDO
+#ifdef _CL_ALPHA
+C
+C     Compute gradient of Cl wrt alpha
+C
+      IF(ICFTYP.NE.1)THEN
+         PRINT*,'MAIN: Set ICFTYP=1 to compute Cl_alpha'
+         STOP
+      ENDIF
       grad = 0.0
       DO IBLK = 1, NBLKS
          IR   = IOFFS(IBLK,ILVL) * 3     + 1
@@ -2141,6 +2161,7 @@ C
      1                KDIM(IBLK,ILVL), RG(IR), RB(IR), grad)
       ENDDO
       print*,'GRADIENT =',grad
+#endif
 C
 C     Calculate execution time of run
 C
