@@ -153,10 +153,10 @@ C
 C 5.  If 3D or axisymmetric then Residual in K direction - add dH/dz term
 C
       IF ( THREED ) THEN
-         STOP "RESID_Q: FLUXK NOT DONE"
-         CALL FLUXK  (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-     1                Q, PROPS, NPPTS, S, VOL, 
-     2                RES, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
+         CALL FLUXK_X(IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
+     1                Q, PROPS, NPPTS, S, SB, VOL, 
+     2                RES, RESB, DQP, DQM, QP, 
+     3                QM, TAU, F, FB, FM, STEMP, STEMPB,
      3                IBCDAT, NBCS, IORDER(3), LIMIT(3), RKAP(3), 
      4                IFLUX, VISCOS(3), IMODEL)
       ELSE IF ( AXISYM ) THEN

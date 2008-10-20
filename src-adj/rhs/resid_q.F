@@ -142,64 +142,6 @@ C       IF (INITRS) THEN
 C          QB  (:,:,:,:) = 0.0E0
 C       ENDIF
 
-c$$$      eps = 1.0e-10
-c$$$      RES (:,:,:,:) = 0.0E0
-c$$$      RES1(:,:,:,:) = 0.0E0
-c$$$      QDOT(:,:,:,:) = 0.0E0
-c$$$      RESB(:,:,:,:) = 0.0E0
-c$$$      Q1            = Q
-c$$$         DO L = 1, NQ
-c$$$            DO I = 2, IDIM
-c$$$               DO K = 2, KDIM
-c$$$                  DO J = 2, JDIM
-c$$$                     QDOT (J,K,I,L) = 2.0e0*rand() - 1.0e0
-c$$$                     Q1 (J,K,I,L) = Q(J,K,I,L) + eps*QDOT(J,K,I,L)
-c$$$                  ENDDO
-c$$$               ENDDO
-c$$$            ENDDO
-c$$$         ENDDO
-c$$$         DO L = 1, NF
-c$$$            DO I = 2, IDIM
-c$$$               DO K = 2, KDIM
-c$$$                  DO J = 2, JDIM
-c$$$c                    RESB (J,K,I,L) = rand()
-c$$$                     RESB (J,K,I,L) = 1.0E0
-c$$$                  ENDDO
-c$$$               ENDDO
-c$$$            ENDDO
-c$$$         ENDDO
-c$$$C
-c$$$C 3.  Residual in I direction - Add dF/dx term
-c$$$C
-c$$$      CALL FLUXI  (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-c$$$     1             Q, PROPS, NPPTS, S, VOL, 
-c$$$     2             RES, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
-c$$$     3             IBCDAT, NBCS, IORDER(1), LIMIT(1), RKAP(1), 
-c$$$     4             IFLUX, VISCOS(1), IMODEL)
-c$$$      CALL FLUXJ  (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-c$$$     1             Q, PROPS, NPPTS, S, VOL, 
-c$$$     2             RES, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
-c$$$     3             IBCDAT, NBCS, IORDER(2), LIMIT(2), RKAP(2), 
-c$$$     4             IFLUX, VISCOS(2), IMODEL)
-c$$$      CALL FLUXI  (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-c$$$     1             Q1, PROPS, NPPTS, S, VOL, 
-c$$$     2             RES1, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
-c$$$     3             IBCDAT, NBCS, IORDER(1), LIMIT(1), RKAP(1), 
-c$$$     4             IFLUX, VISCOS(1), IMODEL)
-c$$$      CALL FLUXJ  (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-c$$$     1             Q1, PROPS, NPPTS, S, VOL, 
-c$$$     2             RES1, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
-c$$$     3             IBCDAT, NBCS, IORDER(2), LIMIT(2), RKAP(2), 
-c$$$     4             IFLUX, VISCOS(2), IMODEL)
-c$$$         DO L = 1, NF
-c$$$            DO I = IPSTRT - 1, IPEND + 1
-c$$$               DO K = 1, KDIM + 1
-c$$$                  DO J = 1, JDIM + 1
-c$$$                     RESDOT (J,K,I,L) = (RES1(J,K,I,L)-RES(J,K,I,L))/eps
-c$$$                  ENDDO
-c$$$               ENDDO
-c$$$            ENDDO
-c$$$         ENDDO
 C
 C 3.  Residual in I direction - Add dF/dx term
 C
@@ -218,41 +160,18 @@ C
      3              QM, QMB, TAU, F, FB, FM, STEMP,
      3              IBCDAT, NBCS, IORDER(2), LIMIT(2), RKAP(2), 
      4              IFLUX, VISCOS(2), IMODEL)
-c$$$      rx = 0.0
-c$$$      ry = 0.0
-c$$$         DO L = 1, NF
-c$$$            DO I = 2, IDIM
-c$$$               DO K = 2, KDIM
-c$$$                  DO J = 2, JDIM
-c$$$                     rx = rx + QB(J,K,I,L)*QDOT(J,K,I,L)
-c$$$                     ry = ry + RESB(J,K,I,L)*RESDOT(J,K,I,L)
-c$$$                  ENDDO
-c$$$               ENDDO
-c$$$            ENDDO
-c$$$         ENDDO
-c$$$         print*,'eps   =',eps
-c$$$         print*,'rx    =',rx
-c$$$         print*,'ry    =',ry
-c$$$         print*,'rx-ry =',rx-ry
-c$$$         print*,'---------------------------------'
-c$$$      STOP "RESID_Q force stop"
 C
 C 5.  If 3D or axisymmetric then Residual in K direction - add dH/dz term
 C
       IF ( THREED ) THEN
-         STOP "RESID_Q: FLUXK NOT DONE"
-         CALL FLUXK  (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-     1                Q, PROPS, NPPTS, S, VOL, 
-     2                RES, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
+         CALL FLUXK_Q(IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
+     1                Q, QB, PROPS, NPPTS, S, VOL, 
+     2                RES, RESB, DQP, DQPB, DQM, DQMB, QP, QPB,
+     3                QM, QMB, TAU, F, FB, FM, STEMP,
      3                IBCDAT, NBCS, IORDER(3), LIMIT(3), RKAP(3), 
      4                IFLUX, VISCOS(3), IMODEL)
       ELSE IF ( AXISYM ) THEN
          STOP "RESID_Q: FLUXKA NOT DONE"
-         CALL FLUXKA (IDIM, JDIM, KDIM, IPSTRT, IPEND, MXSECT,
-     1                Q, PROPS, NPPTS, S, VOL, 
-     2                RES, DQP, DQM, QP, QM, TAU, F, FM, STEMP,
-     3                IBCDAT, NBCS, IORDER(3), LIMIT(3), RKAP(3), 
-     4                IFLUX, VISCOS(3), IMODEL)
       ENDIF
 C
 C     Finished with residual computation.

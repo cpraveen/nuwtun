@@ -11,7 +11,8 @@ C     Check gfile, qfile for the input files
          write(ifid,*) (((fact*rb(j,1,i,l),i=1,idim),j=1,jdim),l=1,2)
       else
          fact = 1.0
-         STOP "wrtrb"
+         write(ifid,*) ((((fact*rb(j,k,i,l),i=1,idim),j=1,jdim),
+     1                     k=1,kdim), l=1,3)
       endif
 
       return
