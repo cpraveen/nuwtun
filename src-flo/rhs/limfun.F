@@ -21,7 +21,7 @@ C
       SMI(D1, D2, EPSQ) = ( D1*(D2*D2+2.E0*EPSQ) 
      1                    + D2*(2.E0*D1*D1+EPSQ) )
      2                / ( 2.E0*D1*D1 - D1*D2 + 2.E0*D2*D2 + 3.E0*EPSQ )
-      EPSQ = 1.0E-8
+      EPSQ = 1.0E-4
       XP   = SMI( DQP1, DQP2, EPSQ )
       XM   = SMI( DQP2, DQP1, EPSQ ) 
       DQP1 = - 0.5E0 * XP

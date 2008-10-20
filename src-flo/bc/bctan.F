@@ -303,7 +303,7 @@ C
 C
 c-1st order PW    = PN
       PW    = (9.E0 * PN - PN2) / 8.E0
-      RHOW  = ( PW / (PN/RHON**GAMMA) )**(1.E0/GAMMA)
+      RHOW  = RHON * ( PW / PN )**(1.E0/GAMMA)
 C
       UBAR  = Q(JN,KN,IN,2) * S(JM,KM,IM,1,IDIR)
      1      + Q(JN,KN,IN,3) * S(JM,KM,IM,2,IDIR)
