@@ -21,6 +21,26 @@ OBJS = main/main.o     \
        main/adBuffer.o \
        main/adStack.o
 
+HDIF = rhs/fluxi_q.F \
+       rhs/fluxi_x.F \
+       rhs/fluxj_q.F \
+       rhs/fluxj_x.F \
+       rhs/fluxk_q.F \
+       rhs/fluxk_x.F \
+		 rhs/muscli_q.F \
+		 rhs/musclj_q.F \
+		 rhs/musclk_q.F \
+		 rhs/resid_q.F \
+		 rhs/resid_x.F \
+		 rhs/fds_q.F \
+		 rhs/fds_x.F \
+       bc/bc_q.F \
+       bc/bcfar_q.F \
+       bc/bcsym_q.F  \
+       bc/bctan_q.F  \
+       bc/bcext_q.F \
+       bc/cut_q.F \
+
 # Library files from src-flo
 FLOLIB   = $(SRCFLO)/rhs/.lib.a      \
            $(SRCFLO)/bc/.lib.a       \
@@ -34,7 +54,7 @@ all:
 	@for dir in $(DIRS); do cd $$dir && $(MAKE); cd .. ; done
 	@$(MAKE) nuwtun_adj
 
-nuwtun_adj: $(OBJS) $(LIBS) $(FLOLIB)
+nuwtun_adj: $(OBJS) $(LIBS) $(FLOLIB) $(HDIF)
 	$(FC) -o $(PGM) $(OBJS) $(LIBS) $(FLOLIB)
 
 normal:
@@ -57,6 +77,29 @@ main/adBuffer.o: $(TAPENADE_HOME)/ADFirstAidKit/adBuffer.f
 
 main/adStack.o: $(TAPENADE_HOME)/ADFirstAidKit/adStack.c
 	@echo "Compiling " $<; cd main; $(CC) -c $<
+
+# Hand differentiated files
+
+rhs/cvtc2p_q.F : rhs/cvtc2p.F
+rhs/fluxi_q.F  : $(SRCFLO)/rhs/fluxi.F
+rhs/fluxi_x.F  : $(SRCFLO)/rhs/fluxi.F
+rhs/fluxj_q.F  : $(SRCFLO)/rhs/fluxj.F
+rhs/fluxj_x.F  : $(SRCFLO)/rhs/fluxj.F
+rhs/fluxk_q.F  : $(SRCFLO)/rhs/fluxk.F
+rhs/fluxk_x.F  : $(SRCFLO)/rhs/fluxk.F
+rhs/muscli_q.F : $(SRCFLO)/rhs/muscli.F
+rhs/musclj_q.F : $(SRCFLO)/rhs/musclj.F
+rhs/musclk_q.F : $(SRCFLO)/rhs/musclk.F
+rhs/fds_q.F    : $(SRCFLO)/rhs/fds.F
+rhs/fds_x.F    : $(SRCFLO)/rhs/fds.F
+rhs/limitr_q.F : $(SRCFLO)/rhs/limitr.F
+bc/bc_q.F      : $(SRCFLO)/bc/bc.F
+bc/bcfar_q.F   : $(SRCFLO)/bc/bcfar.F
+bc/bcsym_q.F   : $(SRCFLO)/bc/bcsym.F
+bc/bctan_q.F   : $(SRCFLO)/bc/bctan.F
+bc/bcext_q.F   : $(SRCFLO)/bc/bcext.F
+bc/cut_q.F     : $(SRCFLO)/bc/cut.F
+	@echo "$< seems to have changed"
 
 # Remove object, library and executable files
 clean:

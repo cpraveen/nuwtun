@@ -66,7 +66,7 @@ tree:
 
 ##############################################################################
 clean:
-	$(RM) -f $(LIBS) $(PGM)
+	$(RM) -f $(LIBS) $(OBJS) */*.o $(PGM)
 #Remove everything
 cleanall:
 	$(RM) -f $(LIBS) $(OBJS) $(PGM) */*.o
