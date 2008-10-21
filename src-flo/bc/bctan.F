@@ -270,7 +270,7 @@ C
 C
 C     Apply inviscid wall boundary condition for given face
 C
-      SUBROUTINE BCTINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+      SUBROUTINE BCTINV2(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
      1                  IBCN2, IBCM, IC1, IC2, IC3, I2, I3, Q, S)
       INCLUDE '../header/common.h'
 C
@@ -321,5 +321,146 @@ C
       Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
       Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
 C
+      RETURN
+      END
+C
+C     Apply inviscid wall boundary condition for given face
+C     using normal momentum equation
+C
+      SUBROUTINE BCTINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+     1                  IBCN2, IBCM, IC1, IC2, IC3, I2, I3, Q, S)
+      INCLUDE '../header/common.h'
+C
+      DIMENSION Q     (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ),
+     1          S     (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3)
+C
+      DIMENSION UXI   (3),
+     1          UET   (3),
+     2          UZE   (3)
+      REAL      RHS, LHS
+C
+      IBC  = IBCPT *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JBC  = IBCPT *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KBC  = IBCPT *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IBC2 = IBCPT2*IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JBC2 = IBCPT2*IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KBC2 = IBCPT2*IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IN   = IBCN  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JN   = IBCN  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KN   = IBCN  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IN2  = IBCN2 *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JN2  = IBCN2 *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KN2  = IBCN2 *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      IM   = IBCM  *IKD(IC1,1) + I2*IKD(IC2,1) + I3*IKD(IC3,1)
+      JM   = IBCM  *IKD(IC1,2) + I2*IKD(IC2,2) + I3*IKD(IC3,2)
+      KM   = IBCM  *IKD(IC1,3) + I2*IKD(IC2,3) + I3*IKD(IC3,3)
+C
+      RHON  = Q(JN ,KN ,IN ,1)
+      PN    = Q(JN ,KN ,IN ,5)
+      PN2   = Q(JN2,KN2,IN2,5)
+C
+C Unit normal
+C
+      SX = S(JM,KM,IM,1,IDIR)
+      SY = S(JM,KM,IM,2,IDIR)
+      SZ = S(JM,KM,IM,3,IDIR)
+C
+C Normal velocity
+C
+      UBAR  = Q(JN,KN,IN,2) * SX
+     1      + Q(JN,KN,IN,3) * SY
+     2      + Q(JN,KN,IN,4) * SZ
+C
+      Q(JBC ,KBC ,IBC ,2) = Q(JN,KN,IN,2)-UBAR*SX
+      Q(JBC ,KBC ,IBC ,3) = Q(JN,KN,IN,3)-UBAR*SY
+      Q(JBC ,KBC ,IBC ,4) = Q(JN,KN,IN,4)-UBAR*SZ
+C
+      Q(JBC2,KBC2,IBC2,2) = Q(JBC ,KBC ,IBC ,2)
+      Q(JBC2,KBC2,IBC2,3) = Q(JBC ,KBC ,IBC ,3)
+      Q(JBC2,KBC2,IBC2,4) = Q(JBC ,KBC ,IBC ,4)
+C
+C Contravariant velocities
+C      
+      UT = (Q(JBC,KBC,IBC,2) * S(JN,KN,IN,1,1)
+     1   +  Q(JBC,KBC,IBC,3) * S(JN,KN,IN,2,1)
+     2   +  Q(JBC,KBC,IBC,4) * S(JN,KN,IN,3,1)) * S(JN,KN,IN,4,1)
+      VT = (Q(JBC,KBC,IBC,2) * S(JN,KN,IN,1,2)
+     1   +  Q(JBC,KBC,IBC,3) * S(JN,KN,IN,2,2)
+     2   +  Q(JBC,KBC,IBC,4) * S(JN,KN,IN,3,2)) * S(JN,KN,IN,4,2)
+      WT = (Q(JBC,KBC,IBC,2) * S(JN,KN,IN,1,3)
+     1   +  Q(JBC,KBC,IBC,3) * S(JN,KN,IN,2,3)
+     2   +  Q(JBC,KBC,IBC,4) * S(JN,KN,IN,3,3)) * S(JN,KN,IN,4,3)
+C      
+C du/d(xi)
+C      
+      UXI(1) = (Q(JN,KN,IN+1,2) - Q(JN,KN,IN-1,2))/2.0
+      UXI(2) = (Q(JN,KN,IN+1,3) - Q(JN,KN,IN-1,3))/2.0
+      UXI(3) = (Q(JN,KN,IN+1,4) - Q(JN,KN,IN-1,4))/2.0
+C      
+C du/d(eta)
+C      
+      UET(1) = (Q(JN+1,KN,IN,2) - Q(JN-1,KN,IN,2))/2.0
+      UET(2) = (Q(JN+1,KN,IN,3) - Q(JN-1,KN,IN,3))/2.0
+      UET(3) = (Q(JN+1,KN,IN,4) - Q(JN-1,KN,IN,4))/2.0
+C      
+C du/d(zeta)
+C      
+      UZE(1) = (Q(JN,KN+1,IN,2) - Q(JN,KN-1,IN,2))/2.0
+      UZE(2) = (Q(JN,KN+1,IN,3) - Q(JN,KN-1,IN,3))/2.0
+      UZE(3) = (Q(JN,KN+1,IN,4) - Q(JN,KN-1,IN,4))/2.0
+C
+C Dot product with normal vector
+C
+      UXIN = UXI(1) * SX + UXI(2) * SY + UXI(3) * SZ
+      UETN = UET(1) * SX + UET(2) * SY + UET(3) * SZ
+      UZEN = UZE(1) * SX + UZE(2) * SY + UZE(3) * SZ
+      RHS = -RHON * ( UT*UXIN + VT*UETN + WT*UZEN )
+
+      IF(IDIR.EQ.1)THEN
+         PET = (Q(JN+1,KN,IN,5) - Q(JN-1,KN,IN,5))/2.0
+         PZE = (Q(JN,KN+1,IN,5) - Q(JN,KN-1,IN,5))/2.0
+         LHS = (SX*S(JN,KN,IN,1,2) 
+     1       +  SY*S(JN,KN,IN,2,2)
+     2       +  SZ*S(JN,KN,IN,3,2)) * S(JN,KN,IN,4,2) * PET
+     3       + (SX*S(JN,KN,IN,1,3) 
+     4       +  SY*S(JN,KN,IN,2,3)
+     5       +  SZ*S(JN,KN,IN,3,3)) * S(JN,KN,IN,4,3) * PZE
+         PXI = (RHS - LHS)/S(JN,KN,IN,4,1)
+         PW  = (9.0*PN - PN2 - 3.0*PXI)/8.0
+      ELSE IF(IDIR.EQ.2)THEN
+         PXI = (Q(JN,KN,IN+1,5) - Q(JN,KN,IN-1,5))/2.0
+         PZE = (Q(JN,KN+1,IN,5) - Q(JN,KN-1,IN,5))/2.0
+         LHS = (SX*S(JN,KN,IN,1,3) 
+     1       +  SY*S(JN,KN,IN,2,3)
+     2       +  SZ*S(JN,KN,IN,3,3)) * S(JN,KN,IN,4,3) * PZE
+     3       + (SX*S(JN,KN,IN,1,1) 
+     4       +  SY*S(JN,KN,IN,2,1)
+     5       +  SZ*S(JN,KN,IN,3,1)) * S(JN,KN,IN,4,1) * PXI
+         PET = (RHS - LHS)/S(JN,KN,IN,4,2)
+         PW  = (9.0*PN - PN2 - 3.0*PET)/8.0
+      ELSE
+         PXI = (Q(JN,KN,IN+1,5) - Q(JN,KN,IN-1,5))/2.0
+         PET = (Q(JN+1,KN,IN,5) - Q(JN-1,KN,IN,5))/2.0
+         LHS = (SX*S(JN,KN,IN,1,1) 
+     1       +  SY*S(JN,KN,IN,2,1)
+     2       +  SZ*S(JN,KN,IN,3,1)) * S(JN,KN,IN,4,1) * PXI
+     3       + (SX*S(JN,KN,IN,1,2) 
+     4       +  SY*S(JN,KN,IN,2,2)
+     5       +  SZ*S(JN,KN,IN,3,2)) * S(JN,KN,IN,4,2) * PET
+         PZE = (RHS - LHS)/S(JN,KN,IN,4,3)
+         PW  = (9.0*PN - PN2 - 3.0*PZE)/8.0
+      ENDIF
+
+      Q(JBC ,KBC ,IBC ,5) = PW
+      Q(JBC2,KBC2,IBC2,5) = Q(JBC ,KBC ,IBC ,5)
+
+      RHOW  = RHON * ( PW / PN )**(1.E0/GAMMA)
+      Q(JBC ,KBC ,IBC ,1) = RHOW
+      Q(JBC2,KBC2,IBC2,1) = Q(JBC ,KBC ,IBC ,1)
+
       RETURN
       END
