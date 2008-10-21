@@ -127,9 +127,8 @@ C     Extrapolation boundary condition
 C     This is general for any number of equations
 C
          ELSE IF (IBCTYP .EQ. IEXT) THEN
-            STOP "BCEXT not finished"
-            CALL BCEXT  (ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
-     1                   Q, PROPS, S, IBCDAT(1,IBC))
+            CALL BCEXT_Q(ITURB, IDIM, JDIM, KDIM, IPSTRT, IPEND, 
+     1                   Q, QB, PROPS, S, SB, IBCDAT(1,IBC))
 C
 C     Fix boundary condition
 C
