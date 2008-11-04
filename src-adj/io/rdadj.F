@@ -1,7 +1,9 @@
 c This subroutine resets some parameters read from input file to modify
 c it for the adjoint solver.
-      subroutine rdadj(RESTRT, NCFS, FRDRST, FWRRST, ICFTYP)
+      subroutine rdadj(RESTRT, NCFS, NITS, FRDRST, FWRRST, ICFTYP)
+      include '../header/refval.h'
       logical      RESTRT
+      dimension    NITS(*)
       character*80 FRDRST, FWRRST
       character*80 string
 
@@ -17,13 +19,37 @@ c     Read and set cost function type
       else if(string .eq. 'CD')then
          print*,'Cost function is drag coefficient'
          icftyp = 2
+      else if(string .eq. 'CDCLPEN1')then
+         print*,'Cost function is cd with cl penalty'
+         icftyp = 3
+         call readrefval
       else
          print*,'RDADJ: cost function type not defined'
          stop
       endif
 
-      RESTRT = .TRUE. ! So that we read the flow solution
-      FRDRST = FWRRST ! File to read flow solution
-      NCFS   = 1      ! Only one grid level at present
+      RESTRT = .TRUE.    ! So that we read the flow solution
+      FRDRST = FWRRST    ! File to read flow solution
+      NCFS   = 1         ! Only one grid level at present
+      NITS(1)= 2*NITS(1) ! Double no. of iterations
+
+      end
+
+c     Read reference value for cl and cd
+c     refval.dat has same format as fort.19 produced by nuwtun_flo
+      subroutine readrefval
+      include '../header/refval.h'
+      character*32 str
+
+      print*,'Reading reference values ...'
+      open(30, file='refval.dat', status='old')
+      read(30,*)
+      read(30,*)
+      read(30,*) str, clref
+      read(30,*) str, cdref
+      close(30)
+
+      print*,'clref =', clref
+      print*,'cdref =', cdref
 
       end

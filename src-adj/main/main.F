@@ -7,6 +7,7 @@ C
       include '../../src-flo/header/maxdim.h'
       include '../../src-flo/header/common.h'
       include '../../src-flo/header/histry.h'
+      include '../header/refval.h'
 C
 C     PERMANENT STORAGE FOR ALL ZONES/BLOCKS
 C
@@ -301,7 +302,7 @@ C
      B             CONTRB, IMODLX, QMIN, ITRSMX, IFFORC, IFRCPR, 
      C             YNCALC, NXTRSG, NTRSEG, ITRSEG, RCNTR)
 C
-      CALL RDADJ(RESTRT, NCFS, FRDRST, FWRRST, ICFTYP)
+      CALL RDADJ(RESTRT, NCFS, NITS, FRDRST, FWRRST, ICFTYP)
 C
       ITURB = IMODEL( 1)
       IASM  = IMODEL(10)
@@ -1469,6 +1470,11 @@ C
          ELSE IF(ICFTYP.EQ.2)THEN
             CLB = 0.0E0
             CDB = 1.0E0
+         ELSE IF(ICFTYP.EQ.3)THEN
+            CLB = 0.0E0
+            CDB = 0.0E0
+            COSTB = 1.0E0
+            CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
          ENDIF
          CALL FRCINT_BQ (ITURB,NBLKS,IDIM(1,ILVL), 
      1                JDIM(1,ILVL),  KDIM(1,ILVL), 
@@ -1962,6 +1968,11 @@ C
       ELSE IF(ICFTYP.EQ.2)THEN
          CLB = 0.0E0
          CDB = 1.0E0
+      ELSE IF(ICFTYP.EQ.3)THEN
+         CLB = 0.0E0
+         CDB = 0.0E0
+         COSTB = 1.0E0
+         CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
       ENDIF
       QB(:) = 0.0
       SB(:) = 0.0

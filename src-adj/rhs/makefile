@@ -20,7 +20,8 @@ BQ = fluroe_bq.f \
 	  metbc_bx.f  \
 	  metric_bx.f \
 	  grdcut_bx.f \
-	  gdxtnd_bx.f
+	  gdxtnd_bx.f \
+	  costfun_bq.f
 
 all: $(BQ)
 	@$(MKLIB)
@@ -138,6 +139,14 @@ metbc_bx.f: $(SRCP)/metbc.F
 		-head    metbc       \
 		-vars    "S"         \
 		-outvars "S"         \
+		$<
+#-----------------------------------------------------------------------------
+costfun_bq.f: $(SRCD)/costfun.F
+	$(RM) -f $@
+	cd $(SRCD) && $(TPNBQ)  \
+		-head    costfun     \
+		-vars    "cl cd cost"\
+		-outvars "cl cd cost"\
 		$<
 ##############################################################################
 clean:
