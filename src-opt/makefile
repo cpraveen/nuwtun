@@ -8,6 +8,5 @@ cost: cost.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 
 # Remove object, library and executable files
 clean:
-	@for dir in $(DIRS); do cd $$dir; $(MAKE) clean; cd ..; done
-	$(RM) -f $(OBJS)
-	$(RM) -f $(PGM)
+	$(RM) -f cost
+	$(RM) -f *.o

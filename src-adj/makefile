@@ -27,13 +27,13 @@ HDIF = rhs/fluxi_q.F \
        rhs/fluxj_x.F \
        rhs/fluxk_q.F \
        rhs/fluxk_x.F \
-		 rhs/muscli_q.F \
-		 rhs/musclj_q.F \
-		 rhs/musclk_q.F \
-		 rhs/resid_q.F \
-		 rhs/resid_x.F \
-		 rhs/fds_q.F \
-		 rhs/fds_x.F \
+       rhs/muscli_q.F \
+       rhs/musclj_q.F \
+       rhs/musclk_q.F \
+       rhs/resid_q.F \
+       rhs/resid_x.F \
+       rhs/fds_q.F \
+       rhs/fds_x.F \
        bc/bc_q.F \
        bc/bcfar_q.F \
        bc/bcsym_q.F  \
@@ -100,6 +100,7 @@ bc/bctan_q.F   : $(SRCFLO)/bc/bctan.F
 bc/bcext_q.F   : $(SRCFLO)/bc/bcext.F
 bc/cut_q.F     : $(SRCFLO)/bc/cut.F
 	@echo "$< seems to have changed"
+	@false
 
 # Remove object, library and executable files
 clean:

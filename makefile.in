@@ -6,15 +6,22 @@
 # Fortran compiler: These work for Linux and gcc/gfortran
 # CFLAGS is assumed to be set in your shell, otherwise define it here
 CPPFLAGS = -DCPU_TIME
-# For g95 compiler
-FC       = g95
-FFLAGS   = $(CFLAGS) -r8 $(CPPFLAGS)
-# For intel compiler
-#FC       = ifort
-#FFLAGS   = $(CFLAGS) -r8 $(CPPFLAGS) -diag-disable vec
-# For gfortran compiler
-#FC       = gfortran
-#FFLAGS   = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
+
+#Fortran compiler: g95, ifort, gfortran
+FC       = ifort
+
+#Set compiler flags based on compiler
+ifeq ($(FC),g95)
+  	FFLAGS = $(CFLAGS) -r8 $(CPPFLAGS)
+endif
+
+ifeq ($(FC),ifort)
+	FFLAGS = $(CFLAGS) -r8 $(CPPFLAGS) -diag-disable vec
+endif
+
+ifeq ($(FC),gfortran)
+	FFLAGS = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
+endif
 
 # C compiler on Linux
 CC       = gcc
