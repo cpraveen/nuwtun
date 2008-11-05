@@ -1,9 +1,9 @@
 # Include parameters from file
 include ../makefile.in
 
-all: costfun
+all: cost
 
-costfun: cost.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
+cost: cost.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 	$(FC) -o cost cost.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 
 # Remove object, library and executable files

@@ -12,7 +12,7 @@ EXCLU=nuwtun/docs/tree
 #Name of tgz file
 TGZFILE=nuwtun.tgz
 
-all: flo adj grd
+all: flo adj grd opt
 
 flo:
 	@cd src-flo && make
@@ -22,6 +22,9 @@ adj:
 
 grd:
 	@cd src-grd && make
+
+opt:
+	@cd src-opt && make
 
 tgz:
 	cd src-flo && make cleanall
