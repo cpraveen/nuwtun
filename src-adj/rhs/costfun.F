@@ -7,6 +7,7 @@
          cost = cd/cdref + 1.0e4 * max(1.0 - cl/clref, 0.0)
       else
          print*,'costfun: unknown cost function type'
+         print*,'         icftyp =', icftyp
          stop
       endif
 

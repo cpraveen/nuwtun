@@ -5,27 +5,19 @@ c it for the adjoint solver.
       logical      RESTRT
       dimension    NITS(*)
       character*80 FRDRST, FWRRST
-      character*80 string
 
       if(iargc().ne.1)then
          print*,'RDADJ: Specify cost function type'
          stop
       endif
-c     Read and set cost function type
-      call getarg(1, string)
-      if(string .eq. 'CL')then
-         print*,'Cost function is lift coefficient'
-         icftyp = 1
-      else if(string .eq. 'CD')then
-         print*,'Cost function is drag coefficient'
-         icftyp = 2
-      else if(string .eq. 'CDCLPEN1')then
-         print*,'Cost function is cd with cl penalty'
-         icftyp = 3
+
+c     Set cost function type
+      call sicftyp(icftyp)
+
+c     Some cost functions require reference values
+c     we read them from file refval.dat
+      if(icftyp.eq.3)then
          call readrefval
-      else
-         print*,'RDADJ: cost function type not defined'
-         stop
       endif
 
       RESTRT = .TRUE.    ! So that we read the flow solution
