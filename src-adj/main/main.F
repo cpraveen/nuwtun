@@ -1464,18 +1464,10 @@ C
 C     Compute gradient of cost function wrt Q
 C
          SB(:) = 0.0E0
-         IF(ICFTYP.EQ.1)THEN
-            CLB = 1.0E0
-            CDB = 0.0E0
-         ELSE IF(ICFTYP.EQ.2)THEN
-            CLB = 0.0E0
-            CDB = 1.0E0
-         ELSE IF(ICFTYP.EQ.3)THEN
-            CLB = 0.0E0
-            CDB = 0.0E0
-            COSTB = 1.0E0
-            CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
-         ENDIF
+         CLB = 0.0E0
+         CDB = 0.0E0
+         COSTB = 1.0E0
+         CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
          CALL FRCINT_BQ (ITURB,NBLKS,IDIM(1,ILVL), 
      1                JDIM(1,ILVL),  KDIM(1,ILVL), 
      2                IOFF(1,ILVL),  IOFFS(1,ILVL),
@@ -1962,18 +1954,10 @@ C
 C     Compute dJ/dX - This is on the finest level ILVL=1
 C
       ILVL  = 1
-      IF(ICFTYP.EQ.1)THEN
-         CLB = 1.0E0
-         CDB = 0.0E0
-      ELSE IF(ICFTYP.EQ.2)THEN
-         CLB = 0.0E0
-         CDB = 1.0E0
-      ELSE IF(ICFTYP.EQ.3)THEN
-         CLB = 0.0E0
-         CDB = 0.0E0
-         COSTB = 1.0E0
-         CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
-      ENDIF
+      CLB = 0.0E0
+      CDB = 0.0E0
+      COSTB = 1.0E0
+      CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
       QB(:) = 0.0
       SB(:) = 0.0
       CALL FRCINT_BX (ITURB,NBLKS,IDIM(1,ILVL),
