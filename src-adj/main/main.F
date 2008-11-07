@@ -1317,6 +1317,15 @@ C
                NPPTS = NXPPTS
             ENDIF
 C
+C 10-b. Update boundary conditions
+C
+            CALL BC (IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), KDIM(IBLK,ILVL),
+     1               1, IDIM(IBLK,ILVL)+1, Q(IQ), PROPS(IP), NPPTS,
+     2               S(IS), VOL(IV), R(IR),
+     3               NBCS(IBLK), IBCDAT(1,1,IBLK,ILVL), 
+     4               NXPROF, NPROFL, IOFQBC(1,ILVL), QBC,
+     5               VISCOS(1,IBLK), IMODEL, QP, NXSECT, CL, RCNTR)
+C
             IF (ITURB .GE. ITLMNR) THEN
                IPSTRT = 1
                IPEND  = IDIM(IBLK,ILVL) + 1
