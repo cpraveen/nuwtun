@@ -4,9 +4,9 @@
       real    cl, cd, cost
 
       if(icftyp.eq.1)then
-         cost = cl
+         cost = cl/clref
       else if(icftyp.eq.2)then
-         cost = cd
+         cost = cd/cdref
       else if(icftyp.eq.3)then
          cost = cd/cdref + 1.0e4 * max(1.0 - cl/clref, 0.0)
       else

@@ -7,6 +7,7 @@
          stop
       endif
 
+c     Read reference values
       open(10, file='refval.dat', status='old')
       read(10,*)
       read(10,*)
@@ -14,6 +15,7 @@
       read(10,*) str, cdref
       close(10)
 
+c     Read current values
       open(10, file='fort.19', status='old')
       read(10,*)
       read(10,*)
@@ -26,6 +28,8 @@ c     Set cost function type
 
       cost = 0.0
       call costfun(icftyp, cl, cd, cost)
+      print*,'cd/cd0 =', cd/cdref
+      print*,'cl/cl0 =', cl/clref
       print*,'cost = ', cost
 
       stop
