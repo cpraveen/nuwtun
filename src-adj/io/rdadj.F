@@ -14,11 +14,8 @@ c it for the adjoint solver.
 c     Set cost function type
       call sicftyp(icftyp)
 
-c     Some cost functions require reference values
-c     we read them from file refval.dat
-      if(icftyp.eq.3)then
-         call readrefval
-      endif
+c     we read reference values from file refval.dat
+      call readrefval
 
       RESTRT = .TRUE.    ! So that we read the flow solution
       FRDRST = FWRRST    ! File to read flow solution
