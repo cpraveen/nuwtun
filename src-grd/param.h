@@ -7,11 +7,13 @@
      3        jend (nsurfmax),
      4        blk  (nsurfmax),
      4        nspt (nsurfmax),
-     5        nhhp (nsurfmax)
+     5        nhhp (nsurfmax),
+     6        nhhpo(nsurfmax)
       real    xw(nparammax,nsurfmax)
       real    xwb(nparammax,nsurfmax)
 
-      common/iparams/nsurf, ibeg, jbeg, iend, jend, blk, nspt, nhhp
+      common/iparams/nsurf, ibeg, jbeg, iend, jend, blk, nspt, nhhp,
+     1               nhhpo
       common/rparams/xw, xwb
 
       integer nblkmax, nblks

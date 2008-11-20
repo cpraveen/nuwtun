@@ -50,8 +50,8 @@ c     Count number of boundary points to allocate memory
       nwp = 0
       mn  = 0
       do i=1,nsurf
-         di  = iend(i) - ibeg(i) + 1
-         dj  = jend(i) - jbeg(i) + 1
+         di  = abs(iend(i) - ibeg(i)) + 1
+         dj  = abs(jend(i) - jbeg(i)) + 1
          nwp = nwp + di*dj
          mn  = max( mn, di*dj )
          nspt(i) = di*dj
@@ -62,6 +62,18 @@ c     Count number of boundary points to allocate memory
       allocate( wtb (NDIM, nwp+NDIM+1) )
       allocate( drwb(NDIM, nwp) )
       allocate( idx (mn, nsurf) )
+
+c     For mirror surfaces like in symmetric airfoil
+      do i=1,nsurf
+         nhhpo(i) = nhhp(i)
+         if(nhhp(i).lt.0)then
+            ir      =-nhhp(i)
+            nhhp(i) = nhhp(ir)
+            do j=1,nhhp(i)
+               xw(j,i) = xw(j,ir)
+            enddo
+         endif
+      enddo
 
 c     Loop over surfaces
 c     Put boundary points in rw and deformation into drw
@@ -123,12 +135,23 @@ c     Construct RBF interpolant
          enddo
       enddo
 
+c     Differentiation for symmetric case
+      do i=1,nsurf
+         if(nhhpo(i).lt.0)then
+            ir      =-nhhpo(i)
+            do j=1,nhhp(i)
+               xwb(j,ir) = xwb(j,ir) + xwb(j,i)
+               xwb(j,i)  = 0.0
+            enddo
+         endif
+      enddo
+
 c     Save gradients
       fid = 15
       mn  = 0 ! Counter for parameter number
       open(fid, file='gradient.dat')
       do i=1,nsurf
-         do j=1,nhhp(i)
+         do j=1,nhhpo(i)
             mn = mn + 1
             write(fid,*) mn, xwb(j,i)
          enddo

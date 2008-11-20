@@ -18,7 +18,7 @@ c-----------------------------------------------------------------------------
       real,allocatable:: r(:), dr(:), rw(:,:), drw(:,:), wt(:,:)
       integer,allocatable:: idx(:,:)
 
-      integer i, ioffrt, iblk, npts, nwp, ir, di, dj, mn, ifid
+      integer i, j, ioffrt, iblk, npts, nwp, ir, di, dj, mn, ifid
       real    fun
 
 c     Read input file defining moving and fixed surfaces
@@ -47,8 +47,8 @@ c     Count number of boundary points to allocate memory
       nwp = 0
       mn  = 0
       do i=1,nsurf
-         di  = iend(i) - ibeg(i) + 1
-         dj  = jend(i) - jbeg(i) + 1
+         di  = abs(iend(i) - ibeg(i)) + 1
+         dj  = abs(jend(i) - jbeg(i)) + 1
          nwp = nwp + di*dj
          mn  = max( mn, di*dj )
          nspt(i) = di*dj
@@ -57,6 +57,18 @@ c     Count number of boundary points to allocate memory
       allocate( drw (NDIM, nwp) )
       allocate( wt  (NDIM, nwp+NDIM+1) )
       allocate( idx (mn, nsurf) )
+
+c     For mirror surfaces like in symmetric airfoil
+      do i=1,nsurf
+         nhhpo(i) = nhhp(i)
+         if(nhhp(i).lt.0)then
+            ir      =-nhhp(i)
+            nhhp(i) = nhhp(ir)
+            do j=1,nhhp(i)
+               xw(j,i) = xw(j,ir)
+            enddo
+         endif
+      enddo
 
 c     Loop over surfaces
 c     Put boundary points in rw and deformation into drw

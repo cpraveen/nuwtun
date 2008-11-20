@@ -9,9 +9,15 @@
      4        xw  (*)
       integer idx(*)
 
-      integer i, j, nc
+      integer i, j, nc, iinc, jinc
       real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t, dx, dy, ds, ex,
      1        ey, nx, ny, l1p, h, dh, A, B, C, HicksHenne
+
+c     Set increment to +1 or -1
+      iinc = 1
+      jinc = 1
+      if(iend.lt.ibeg) iinc = -1
+      if(jend.lt.jbeg) jinc = -1
 
 c     (x1,y1) = first point, (x2,y2) = second point on curve
       x1 = r(ibeg,jbeg,1)
@@ -47,8 +53,8 @@ c     Equation of line joining (x1,y1) to (x2,y2) -> Ax + By + C = 0
 c     Counter for idx array
       nc = 0
 
-      do i=ibeg,iend
-         do j=jbeg,jend
+      do i=ibeg,iend,iinc
+         do j=jbeg,jend,jinc
             nc        = nc + 1
             nwp       = nwp + 1
             xp        = r(i,j,1)
