@@ -31,7 +31,7 @@ c-----------------------------------------------------------------------------
       real    xh, tmp1, tmp2, tmp3, tmp4, PI
 
       PI   = 4.0*atan(1.0)
-      xh   = (i+4.0)/(n+5.0)
+      xh   = real(i)/(n+1.0)
       tmp1 = log(0.5)/log(xh)
       tmp2 = PI*t**tmp1
       tmp3 = sin(tmp2)
