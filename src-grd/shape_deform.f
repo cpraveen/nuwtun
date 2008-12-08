@@ -10,8 +10,8 @@
       integer idx(*)
 
       integer i, j, nc, iinc, jinc
-      real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t, dx, dy, ds, ex,
-     1        ey, nx, ny, l1p, h, dh, A, B, C, HicksHenne
+      real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t,
+     1        nx, ny, dh, A, B, C, D, HicksHenne
 
 c     Set increment to +1 or -1
       iinc = 1
@@ -40,8 +40,8 @@ c     (x1,y1) = first point, (x2,y2) = second point on curve
          print*,'nhhp =',nhhp
          stop
       endif
-      nx = (x2-x1)/ln
-      ny = (y2-y1)/ln
+      nx = (y2-y1)/ln
+      ny =-(x2-x1)/ln
 
       print*,'   Unit vector  =',nx,ny
 
@@ -67,38 +67,18 @@ c     Counter for idx array
             idx(nc)   = nwp
             if(nhhp.eq.0) goto 100
 
-c           Find foot of perpendicular (xf,yf)
-            h         = abs( A*xp + B*yp + C)/sqrt(A**2 + B**2)
-            l1p       = sqrt( (x1-xp)**2 + (y1-yp)**2 )
-            l         = l1p**2 - h**2
-c           If l is close to zero it may be negative: clip it to zero
-            if(abs(l).lt.1.0e-15) l = 0.0
-            if(l.lt.0.0)then
-               print*,'shape_deform: FATAL !!!'
-               print*,'              l < 0'
-               print*,'              l =',l
-               stop
-            endif
-            l         = sqrt(l)
+c           Equation of perpendicular line through (xp,yp)
+c           -B x + A y + D = 0
+            D = B * xp - A * yp
+c           Solve for intersection point (xf,yf) = foot of perpendicular
+            xf = -(A*C - B*D)/(A**2 + B**2)
+            yf = -(B*C + A*D)/(A**2 + B**2)
+            l  = sqrt( (xf-x1)**2 + (yf-y1)**2 )
             t         = l/ln
             dh        = HicksHenne(nhhp, xw, t)
 
-            xf        = x1 + nx*l
-            yf        = y1 + ny*l
-c           Unit vector from (xf,yf) to (xp,yp)
-            dx        = xp - xf
-            dy        = yp - yf
-            ds        = sqrt(dx**2 + dy**2)
-            if(ds.eq.0.0)then
-               ex     = 0.0
-               ey     = 0.0
-            else
-               ex     = dx/ds
-               ey     = dy/ds
-            endif
-
-            drw(1,nwp)= dh*ex
-            drw(2,nwp)= dh*ey
+            drw(1,nwp)= dh*nx
+            drw(2,nwp)= dh*ny
 100         continue
          enddo
       enddo
