@@ -8,7 +8,7 @@ C
       include '../src-adj/header/refval.h'
       integer NDMAX, ITMAX
       real    GTOL
-      parameter(NDMAX=100, ITMAX=20, GTOL=1.0e-5)
+      parameter(NDMAX=100, ITMAX=50, GTOL=1.0e-5)
       integer nfeval, ngeval
       common/eval/nfeval, ngeval
 
@@ -36,14 +36,6 @@ c     Set cost function type
       call sicftyp(icftyp)
       write(*,*)
 
-c     Read reference values
-      open(10, file='refval.dat', status='old')
-      read(10,*)
-      read(10,*)
-      read(10,*) str, clref
-      read(10,*) str, cdref
-      close(10)
-
       nd    = 20    ! Number of design variables
       step0 = 0.00001 ! Initial step size
 
@@ -51,7 +43,6 @@ c     Read reference values
       x(it,:)  = 0.0e0
       step(it) = step0
 c     Compute cost function and its gradient
-c     call CostFunGrad(icftyp, nd, x(it,:), f(it), g(it,:))
       call CostFunVal(icftyp, nd, x(it,:), f(it))
       call CostGradVal(icftyp, nd, x(it,:), g(it,:), gn(it))
       write(*,*)' Iteration number ', it
@@ -69,7 +60,6 @@ c        Update design variables
 c        Increment iteration counter
          it = it + 1
 c        Compute cost function and its gradient
-c        call CostFunGrad(icftyp, nd, x(it,:), f(it), g(it,:))
          call CostFunVal(icftyp, nd, x(it,:), f(it))
 c        Compute step size
          if( f(it).le.f(it-1) )then
@@ -121,6 +111,7 @@ C     Computes cost function
 C
       subroutine CostFunVal(icftyp, nd, x, f)
       implicit none
+      include '../src-adj/header/refval.h'
       integer nfeval, ngeval
       common/eval/nfeval, ngeval
       integer icftyp, nd
@@ -155,6 +146,14 @@ c     Read current values
 
       print*,'cl =',cl
       print*,'cd =',cd
+
+c     If first computation, set reference values
+c     Create refval.dat file, needed by adjoint solver
+      if(nfeval.eq.0)then
+        clref = cl
+        cdref = cd
+        call system("cp fort.19 refval.dat")
+      endif
 
       call costfun(icftyp, cl, cd, cost)
       f = cost
