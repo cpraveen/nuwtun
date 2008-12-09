@@ -8,26 +8,33 @@ C
       include '../src-adj/header/refval.h'
       integer NDMAX, ITMAX
       real    GTOL
-      parameter(NDMAX=100, ITMAX=50, GTOL=1.0e-5)
+      parameter(NDMAX=100, ITMAX=100)
       integer nfeval, ngeval
       common/eval/nfeval, ngeval
 
-      integer nd, it, i
+      integer nd, it, i, itm
       real    x(0:ITMAX,NDMAX), f(0:ITMAX), g(0:ITMAX,NDMAX)
       real    step0, step(0:ITMAX)
       real    gn(0:ITMAX)
       integer icftyp
-      character*32 str
+
+      write(*,10)
+      write(*,*)'    STEEPEST DESCENT OPTIMIZATION'
+      write(*,10)
 
       if(iargc().ne.1)then
          print*,'steep: Specify cost function type'
          stop
       endif
 
-      write(*,10)
-      write(*,*)'    STEEPEST DESCENT OPTIMIZATION'
-      write(*,10)
+c     Read optimization parameters from a file
+      call readparam(nd, step0, itm, gtol) 
+      if(itm.gt.ITMAX)then
+         print*,'itm > ITMAX, increase ITMAX'
+         stop
+      endif
 
+c     Reset function/gradient counter
       nfeval = 0
       ngeval = 0
 
@@ -52,7 +59,7 @@ c     Compute cost function and its gradient
       write(*,10)
 
 c     Beginning of iterations
-      do while(it.lt.ITMAX .and. gn(it).gt.GTOL)
+      do while(it.lt.itm .and. gn(it).gt.GTOL)
 c        Update design variables
          do i=1,nd
              x(it+1,i) = x(it,i) - step(it)*g(it,i)
@@ -106,6 +113,30 @@ c     save iteration history
 
       stop
       end
+C
+C     Read optimization parameters from file steep.in
+C
+      subroutine readparam(nd, step0, itm, gtol) 
+      implicit none
+      integer nd, itm
+      real    step0, gtol
+
+      open(30, file='steep.in', status='old')
+      read(30,*) nd
+      read(30,*) step0
+      read(30,*) itm
+      read(30,*) gtol
+      close(30)
+
+      print*
+      print*,'Number of design variables =', nd
+      print*,'Initial step size          =', step0
+      print*,'Max number of iterations   =', itm
+      print*,'Gradient tolerance         =', gtol
+      print*
+
+      end
+
 C
 C     Computes cost function
 C
