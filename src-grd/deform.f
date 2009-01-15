@@ -115,7 +115,7 @@ c     write out new grid
       if(nblks.gt.1) write(ifid) nblks
       write(ifid)(idim(i),jdim(i),i=1,nblks)
       do i=1,nblks
-         ir   = ioffr(iblk)*NDIM + 1
+         ir   = ioffr(i)*NDIM + 1
          call wrtgrd(ifid, idim(i), jdim(i), r(ir), dr(ir))
       enddo
       close(ifid)
