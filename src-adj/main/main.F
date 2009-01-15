@@ -2231,10 +2231,10 @@ c     Save solution to file; vtk format only
             IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
             IR   = IOFFS (IBLK,ILVL) * 3           + 1
             IS   = IOFFS (IBLK,ILVL) * 4 * 3       + 1
-            CALL WRTVTK2(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
-     1                   KDIM(IBLK,ILVL), R(IR), QA(IQ), NQ)
-            CALL WRTVTK3(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
-     1                   KDIM(IBLK,ILVL), RG(IR), RB(IR), SB(IS))
+c           CALL WRTVTK2(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
+c    1                   KDIM(IBLK,ILVL), R(IR), QA(IQ), NQ)
+c           CALL WRTVTK3(IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
+c    1                   KDIM(IBLK,ILVL), RG(IR), RB(IR), SB(IS))
             CALL WRTRB (55, IDIM(IBLK,ILVL), JDIM(IBLK,ILVL), 
      1                   KDIM(IBLK,ILVL), RB(IR))
          ENDDO
