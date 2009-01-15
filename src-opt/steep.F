@@ -43,9 +43,6 @@ c     Set cost function type
       call sicftyp(icftyp)
       write(*,*)
 
-      nd    = 20    ! Number of design variables
-      step0 = 0.00001 ! Initial step size
-
       it       = 0
       x(it,:)  = 0.0e0
       step(it) = step0
@@ -62,7 +59,7 @@ c     Beginning of iterations
       do while(it.lt.itm .and. gn(it).gt.GTOL)
 c        Update design variables
          do i=1,nd
-             x(it+1,i) = x(it,i) - step(it)*g(it,i)
+             x(it+1,i) = x(it,i) - step(it)*g(it,i)/gn(it)
          enddo
 c        Increment iteration counter
          it = it + 1
@@ -226,7 +223,7 @@ c     Norm of gradient
       do i=1,nd
          gn = gn + g(i)**2
       enddo
-      gn = sqrt(gn/nd)
+      gn = sqrt(gn)
 
       ngeval = ngeval + 1
 
