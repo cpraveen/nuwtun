@@ -5,7 +5,7 @@ program extract
    integer :: fid
    character(LEN=80) :: str
    integer :: IOstatus
-   integer :: i, j, k
+   integer :: i, j, k, oid
    real(kind=kind(1.0d0)) :: x, y, z, rho, u, v, w, p, T
    real(kind=kind(1.0d0)) :: mach, gamma, cp
 
@@ -25,23 +25,28 @@ program extract
    do while(str .ne. 'WRTP3D:')
       read(fid,*) str
    enddo
+   if( str == '')then
+      print*,'Error: did not find WRTP3D:'
+      stop
+   endif
 
-   read(fid,*)
-   read(fid,*)
-   read(fid,*)
-   read(fid,*)
+   oid = 0
 
    do
       read(fid,*,IOSTAT=IOstatus) i, j, k, x, y, z, rho, u, v, w, p, T
       if(IOstatus > 0)then
-         print*,'IOStatus >0, something wrong'
-         stop
+         read(fid,*)
+         read(fid,*)
+         read(fid,*)
+         read(fid,*)
+         oid = oid + 1
+         write(*,'("Writing file fort.",i1)') oid
       else if(IOstatus < 0)then
          close(fid)
          stop
       else
          cp = 2.0d0*(1.0d0 - p)/mach**2/gamma ! actually -Cp
-         print*,x,y,cp
+         write(oid,*)x,y,z,cp
       endif
    enddo
 
