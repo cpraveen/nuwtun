@@ -39,3 +39,9 @@ MAKE     = make
 # Tapenade executable; TAPENADE_HOME must already be defined in your shell
 # This is only required if you want to build the adjoint solver.
 TPN      = $(TAPENADE_HOME)/bin/tapenade
+
+# Location FSQP
+FSQP_DIR=/opt/fsqp
+
+# Location of IPOPT
+IPOPT_DIR=/opt/ipopt
