@@ -3,20 +3,26 @@ C Steepest descent algorithm
 C Author: Praveen. C, TIFR-CAM, Bangalore 
 C Date  : 5 Dec, 2008
 C
+C f(:) contains all function evaluations, including those discarded for
+C updating step size.
+C fit(:) contains function values at each iteration
+C
       program main
       implicit none
       include '../src-adj/header/refval.h'
       integer NDMAX, ITMAX
-      real    GTOL
+      real    GTOL, OTOL
       parameter(NDMAX=100, ITMAX=100)
       integer nfeval, ngeval
       common/eval/nfeval, ngeval
 
-      integer nd, it, i, itm
+      integer nd, it, i, itm, iter
       real    x(0:ITMAX,NDMAX), f(0:ITMAX), g(0:ITMAX,NDMAX)
+      real    fit(0:ITMAX)
       real    step0, step(0:ITMAX)
       real    gn(0:ITMAX)
       integer icftyp
+      real    df1, df2, df3
 
       write(*,10)
       write(*,*)'    STEEPEST DESCENT OPTIMIZATION'
@@ -28,7 +34,7 @@ C
       endif
 
 c     Read optimization parameters from a file
-      call readparam(nd, step0, itm, gtol) 
+      call readparam(nd, step0, itm, gtol, otol) 
       if(itm.gt.ITMAX)then
          print*,'itm > ITMAX, increase ITMAX'
          stop
@@ -54,6 +60,9 @@ c     Compute cost function and its gradient
       write(*,*)' Grad norm =', gn(it)
       write(*,*)
       write(*,10)
+      fit(it) = f(it)
+
+      iter = 0
 
 c     Beginning of iterations
       do while(it.lt.itm .and. gn(it).gt.GTOL)
@@ -67,9 +76,11 @@ c        Compute cost function and its gradient
          call CostFunVal(icftyp, nd, x(it,:), f(it))
 c        Compute step size
          if( f(it).le.f(it-1) )then
+            iter = iter + 1
+            fit(iter) = f(it)
             call CostGradVal(icftyp, nd, x(it,:), g(it,:), gn(it))
             write(*,*)
-            write(*,*)' Iteration number ', it
+            write(*,*)' Function evaluation ', it
             write(*,*)' Cost fun  =', f(it)
             write(*,*)' Grad norm =', gn(it)
             write(*,*)
@@ -77,7 +88,7 @@ c        Compute step size
             step(it) = step(it-1)
          else ! reduce step and reset to previous iteration
             write(*,*)
-            write(*,*)' Iteration number ', it
+            write(*,*)' Function evaluation ', it
             write(*,*)' Cost fun  =', f(it)
             write(*,*)
             write(*,*)'*** Function did not decrease ***'
@@ -91,9 +102,27 @@ c        Compute step size
             g(it, 1:nd) = g(it-1, 1:nd)
             gn(it)      = gn(it-1)
          endif
+c        Check if we must stop
+         if(iter.gt.3)then
+            df1 = abs( fit(iter ) - fit(iter-1)  )
+            df2 = abs( fit(iter-1) - fit(iter-2) )
+            df3 = abs( fit(iter-2) - fit(iter-3) )
+            if(df1.lt.OTOL .and. 
+     1         df2.lt.OTOL .and. 
+     2         df3.lt.OTOL) then
+               write(*,*)
+               write(*,*)'Objective function did not decrease'
+               write(*,*)'sufficiently for 3 iterations'
+               write(*,*)
+               goto 123
+            endif
+         endif
       enddo
 
+123   continue
+
       write(*,*)
+      write(*,*)'Number of iterations           =',iter
       write(*,*)'Number of function evaluations =',nfeval
       write(*,*)'Number of gradient evaluations =',ngeval
       write(*,*)
@@ -113,16 +142,17 @@ c     save iteration history
 C
 C     Read optimization parameters from file steep.in
 C
-      subroutine readparam(nd, step0, itm, gtol) 
+      subroutine readparam(nd, step0, itm, gtol, otol) 
       implicit none
       integer nd, itm
-      real    step0, gtol
+      real    step0, gtol, otol
 
       open(30, file='steep.in', status='old')
       read(30,*) nd
       read(30,*) step0
       read(30,*) itm
       read(30,*) gtol
+      read(30,*) otol
       close(30)
 
       print*
@@ -130,6 +160,7 @@ C
       print*,'Initial step size          =', step0
       print*,'Max number of iterations   =', itm
       print*,'Gradient tolerance         =', gtol
+      print*,'Objectiv tolerance         =', otol
       print*
 
       end
@@ -204,8 +235,8 @@ C
 
 c     run adjoint solver
       call getarg(1, ct)
-      print*,'Running adjoint flow solver ...'
-      call system("nuwtun_adj "//ct//" < flo.in > adj.log")
+      print*,'Running adjoint flow solver for ',TRIM(ct)
+      call system("nuwtun_adj "//TRIM(ct)//" < flo.in > adj.log")
       print*,'Running adjoint grid solver ...'
       call system("deform_adj > def_adj.log")
 
