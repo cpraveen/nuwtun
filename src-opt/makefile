@@ -13,12 +13,8 @@ cost: cost.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 steep: steep.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 	$(FC) -o steep steep.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 
-ipopt: ipopt.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
-	$(FC) -o ipopt ipopt.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o \
-		$(IPOPTFLAGS)
-
-ipopt.o: ipopt.f
-	$(FC) $(FFLAGS) -I$(IPOPT_DIR)/include/coin -c $<
+ipopt: ipopt.c
+	$(CC) -o ipopt $< -I$(IPOPT_DIR)/include/coin $(IPOPTFLAGS)
 
 fsqp: fsqp.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 	$(FC) -o fsqp fsqp.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o \
