@@ -12,9 +12,15 @@ c     Read and set cost function type
       else if(string .eq. 'CD/CL')then
          print*,'Cost function is drag/lift'
          icftyp = 3
-      else if(string .eq. 'CDCLPEN1')then
-         print*,'Cost function is cd with cl penalty'
+      else if(string .eq. 'CDCLPENM')then
+         print*,'Cost function is cd/cd0 + C * max(0,1-cl/cl0)'
          icftyp = 4
+      else if(string .eq. 'CDCLPEN1')then
+         print*,'Cost function is (cd/cd0) + C * abs(1-cl/cl0)'
+         icftyp = 5
+      else if(string .eq. 'CDCLPEN2')then
+         print*,'Cost function is (cd/cd0)**2 + C * (1-cl/cl0)**2'
+         icftyp = 6
       else
          print*,'SICFTYP: cost function type not defined'
          stop
