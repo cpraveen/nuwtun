@@ -39,3 +39,12 @@ clean:
 	cd src-flo && make clean
 	cd src-adj && make clean
 	cd src-grd && make clean
+	cd src-opt && make clean
+	cd src-utl && make clean
+
+cleanall:
+	cd src-flo && make cleanall
+	cd src-adj && make cleanall
+	cd src-grd && make cleanall
+	cd src-opt && make cleanall
+	cd src-utl && make cleanall

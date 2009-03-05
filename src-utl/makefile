@@ -25,5 +25,6 @@ ext2cp: ext2cp.f95
 
 # Remove object, library and executable files
 clean:
+cleanall:
 	$(RM) -f $(TARGETS)
 	$(RM) -f *.o

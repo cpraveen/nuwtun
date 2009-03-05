@@ -55,4 +55,5 @@ deform_adj: $(OADJ)
 	@$(FC) $(FFLAGS) -c $<
 
 clean:
+cleanall:
 	$(RM) -f $(ODEF) $(OADJ) $(DEFORM) $(DEFADJ)
