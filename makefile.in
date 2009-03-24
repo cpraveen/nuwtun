@@ -7,7 +7,7 @@
 # CFLAGS is assumed to be set in your shell, otherwise define it here
 CPPFLAGS = -DCPU_TIME
 
-#Fortran compiler: g95, ifort, gfortran
+#Fortran compiler: g95, ifort, gfortran, pgf95
 FC       = ifort
 
 #Set compiler flags based on compiler
@@ -21,6 +21,10 @@ endif
 
 ifeq ($(FC),gfortran)
 	FFLAGS = $(CFLAGS) -fdefault-real-8 $(CPPFLAGS)
+endif
+
+ifeq ($(FC),pgf95)
+	FFLAGS = $(CFLAGS) -r8 $(CPPFLAGS)
 endif
 
 # C compiler on Linux
