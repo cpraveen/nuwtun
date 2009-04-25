@@ -1,6 +1,10 @@
 # Include parameters from file
 include ../makefile.in
 
+ifeq ($(FC),ifort)
+	IFORTFLAGS = -free -Tf
+endif
+
 #FFSQPLIB=/opt/fsqp/lib/libffsqp.a
 FFSQPFLAGS= $(FSQP_DIR)/lib/libffsqp.a
 IPOPTFLAGS= -L$(IPOPT_DIR)/lib -lipopt -lblas -llapack
@@ -21,7 +25,7 @@ fsqp: fsqp.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
 		$(FFSQPFLAGS)
 
 fsqp.o: fsqp.f95
-	$(FC) -c $(FFLAGS) -free -Tf $<
+	$(FC) -c $(FFLAGS) $(IFORTFLAGS) $<
 
 # Remove object, library and executable files
 clean:
