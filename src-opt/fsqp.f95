@@ -45,8 +45,8 @@ program fsqp
 
    do i=1,nd
       x(i) = 0.0
-      bl(i) = -0.01
-      bu(i) = +0.01
+      bl(i) = -0.003
+      bu(i) = +0.003
    enddo
 
    nf     = 1
@@ -54,13 +54,13 @@ program fsqp
    nineq  = 0
    neqn   = 1
    neq    = 1
-   mode   = 101
+   mode   = 100
    iprint = 2
-   miter  = 50
+   miter  = 15
    bigbnd = 1.0e20
-   eps    = 1.0e-8
+   eps    = 1.0e-3
    epseqn = 1.0e-3
-   udelta = 1.0e-20
+   udelta = 1.0e-8
 
    call FFSQP(nd,nf,nineqn,nineq,neqn,neq,mode,iprint, &
               miter,inform,bigbnd,eps,epseqn,udelta,bl,bu,x, &
@@ -159,7 +159,7 @@ subroutine gobjfun(nd, nf, x, gf, objfun)
 
    character(len=56) :: dir
    integer           :: i
-   real              :: f(1)
+   real              :: f(2)
 
    call finddir(x, dir)
 
@@ -185,7 +185,7 @@ subroutine gconfun(nd, nf, x, gf, confun)
 
    character(len=56) :: dir
    integer           :: i
-   real              :: f(1)
+   real              :: f(2)
 
    call finddir(x, dir)
 
