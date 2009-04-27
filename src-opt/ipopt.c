@@ -70,6 +70,7 @@ int main()
   					  at the solution */
   Number obj;                          /* objective value */
   Index i;                             /* generic counter */
+  char dir[48];
 
 
   /* set the number of variables and allocate space for the bounds */
@@ -78,8 +79,8 @@ int main()
   x_U = (Number*)malloc(sizeof(Number)*n);
   /* set the values for the variable bounds */
   for (i=0; i<n; i++) {
-    x_L[i] = -0.01;
-    x_U[i] = +0.01;
+    x_L[i] = -0.003;
+    x_U[i] = +0.003;
   }
 
   /* set the number of constraints and allocate space for the bounds */
@@ -117,11 +118,15 @@ int main()
 
   /* Set some options.  Note the following ones are only examples,
      they might not be suitable for your problem. */
-  AddIpoptNumOption(nlp, "tol", 1e-7);
-  AddIpoptStrOption(nlp, "mu_strategy", "adaptive");
+  AddIpoptNumOption(nlp, "tol", 1e-2);
+  AddIpoptNumOption(nlp, "constr_viol_tol", 1e-3);
+  AddIpoptNumOption(nlp, "acceptable_tol", 1e-2);
+  AddIpoptStrOption(nlp, "mu_strategy", "monotone");
   AddIpoptStrOption(nlp, "output_file", "ipopt.out");
   AddIpoptStrOption(nlp, "hessian_approximation", "limited-memory");
-  AddIpoptIntOption(nlp, "max_iter", 50);
+  AddIpoptStrOption(nlp, "print_user_options", "yes");
+  AddIpoptIntOption(nlp, "print_level", 5);
+  AddIpoptIntOption(nlp, "max_iter", 30);
 
   /* allocate space for the initial point and set the values */
   x = (Number*)malloc(sizeof(Number)*n);
@@ -137,7 +142,11 @@ int main()
   /* solve the problem */
   status = IpoptSolve(nlp, x, NULL, &obj, NULL, mult_x_L, mult_x_U, NULL);
 
-  if (status == Solve_Succeeded) {
+  finddir(x, dir);
+  printf("Best solution is in directory %s\n", dir);
+
+  //if (status == Solve_Succeeded) {
+  if (1) {
     printf("\n\nSolution of the primal variables, x\n");
     for (i=0; i<n; i++) {
       printf("x[%d] = %e\n", i, x[i]);
@@ -261,7 +270,7 @@ Bool eval_jac_g(Index n, Number *x, Bool new_x,
    read_grad(dir, n, grad_g);
 
    for(i=0; i<n; i++)
-    values[0] = grad_g[i];
+    values[i] = grad_g[i];
 
   }
 
