@@ -10,7 +10,7 @@ ifeq ($(FC),ifort)
 endif
 
 # Executables to generate
-TARGETS=extract ext2cp plot2vtk_2d plot2vtk_3d ad_vs_fd
+TARGETS=extract ext2cp plot2vtk_2d plot2vtk_3d ad_vs_fd mach_sweep
 
 all: $(TARGETS)
 
