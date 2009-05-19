@@ -30,7 +30,7 @@ program extract
       stop
    endif
 
-   oid = 0
+   oid = 100
 
    do
       read(fid,*,IOSTAT=IOstatus) i, j, k, x, y, z, rho, u, v, w, p, T
@@ -40,7 +40,7 @@ program extract
          read(fid,*)
          read(fid,*)
          oid = oid + 1
-         write(*,'("Writing file fort.",i1)') oid
+         write(*,'("Writing file fort.",i3)') oid
       else if(IOstatus < 0)then
          close(fid)
          stop
