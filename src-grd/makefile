@@ -40,7 +40,7 @@ OADJ = deform_adj.o \
        hickshenne.o \
        hickshenne_b.o \
 
-all: $(DEFORM) $(DEFADJ)
+all: $(DEFORM) $(DEFADJ) volume
 
 deform: $(ODEF)
 	@echo "Building   deform"
@@ -49,6 +49,10 @@ deform: $(ODEF)
 deform_adj: $(OADJ)
 	@echo "Building   deform_adj"
 	@$(FC) -o deform_adj $(OADJ) $(LIBPATH) -llinpack -lblas
+
+volume: volume.o
+	@echo "Building   volume"
+	@$(FC) -o volume volume.o $(LIBPATH)
 
 %.o: %.f
 	@echo "Compiling " $<
