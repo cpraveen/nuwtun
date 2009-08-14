@@ -89,7 +89,6 @@ C
 C 3.  Smooth Limiter
 C
       ELSE IF (LIMIT .EQ. ILSMTH) THEN
-         WRITE (IOUT,'(A)') ' WARNING - THE SMOOTH LIMITER IS UNTESTED '
          DO L = LBEG, LEND
             DO I = 2, NPTS
                CALL SMTLIM(DQP(I-1,L), DQP(I,L), DQM(I,L), RKAP)
