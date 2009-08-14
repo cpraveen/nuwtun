@@ -79,7 +79,7 @@ C
             DO I = NPTS, 2, -1
                CALL SMTLIM_BQ(DQP(I-1,L), DQPB(I-1,L), 
      1                        DQP(I,L),   DQPB(I,L), 
-     2                        DQM(I,L),   DQMB(I,L))
+     2                        DQM(I,L),   DQMB(I,L), RKAP)
             END DO
          END DO
 C
