@@ -43,7 +43,7 @@ C
 C
 C 3.  Smooth Limiter
 C
-      SUBROUTINE SMTLIM(DQP1, DQP2, DQM1)
+      SUBROUTINE SMTLIM(DQP1, DQP2, DQM1, RKAP)
       SMTH(D1, D2, EP, EPSQ) = ( 2.E0*D1*D2 + EP ) 
      1                           / ( D1*D1 + D2*D2 + EPSQ )
       EPS   = 1.E-06
