@@ -29,10 +29,12 @@ fsqp.o: fsqp.f95
 
 # Remove object, library and executable files
 clean:
-cleanall:
 	$(RM) -f cost
 	$(RM) -f steep
 	$(RM) -f ipopt
 	$(RM) -f fsqp
 	$(RM) -f *.o
 	$(RM) -f *.mod
+
+cleanall:
+	@$(MAKE) clean

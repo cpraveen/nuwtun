@@ -34,10 +34,11 @@ program fsqp
    real :: bl(ndmax), bu(ndmax)
    character(len=56) :: dir
 
+   call readinp(miter, neqn, nineqn, nd, bl, bu)
+
    call system('rm -rf workdir.*')
 
-   nd       = 20
-
+   ! Initialize database: empty to begin with
    optdb%np = 0
    optdb%nd = nd
 
@@ -45,15 +46,13 @@ program fsqp
 
    do i=1,nd
       x(i) = 0.0
-      bl(i) = -0.003
-      bu(i) = +0.003
    enddo
 
    nf     = 1
-   nineqn = 0
-   nineq  = 0
-   neqn   = 1
-   neq    = 1
+   !nineqn = 0     ! This is set in readinp
+   nineq  = nineqn ! We have only non-linear inequality
+   !neqn   = 1     ! This is set in readinp
+   neq    = neqn   ! We have only non-linear equality
    mode   = 100
    iprint = 2
    miter  = 15
@@ -71,6 +70,47 @@ program fsqp
    print*,'Best solution is in directory ',TRIM(dir)
 
 end program fsqp
+
+! Read input parameters from file
+subroutine readinp(miter, neqn, nineqn, nd, bl, bu)
+   implicit none
+   integer :: miter, neqn, nineqn, nd
+   real    :: bl(*), bu(*)
+
+   integer :: fid, i, clcon
+
+   fid = 10
+   open(fid, file='fsqp.in', status='old')
+   read(fid,*) miter
+   read(fid,*) clcon
+   read(fid,*) nd
+   do i=1,nd
+      read(fid,*) bl(i), bu(i)
+   enddo
+   close(fid)
+
+   ! Print parameters to screen
+   print*,'Max number of iterations =', miter
+   if(clcon.eq.1)then
+      print*,'Cl constraint is  Cl  = Cl0'
+      nineqn = 0
+      neqn   = 1
+   else if(clcon.eq.2)then
+      print*,'Cl constraint is  Cl >= Cl0'
+      nineqn = 1
+      neqn   = 0
+   else
+      print*,'Unknown value for Cl constraint. Valid options:'
+      print*,' 1 : Cl  = Cl0'
+      print*,' 2 : Cl >= Cl0'
+      stop
+   endif
+   print*,'Lower/upper bounds:'
+   do i=1,nd
+      write(*,'(i5,2e20.10)') i, bl(i), bu(i)
+   enddo
+
+end subroutine readinp
 
 ! Objective function
 subroutine objfun(nd, nf, x, f)
