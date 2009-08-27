@@ -20,7 +20,7 @@ C
       else if(icftyp.eq.3)then
          cost = (cd/cdref)/(cl/clref)
       else if(icftyp.eq.4)then
-         cost = cd/cdref + 10.0 * max(1.0 - cl/clref, 0.0)
+         cost = cd/cdref + 1.0 * max(1.0 - cl/clref, 0.0)
       else if(icftyp.eq.5)then
          cost = cd/cdref + 1.0 * abs(1.0 - cl/clref)
       else if(icftyp.eq.6)then
