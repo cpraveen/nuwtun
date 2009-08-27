@@ -55,7 +55,7 @@ program fsqp
    neq    = neqn   ! We have only non-linear equality
    mode   = 100
    iprint = 2
-   miter  = 15
+   !miter  = 15    ! This is set in readinp
    bigbnd = 1.0e20
    eps    = 1.0e-3
    epseqn = 1.0e-3
