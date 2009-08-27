@@ -1,6 +1,9 @@
 #List of files/directories to make tgz file
 FILES=nuwtun/src-flo     \
 		nuwtun/src-adj     \
+		nuwtun/src-grd     \
+		nuwtun/src-opt     \
+		nuwtun/src-utl     \
 		nuwtun/docs        \
 		nuwtun/makefile    \
 		nuwtun/makefile.in \
