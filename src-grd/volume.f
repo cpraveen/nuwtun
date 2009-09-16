@@ -11,6 +11,7 @@
      1        imin(nvolmax,nsurfmax), jmin(nvolmax,nsurfmax),
      2        kmin(nvolmax,nsurfmax), imax(nvolmax,nsurfmax),
      3        jmax(nvolmax,nsurfmax), kmax(nvolmax,nsurfmax)
+      real    totvol
 
 c     read volume definition
       write(*,*)'Reading volume.in'
@@ -65,6 +66,7 @@ c     read each block of grid points
 
 
 c     compute volumes
+      totvol = 0.0
       do i=1,nvol
          vol(i) = 0.0
          do j=1,nsurf(i)
@@ -74,8 +76,10 @@ c     compute volumes
      1                   imin(i,j),jmin(i,j),kmin(i,j),
      2                   imax(i,j),jmax(i,j),kmax(i,j),vol(i))
          enddo
+         totvol = totvol + vol(i)
          print*,i,vol(i)
       enddo
+      print*, 'VOL      ', totvol
 
       deallocate( idim )
       deallocate( jdim )
