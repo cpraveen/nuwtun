@@ -99,7 +99,7 @@ int main()
   Index nele_jac = n*m;
   /* Number of nonzeros in the Hessian of the Lagrangian (lower or
      upper triangual part only) */
-  Index nele_hess = n*n;
+  Index nele_hess = n*(n+1)/2;
   /* indexing style for matrices */
   Index index_style = 0; /* C-style; start counting of rows and column
   			    indices at 0 */
@@ -119,11 +119,14 @@ int main()
   /* Set some options.  Note the following ones are only examples,
      they might not be suitable for your problem. */
   AddIpoptNumOption(nlp, "tol", 1e-2);
-  AddIpoptNumOption(nlp, "constr_viol_tol", 1e-3);
+  AddIpoptNumOption(nlp, "constr_viol_tol", 1e-2);
   AddIpoptNumOption(nlp, "acceptable_tol", 1e-2);
+  AddIpoptNumOption(nlp, "dual_inf_tol", 1e-2);
+  AddIpoptNumOption(nlp, "compl_inf_tol", 1e-2);
   AddIpoptStrOption(nlp, "mu_strategy", "monotone");
   AddIpoptStrOption(nlp, "output_file", "ipopt.out");
   AddIpoptStrOption(nlp, "hessian_approximation", "limited-memory");
+  AddIpoptIntOption(nlp, "limited_memory_max_history", 6);
   AddIpoptStrOption(nlp, "print_user_options", "yes");
   AddIpoptIntOption(nlp, "print_level", 5);
   AddIpoptIntOption(nlp, "max_iter", 30);
