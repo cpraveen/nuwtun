@@ -65,7 +65,7 @@ c     For mirror surfaces like in symmetric airfoil
             ir      =-nhhp(i)
             nhhp(i) = nhhp(ir)
             do j=1,nhhp(i)
-               xw(j,i) = xw(j,ir)
+               xw(j,i) = -xw(j,ir)
             enddo
          endif
       enddo

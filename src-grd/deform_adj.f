@@ -70,7 +70,7 @@ c     For mirror surfaces like in symmetric airfoil
             ir      =-nhhp(i)
             nhhp(i) = nhhp(ir)
             do j=1,nhhp(i)
-               xw(j,i) = xw(j,ir)
+               xw(j,i) = -xw(j,ir)
             enddo
          endif
       enddo
@@ -140,7 +140,7 @@ c     Differentiation for symmetric case
          if(nhhpo(i).lt.0)then
             ir      =-nhhpo(i)
             do j=1,nhhp(i)
-               xwb(j,ir) = xwb(j,ir) + xwb(j,i)
+               xwb(j,ir) = xwb(j,ir) - xwb(j,i)
                xwb(j,i)  = 0.0
             enddo
          endif
