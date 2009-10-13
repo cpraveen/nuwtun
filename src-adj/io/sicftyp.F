@@ -21,6 +21,12 @@ c     Read and set cost function type
       else if(string .eq. 'CDCLPEN2')then
          print*,'Cost function is (cd/cd0)**2 + C * (1-cl/cl0)**2'
          icftyp = 6
+      else if(string .eq. 'APGRAD')then
+         print*,'Cost function is adverse pressure gradient'
+         icftyp = 101
+      else if(string .eq. 'APGCL')then
+         print*,'Cost function is adverse pressure gradient + Cl'
+         icftyp = 102
       else
          print*,'SICFTYP: cost function type not defined'
          stop

@@ -17,6 +17,8 @@ BQ = fluroe_bq.f \
 	  frcint_bx.f \
 	  frcel_bq.f  \
 	  frcel_bx.f  \
+	  apgrad_bq.f \
+	  apgrad_bx.f \
 	  metbc_bx.f  \
 	  metric_bx.f \
 	  grdcut_bx.f \
@@ -109,6 +111,22 @@ frcel_bx.f: $(SRCP)/force.F
 		-outvars "Q S FORCE" \
 		$<
 #-----------------------------------------------------------------------------
+apgrad_bq.f: $(SRCP)/apgrad.F
+	$(RM) -f $@
+	cd $(SRCP) && $(TPNBQ) \
+		-head    apgrad     \
+		-vars    "Q APGINT"  \
+		-outvars "Q APGINT"  \
+		$<
+#-----------------------------------------------------------------------------
+apgrad_bx.f: $(SRCP)/apgrad.F
+	$(RM) -f $@
+	cd $(SRCP) && $(TPNBX)  \
+		-head    apgrad      \
+		-vars    "Q S APGINT" \
+		-outvars "Q S APGINT" \
+		$<
+#-----------------------------------------------------------------------------
 gdxtnd_bx.f: $(SRCP)/gdxtnd.F
 	$(RM) -f $@
 	cd $(SRCP) && $(TPNBX)  \
@@ -145,8 +163,8 @@ costfun_bq.f: $(SRCD)/costfun.F
 	$(RM) -f $@
 	cd $(SRCD) && $(TPNBQ)  \
 		-head    costfun     \
-		-vars    "cl cd cost"\
-		-outvars "cl cd cost"\
+		-vars    "cl cd apgint cost"\
+		-outvars "cl cd apgint cost"\
 		$<
 ##############################################################################
 clean:

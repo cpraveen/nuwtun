@@ -1,2 +1,2 @@
-      real clref, cdref
-      common/ref/clref,cdref
+      real clref, cdref, apref
+      common/ref/clref,cdref,apref

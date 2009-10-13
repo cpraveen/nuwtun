@@ -1475,14 +1475,23 @@ C
          SB(:) = 0.0E0
          CLB = 0.0E0
          CDB = 0.0E0
+         APGINTB = 0.0E0
          COSTB = 1.0E0
-         CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
+         CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, APGINT, APGINTB,
+     1                   COST, COSTB)
          CALL FRCINT_BQ (ITURB,NBLKS,IDIM(1,ILVL), 
      1                JDIM(1,ILVL),  KDIM(1,ILVL), 
      2                IOFF(1,ILVL),  IOFFS(1,ILVL),
      3                IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4                Q, QB0, PROPS, S, R, NXBCS, NBCS, 
      5                IBCDAT(1,1,1,ILVL), FORCE, CL, CLB, CD, CDB)
+      CALL APGRAD_BQ (ITURB,NBLKS,IDIM(1,ILVL),
+     1                JDIM(1,ILVL),  KDIM(1,ILVL),
+     2                IOFF(1,ILVL),  IOFFS(1,ILVL),
+     3                IOFFQ(1,ILVL), IOFFP(1,ILVL),
+     4                Q, QB0, S, R, NXBCS, NBCS,
+     5                IBCDAT(1,1,1,ILVL), APGINT, APGINTB)
+
          DO 405 IBLK = 1, NBLKS
             IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
             IQN  = IOFFQN(IBLK,ILVL) * NQ * NTMLVL + 1
@@ -1965,8 +1974,10 @@ C
       ILVL  = 1
       CLB = 0.0E0
       CDB = 0.0E0
+      APGINTB = 0.0E0
       COSTB = 1.0E0
-      CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, COST, COSTB)
+      CALL COSTFUN_BQ(ICFTYP, CL, CLB, CD, CDB, APGINT, APGINTB,
+     1                COST, COSTB)
       QB(:) = 0.0
       SB(:) = 0.0
       CALL FRCINT_BX (ITURB,NBLKS,IDIM(1,ILVL),
@@ -1975,6 +1986,12 @@ C
      3               IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4               Q, QB, PROPS, S, SB, R, NXBCS, NBCS,
      5               IBCDAT(1,1,1,ILVL), FORCE, CL, CLB, CD, CDB)
+      CALL APGRAD_BX (ITURB,NBLKS,IDIM(1,ILVL),
+     1                JDIM(1,ILVL),  KDIM(1,ILVL),
+     2                IOFF(1,ILVL),  IOFFS(1,ILVL),
+     3                IOFFQ(1,ILVL), IOFFP(1,ILVL),
+     4                Q, QB, S, SB, R, NXBCS, NBCS,
+     5                IBCDAT(1,1,1,ILVL), APGINT, APGINTB)
       DO 860 IBLK = 1, NBLKS
          IQ   = IOFFQ (IBLK,ILVL) * NQ          + 1
          IQN  = IOFFQN(IBLK,ILVL) * NQ * NTMLVL + 1

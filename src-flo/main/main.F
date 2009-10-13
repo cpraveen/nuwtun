@@ -2405,6 +2405,14 @@ C     Write restart file.
 C
   910 CONTINUE
 C
+      ILVL = 1
+      CALL APGRAD (ITURB,NBLKS,IDIM(1,ILVL), 
+     1             JDIM(1,ILVL),  KDIM(1,ILVL), 
+     2             IOFF(1,ILVL),  IOFFS(1,ILVL),
+     3             IOFFQ(1,ILVL), IOFFP(1,ILVL),
+     4             Q, S, R, NXBCS, NBCS, 
+     5             IBCDAT(1,1,1,ILVL), APGINT)
+C
       CALL WRREST (NXBLKS, NXLVLS, NXBCS,  NXSECT,
      2             IOFFS,  IOFFQ,  IOFFP,  IOFFQN,
      3             NBLKS,  NLVLS,  IMODEL, IFDELQ, ITRUN,
@@ -2469,7 +2477,7 @@ C
 C
 C     Write global result
 C
-      CALL RESULT(ITCUR, R2NORM, CL, CD)
+      CALL RESULT(ITCUR, R2NORM, CL, CD, APGINT)
 C
 C     Finished with ISAAC run.
 C

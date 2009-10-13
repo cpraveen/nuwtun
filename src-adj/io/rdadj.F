@@ -36,9 +36,11 @@ c     refval.dat has same format as fort.19 produced by nuwtun_flo
       read(30,*)
       read(30,*) str, clref
       read(30,*) str, cdref
+      read(30,*) str, apref
       close(30)
 
       print*,'clref =', clref
       print*,'cdref =', cdref
+      print*,'apref =', apref
 
       end
