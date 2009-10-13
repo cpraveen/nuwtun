@@ -177,7 +177,7 @@ C
       real    x(*), f
 
       integer i, j
-      real    cl, cd, cost
+      real    cl, cd, apgint, cost
       character*32 str
 
       print*,'Design variables:'
@@ -201,20 +201,23 @@ c     Read current values
       read(10,*)
       read(10,*) str, cl
       read(10,*) str, cd
+      read(10,*) str, apgint
       close(10)
 
-      print*,'cl =',cl
-      print*,'cd =',cd
+      print*,'cl     =',cl
+      print*,'cd     =',cd
+      print*,'apgrad =',apgint
 
 c     If first computation, set reference values
 c     Create refval.dat file, needed by adjoint solver
       if(nfeval.eq.0)then
         clref = cl
         cdref = cd
+        apref = apgint
         call system("cp fort.19 refval.dat")
       endif
 
-      call costfun(icftyp, cl, cd, cost)
+      call costfun(icftyp, cl, cd, apgint, cost)
       f = cost
 
       nfeval = nfeval + 1
