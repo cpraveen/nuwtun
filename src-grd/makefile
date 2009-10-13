@@ -40,7 +40,7 @@ OADJ = deform_adj.o \
        hickshenne.o \
        hickshenne_b.o \
 
-all: $(DEFORM) $(DEFADJ) volume
+all: $(DEFORM) $(DEFADJ) volume area area_x
 
 deform: $(ODEF)
 	@echo "Building   deform"
@@ -54,10 +54,45 @@ volume: volume.o
 	@echo "Building   volume"
 	@$(FC) -o volume volume.o $(LIBPATH)
 
+# Area computation routine
+area: area.o common_area.o routines_area.o
+	@echo "Building   area"
+	@$(FC) -o area area.o common_area.o routines_area.o $(LIBPATH)
+
+area.o: common_area.o
+
+# Area derivative computation routine
+OAREA = area_x.o common_area.o routines_area.o totalarea_b.o adBuffer.o \
+		  adStack.o
+area_x: $(OAREA)
+	@echo "Building   area_x"
+	@$(FC) -o area_x $(OAREA) $(LIBPATH)
+
+totalarea_b.o: routines_area.f95
+	$(TPN) -backward -vars    "r totarea" \
+		              -outvars "r totarea" \
+						  -head    totalarea \
+						  -o       totalarea \
+						           routines_area.f95
+	@$(FC) -c $(FFLAGS) $(IFORTFLAGS) totalarea_b.f95
+
+# Generate *.o from *.f
 %.o: %.f
 	@echo "Compiling " $<
 	@$(FC) $(FFLAGS) -c $<
 
+# Generate *.o from *.f95
+%.o: %.f95
+	@echo "Compiling " $<
+	@$(FC) -c $(FFLAGS) $(IFORTFLAGS) $<
+
+adBuffer.o: $(TAPENADE_HOME)/ADFirstAidKit/adBuffer.f
+	@echo "Compiling " $<; $(FC) -c $<
+
+adStack.o: $(TAPENADE_HOME)/ADFirstAidKit/adStack.c
+	@echo "Compiling " $<; $(CC) -c $<
+
 clean:
 cleanall:
 	$(RM) -f $(ODEF) $(OADJ) $(DEFORM) $(DEFADJ)
+	$(RM) -f $(OAREA) *.mod *.msg *~
