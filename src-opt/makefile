@@ -1,10 +1,6 @@
 # Include parameters from file
 include ../makefile.in
 
-ifeq ($(FC),ifort)
-	IFORTFLAGS = -free -Tf
-endif
-
 #FFSQPLIB=/opt/fsqp/lib/libffsqp.a
 FFSQPFLAGS= $(FSQP_DIR)/lib/libffsqp.a
 IPOPTFLAGS= -L$(IPOPT_DIR)/lib -lipopt -lblas -llapack
