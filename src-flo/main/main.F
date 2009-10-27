@@ -2398,12 +2398,11 @@ C
 C
       ENDIF
 C
-C 13. OUTPUT RESTART DATA
-C     Update properties.
-C     If unsteady, convert QN to primitive (N.B. storage for tke is over nnpts)
-C     Write restart file.
+C     Write global result
 C
-  910 CONTINUE
+      CALL RESULT(ITCUR, R2NORM, CL, CD, APGINT)
+C
+C     Calculate adverse pressure gradient integral
 C
       ILVL = 1
       CALL APGRAD (ITURB,NBLKS,IDIM(1,ILVL), 
@@ -2412,6 +2411,13 @@ C
      3             IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4             Q, S, R, NXBCS, NBCS, 
      5             IBCDAT(1,1,1,ILVL), APGINT)
+C
+C 13. OUTPUT RESTART DATA
+C     Update properties.
+C     If unsteady, convert QN to primitive (N.B. storage for tke is over nnpts)
+C     Write restart file.
+C
+  910 CONTINUE
 C
       CALL WRREST (NXBLKS, NXLVLS, NXBCS,  NXSECT,
      2             IOFFS,  IOFFQ,  IOFFP,  IOFFQN,
@@ -2468,16 +2474,11 @@ C
       WRITE (IOUT,9990) FERROR
  9990 FORMAT (/' ','MAIN  : ERROR-> Error opening file ',A80,
      1        /' ', 8X,'RUN ABORTING!')
-      GO TO 999
 C
 C 16.   Close output and finish
 C
   999 CONTINUE
       CLOSE (IOUT)
-C
-C     Write global result
-C
-      CALL RESULT(ITCUR, R2NORM, CL, CD, APGINT)
 C
 C     Finished with ISAAC run.
 C
