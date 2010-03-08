@@ -32,17 +32,21 @@ c     Check file exists
       imax    = (alpha_max - alpha_min)/dalpha
       open(ifm, file="alpha.dat")
 
+c     Loop over different angle of attack
       do i = 0, imax
 
          alpha = alpha_min + dalpha * i
 
+c        Write angle of attack into file
          open(ifid, file='flo.in')
          write(ifid,*)'ALPHA    ', alpha
          close(ifid)
-
          call system("cat flo.in.noalpha >> flo.in")
+
+c        Run CFD solver
          call system(flosolve)
 
+c        Read solution
          open(ifid,file='fort.19', status='old')
          read(ifid,*) sdummy, iter
          read(ifid,*) sdummy, rdummy, rdummy, rdummy, rdummy, rdummy
