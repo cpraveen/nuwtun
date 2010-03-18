@@ -27,6 +27,6 @@ C     This common restricts the run to have 50000 iterations.
 C
 C     R2ONE  : The residual on the very first iteration of the case
 C
-      PARAMETER (MXHIST = 50000)
+      PARAMETER (MXHIST = 150000)
       COMMON /IHSTRY/ ITTOT
       COMMON /HSTRY / R2(MXHIST), R2ONE
