@@ -39,6 +39,7 @@ c     read volume definition
 c     read grid
       imem = 0
       nblks = 1 ! limited to single block at present
+      write(*,*)'NOTE: WORKS ONLY FOR SINGLE BLOCK GRID'
       allocate( idim(nblks) )
       allocate( jdim(nblks) )
       allocate( kdim(nblks) )
@@ -120,7 +121,6 @@ c-----------------------------------------------------------------------------
 
 
       if(imin.eq.imax)then
-         stop "volume: imin==imax not finished"
          i = imin
          do j=jmin,jmax-1
             do k=kmin,kmax-1
@@ -133,6 +133,17 @@ c-----------------------------------------------------------------------------
                z(1) = r(i,j,  k,  3)
                z(2) = r(i,j+1,k,  3)
                z(3) = r(i,j+1,k+1,3)
+               call triang(x,y,z,vol)
+
+               x(1) = r(i,j,  k,  1)
+               x(2) = r(i,j+1,k+1,1)
+               x(3) = r(i,j,  k+1,1)
+               y(1) = r(i,j,  k,  2)
+               y(2) = r(i,j+1,k+1,2)
+               y(3) = r(i,j,  k+1,2)
+               z(1) = r(i,j,  k,  3)
+               z(2) = r(i,j+1,k+1,3)
+               z(3) = r(i,j,  k+1,3)
                call triang(x,y,z,vol)
             enddo
          enddo
