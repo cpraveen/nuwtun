@@ -10,7 +10,8 @@ ifeq ($(FC),ifort)
 endif
 
 # Executables to generate
-TARGETS=extract ext2cp plot2vtk_2d plot2vtk_3d ad_vs_fd mach_sweep alpha_sweep
+TARGETS=extract ext2cp plot2vtk_2d plot2vtk_3d ad_vs_fd mach_sweep \
+		  alpha_sweep mglvls
 
 all: $(TARGETS)
 
@@ -22,6 +23,9 @@ extract: extract.f95
 
 ext2cp: ext2cp.f95 
 	$(FC) $(F95FLAGS) ext2cp.f95 -o ext2cp
+
+mglvls: mglvls.c
+	$(CC)  -o mglvls mglvls.c
 
 # Remove object, library and executable files
 clean:
