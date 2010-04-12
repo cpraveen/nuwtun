@@ -16,6 +16,7 @@ program extract
    real(kind=kind(1.0d0)) :: x1, y1, z1, cp1
    real(kind=kind(1.0d0)) :: xmin, xmax, chord
    character(len=56) :: dir, f
+   integer :: iargc
 
    narg = iargc()
    if(narg < 2)then

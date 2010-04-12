@@ -14,6 +14,7 @@ C
       integer   ifid, iter
       real      rdummy
       character*80 string
+      integer   iargc
 
       if(iargc().ne.1)then
          print*,'steep: Specify cost function type'
