@@ -27,6 +27,9 @@ ext2cp: ext2cp.f95
 mglvls: mglvls.c
 	$(CC)  -o mglvls mglvls.c
 
+alpha_sweep: alpha_sweep.f
+	$(MPIFC)  -o alpha_sweep alpha_sweep.f
+
 # Remove object, library and executable files
 clean:
 cleanall:

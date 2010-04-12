@@ -6,18 +6,31 @@ C     Cl and Cd will be written into alpha.dat
 C
       program alpha_sweep
       implicit none
+      include 'mpif.h'
       character*64 flosolve, sdummy
+      character*32, allocatable :: dir(:)
+      integer, allocatable :: proc(:)
+      integer   ifid, ifm, iter, i, imax, j, k
+      integer   rank, ierr, nproc, n, remainder, n_elem
+      real, allocatable ::  alpha(:), C_l(:), C_d(:)
       real      Cd, Cl
-      integer   ifid, ifm, iter, i, imax
       real      rdummy
-      real      alpha_min, alpha_max, dalpha, alpha
+      real      alpha_min, alpha_max, dalpha
+      logical ex 
+      call MPI_init(ierr)
+      call MPI_comm_size(MPI_comm_world, nproc, ierr)
+      call MPI_comm_rank(MPI_comm_world, rank, ierr)
 
-      print*,'AOA: min, max, increment'
-      read*, alpha_min, alpha_max, dalpha
+c     Read alpha from input file
+      open(unit =10,file = 'alpha.in', status='old')
+      read (10,*) alpha_min, alpha_max, dalpha
+      close(10)
 
-      if(alpha_max.le.alpha_min .or. dalpha.le.0.0)then
+c     check values of alpha read from input file
+      if(rank==0 .and. (alpha_max<=alpha_min .or. dalpha<=0.0))then
          print*,'Error: give alpha_max > alpha_min'
          print*,'            dalpha > 0.0'
+         call MPI_finalize(ierr)
          stop
       endif
 
@@ -26,39 +39,104 @@ C
       ifm     = 11
 
 c     Check file exists
-      open(ifid, file='flo.in.noalpha', status='old')
-      close(ifid)
+      if(rank==0)then
+         open(ifid, file='flo.in.noalpha', status='old')
+         close(ifid)
+      endif
 
       imax    = (alpha_max - alpha_min)/dalpha
-      open(ifm, file="alpha.dat")
+      n = (imax+1)/nproc
+      remainder = MOD((imax+1),nproc)
+
+      allocate (alpha(0:imax), proc(0:imax), C_l(0:imax))
+      allocate (C_d(0:imax), dir(0:imax))
 
 c     Loop over different angle of attack
       do i = 0, imax
+         alpha(i) = alpha_min + dalpha * i
+      end do
 
-         alpha = alpha_min + dalpha * i
+c     Create partition table for distributing alpha
+      do i = 1, n
+          do j = 0,nproc-1
+              if (i.eq.1) then
+                  k = j
+              else    
+                  k =(i-1)* nproc+j
+              end if
+              proc(k) = j
+          end do
+      end do
+ 
+      if(remainder.ne.0) then
+          i = 0
+          do j = (n*nproc),(n*nproc)+remainder-1
+              k = j
+              proc(k) = i
+              i=i+1
+          end do 
+      end if
 
+c     Create directories for running cfd
+      do i = 0,imax
+          write(dir(i),'(a,i3.3,a)'),'RUN',i
+      end do
+
+c     Create individual directory for each processor
+      do i = 0,imax
+          if(rank == proc(i)) then
+              inquire (file = trim(dir(i)), exist = ex)
+              if (ex .eqv. .TRUE.) then
+                  call system("rm -r "//trim(dir(i)))
+              end if
+              call system("mkdir "//trim(dir(i)))
+              call system("cp template/* "//trim(dir(i)))
+          end if
+      end do
+
+      do i = 0, imax
+          if (proc(i).eq.rank) then
+           
 c        Write angle of attack into file
-         open(ifid, file='flo.in')
-         write(ifid,*)'ALPHA    ', alpha
-         close(ifid)
-         call system("cat flo.in.noalpha >> flo.in")
+              open(ifid, file=trim(dir(i))//'/flo.in')
+              write(ifid,*)'ALPHA    ', alpha(i)
+              close(ifid)
+              call system("cd "//trim(dir(i))//" && "//
+     +                    "cat flo.in.noalpha >> flo.in")
 
 c        Run CFD solver
-         call system(flosolve)
+              call system("cd "//trim(dir(i))//" && "//flosolve)
 
 c        Read solution
-         open(ifid,file='fort.19', status='old')
-         read(ifid,*) sdummy, iter
-         read(ifid,*) sdummy, rdummy, rdummy, rdummy, rdummy, rdummy
-         read(ifid,*) sdummy, Cl
-         read(ifid,*) sdummy, Cd
-         close(ifid)
-         print*,'alpha, Cl, Cd =', alpha, Cl, Cd
-         write(ifm,*) alpha, Cl, Cd
+              open(ifid,file=trim(dir(i))//'/fort.19', status='old')
+              read(ifid,*) sdummy, iter
+              read(ifid,*) sdummy, rdummy, rdummy, rdummy, rdummy
+     +         ,rdummy
+              read(ifid,*) sdummy, C_l(i)
+              read(ifid,*) sdummy, C_d(i)
+              close(ifid)
+          end if
+      end do
 
-      enddo
-      close(ifm)
+      do i = 0, imax
+          call MPI_Bcast(C_d(i), 1, MPI_real, proc(i), MPI_comm_world
+     +      ,ierr)
+          call MPI_Bcast(C_l(i), 1, MPI_real, proc(i), MPI_comm_world
+     +      ,ierr)
+      end do
+      
+      
+c     Save Cl/Cd into file
+      if (rank==0) then
+         open(ifm, file="alpha.dat")
+         do i = 0,imax
+            write(ifm,*) alpha(i), C_l(i), C_d(i)
+         end do
+         close(ifm)
+      end if
+
+
+      call MPI_finalize(ierr)
 
       stop
       end program
-
