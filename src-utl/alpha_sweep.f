@@ -40,7 +40,7 @@ c     check values of alpha read from input file
 
 c     Check file exists
       if(rank==0)then
-         open(ifid, file='flo.in.noalpha', status='old')
+         open(ifid, file='template/flo.in.noalpha', status='old')
          close(ifid)
       endif
 
