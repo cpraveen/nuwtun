@@ -114,6 +114,14 @@ c     Write mach
             write(ivtk,*) ma
          enddo
       enddo
+c     Write velocity vector
+      write(ivtk,'("VECTORS  Velocity  float")')
+      do j=1,nj
+         do i=1,ni
+            write(ivtk,*) q(i,j,2)/q(i,j,1), q(i,j,3)/q(i,j,1), 0.0
+         enddo
+      enddo
+
       close(ivtk)
 
       deallocate(x)
