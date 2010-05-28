@@ -9,7 +9,8 @@ C
       implicit none
       include '../src-adj/header/refval.h'
       character*64 flosolve, adjsolve, deform, defadj, sdummy
-      real cost(100), x(100), fd(100), dvar, cost0, Cd, Cl
+      real cost(100), x(100), x0(100), fd(100), dvar, cost0, Cd, Cl
+      real apgint
       integer   i, j, icftyp, nparam
       integer   ifid, iter
       real      rdummy
@@ -43,8 +44,12 @@ c     Set cost function type
       print*,'Perturbation         =', dvar
 
       ifid = 20
-      open(ifid, file='hicks.in')
-      write(ifid,'(e20.12)')(0.0, i=1,nparam)
+      open(ifid, file='shape0.dat', status='old')
+      read(ifid,*)(x0(i), i=1,nparam)
+      close(ifid)
+
+      open(ifid, file='shape.dat')
+      write(ifid,'(e20.12)')(x0(i), i=1,nparam)
       close(ifid)
 
       print*,'Running flow solver'
@@ -56,6 +61,7 @@ c     Set cost function type
       read(ifid,*) sdummy, rdummy, rdummy, rdummy, rdummy, rdummy
       read(ifid,*) sdummy, Cl
       read(ifid,*) sdummy, Cd
+      read(ifid,*) sdummy, apgint
       close(ifid)
       print*,'Cl, Cd=', Cl, Cd
 
@@ -65,7 +71,7 @@ c     Create file of reference values
       Clref = Cl
       Cdref = Cd
 
-      call costfun(icftyp, cl, cd, cost0)
+      call costfun(icftyp, cl, cd, apgint, cost0)
 
       print*,'Running adjoint flow solver'
       call system(adjsolve)
@@ -75,11 +81,11 @@ c     Create file of reference values
 c     Perturb each variable in turn
       do i=1,nparam
          do j=1,nparam
-            x(j) = 0.0d0
+            x(j) = x0(j)
          enddo
-         x(i) = dvar
+         x(i) = x(i) + dvar
 
-         open(ifid, file='hicks.in')
+         open(ifid, file='shape.dat')
          write(ifid,'(e20.12)')(x(j), j=1,nparam)
          close(ifid)
 
@@ -99,7 +105,7 @@ c     Perturb each variable in turn
          print*,'Cl, Cd=', Cl, Cd
          print*
 
-         call costfun(icftyp, cl, cd, cost(i))
+         call costfun(icftyp, cl, cd, apgint, cost(i))
       enddo
 
 c     One-sided FD
