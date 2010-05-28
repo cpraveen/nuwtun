@@ -11,7 +11,7 @@ C     cost   : Cost function value
 C
       include '../header/refval.h'
       integer icftyp
-      real    cl, cd, cost
+      real    cl, cd, apgint, cost
 
       if(icftyp.eq.1)then
          cost = cl/clref
