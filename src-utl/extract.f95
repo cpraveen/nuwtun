@@ -46,7 +46,7 @@ program extract
          stop
       else
          cp = 2.0d0*(1.0d0 - p)/mach**2/gamma ! actually -Cp
-         write(oid,'(4e20.12)')x,y,z,cp
+         write(oid,'(7e20.12)')x,y,z,cp,u,v,w
       endif
    enddo
 
