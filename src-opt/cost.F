@@ -27,7 +27,7 @@ c     Set cost function type
       call sicftyp(icftyp)
 
       cost = 0.0
-      call costfun(icftyp, cl, cd, cost)
+      call costfun(icftyp, cl, cd, apgint, cost)
       print*,'cd/cd0 =', cd/cdref
       print*,'cl/cl0 =', cl/clref
       print*,'cost = ', cost
