@@ -1,5 +1,5 @@
       subroutine shape_deform(ibeg, jbeg, iend, jend, nhhp, idim, jdim,
-     1                        r, rw, drw, nwp, xw, idx)
+     1                        r, rw, drw, nwp, xw, idx, param_type)
       implicit none
       include 'dim.h'
       integer ibeg, jbeg, iend, jend, nhhp, idim, jdim, nwp
@@ -8,10 +8,13 @@
      3        drw (NDIM,*),
      4        xw  (*)
       integer idx(*)
+      integer param_type
 
       integer i, j, nc, iinc, jinc
       real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t,
-     1        nx, ny, dh, A, B, C, D, HicksHenne
+     1        nx, ny, h, dh, A, B, C, D
+      real    HicksHenne
+      real    kulfan
 
 c     Set increment to +1 or -1
       iinc = 1
@@ -20,10 +23,17 @@ c     Set increment to +1 or -1
       if(jend.lt.jbeg) jinc = -1
 
 c     (x1,y1) = first point, (x2,y2) = second point on curve
-      x1 = r(ibeg,jbeg,1)
-      y1 = r(ibeg,jbeg,2)
-      x2 = r(iend,jend,1)
-      y2 = r(iend,jend,2)
+      if(param_type .eq. 1)then
+         x1 = r(ibeg,jbeg,1)
+         y1 = r(ibeg,jbeg,2)
+         x2 = r(iend,jend,1)
+         y2 = r(iend,jend,2)
+      elseif(param_type .eq. 2)then
+         x1 = 1.0
+         y1 = 0.0
+         x2 = 0.0
+         y2 = 0.0
+      endif
       print*,'   First  point =',x1,y1
       print*,'   Second point =',x2,y2
 
@@ -75,10 +85,17 @@ c           Solve for intersection point (xf,yf) = foot of perpendicular
             yf = -(B*C + A*D)/(A**2 + B**2)
             l  = sqrt( (xf-x1)**2 + (yf-y1)**2 )
             t         = l/ln
-            dh        = HicksHenne(nhhp, xw, t)
+            if(param_type .eq. 1)then
+               dh = HicksHenne(nhhp, xw, t)
+               drw(1,nwp)= dh*nx
+               drw(2,nwp)= dh*ny
+            elseif(param_type .eq. 2)then
+               t = xp
+               h = kulfan(nhhp, xw, t)
+               drw(1,nwp)= 0.0
+               drw(2,nwp)= h - yp
+            endif
 
-            drw(1,nwp)= dh*nx
-            drw(2,nwp)= dh*ny
 100         continue
          enddo
       enddo

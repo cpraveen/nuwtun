@@ -1,6 +1,6 @@
       subroutine shape_deform_b(ibeg, jbeg, iend, jend, nhhp, 
      1                          idim, jdim, r, rw, drw, drwb,
-     2                          nwp, xw, xwb, idx)
+     2                          nwp, xw, xwb, idx, param_type)
       implicit none
       include 'dim.h'
       integer ibeg, jbeg, iend, jend, nhhp, idim, jdim, nwp
@@ -11,10 +11,13 @@
       real    drwb(NDIM,*),
      4        xwb (*)
       integer idx(*)
+      integer param_type
 
       integer i, j, nc, iw, iinc, jinc
       real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t,
-     1        nx, ny, dh, dhb, A, B, C, D, HicksHenne
+     1        nx, ny, dh, dhb, A, B, C, D, h
+      real    HicksHenne
+      real    kulfan
 
 c     Set increment to +1 or -1
       iinc = 1
@@ -23,10 +26,17 @@ c     Set increment to +1 or -1
       if(jend.lt.jbeg) jinc = -1
 
 c     (x1,y1) = first point, (x2,y2) = second point on curve
-      x1 = r(ibeg,jbeg,1)
-      y1 = r(ibeg,jbeg,2)
-      x2 = r(iend,jend,1)
-      y2 = r(iend,jend,2)
+      if(param_type .eq. 1)then
+         x1 = r(ibeg,jbeg,1)
+         y1 = r(ibeg,jbeg,2)
+         x2 = r(iend,jend,1)
+         y2 = r(iend,jend,2)
+      elseif(param_type .eq. 2)then
+         x1 = 1.0
+         y1 = 0.0
+         x2 = 0.0
+         y2 = 0.0
+      endif
       ln = sqrt( (x2-x1)**2 + (y2-y1)**2 )
       if(ln.eq.0.0 .and. nhhp.ne.0)then
          print*,'shape_deform: ln is <= 0'
@@ -65,15 +75,21 @@ c           Solve for intersection point (xf,yf) = foot of perpendicular
             yf = -(B*C + A*D)/(A**2 + B**2)
             l  = sqrt( (xf-x1)**2 + (yf-y1)**2 )
             t         = l/ln
-            dh        = HicksHenne(nhhp, xw, t)
-
-c           Reverse sweep
-
             nc        = nc + 1
             iw        = idx(nc)
             print*,nc,iw
-            dhb       = drwb(1,iw)*nx + drwb(2,iw)*ny
-            call HicksHenne_b(nhhp, xw, xwb, dhb, t)
+            if(param_type .eq. 1)then
+               dh        = HicksHenne(nhhp, xw, t)
+c              Reverse sweep
+               dhb       = drwb(1,iw)*nx + drwb(2,iw)*ny
+               call HicksHenne_b(nhhp, xw, xwb, dhb, t)
+            elseif(param_type .eq. 2)then
+               t = xp
+               h = kulfan(nhhp, xw, t)
+c              Reverse sweep
+               dhb = drwb(2,iw)
+               call kulfan_b(nhhp, xw, xwb, t, dhb)
+            endif
 
 100         continue
          enddo

@@ -85,7 +85,7 @@ c     Count number nwp of boundary points: there may be duplicate points
          ir   = ioffr(iblk)*NDIM + 1
          call shape_deform(ibeg(i), jbeg(i), iend(i), jend(i), nhhp(i),
      1                     idim(iblk), jdim(iblk), r(ir),
-     2                     rw, drw, nwp, xw(1,i), idx(1,i))
+     2                     rw, drw, nwp, xw(1,i), idx(1,i), param_type)
       enddo
       print*,'Number of wall points (inc. duplicates) =',nwp
 
@@ -129,7 +129,7 @@ c     Construct RBF interpolant
          call shape_deform_b(ibeg(i), jbeg(i), iend(i), jend(i),
      1                     nhhp(i), idim(iblk), jdim(iblk), r(ir),
      2                     rw, drw, drwb, nwp, xw(1,i), xwb(1,i),
-     3                     idx(1,i))
+     3                     idx(1,i), param_type)
          do j=1,nhhp(i)
             print*,j,xwb(j,i)
          enddo

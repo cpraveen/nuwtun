@@ -1,4 +1,5 @@
       integer nparammax, nsurfmax, nsurf
+      integer param_type
       parameter(nparammax=100)
       parameter(nsurfmax=100)
       integer ibeg (nsurfmax),
@@ -13,7 +14,7 @@
       real    xwb(nparammax,nsurfmax)
 
       common/iparams/nsurf, ibeg, jbeg, iend, jend, blk, nspt, nhhp,
-     1               nhhpo
+     1               nhhpo, param_type
       common/rparams/xw, xwb
 
       integer nblkmax, nblks

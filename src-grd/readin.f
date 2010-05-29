@@ -17,10 +17,19 @@ c-----------------------------------------------------------------------------
          read(fid,*) blk(i), ibeg(i), jbeg(i), iend(i), jend(i), nhhp(i)
          write(*,10) blk(i), ibeg(i), jbeg(i), iend(i), jend(i), nhhp(i)
       enddo
+      read(fid,*) param_type
       close(fid)
 
-      print*,'Reading Hicks-Henne parameters from hicks.in'
-      open(fid, file='hicks.in', status='old')
+      if(param_type.eq.1)then
+         print*,'Reading HICKS-HENNE parameters from shape.dat'
+      elseif(param_type.eq.2)then
+         print*,'Reading KULFAN parameters from shape.dat'
+      else
+         print*,'Unknown parameterization type'
+         stop
+      endif
+      open(fid, file='shape.dat', status='old')
+
       do i=1,nsurf
          do j=1,nhhp(i)
             read(fid,*) xw(j,i)

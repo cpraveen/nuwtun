@@ -80,7 +80,7 @@ c     Count number nwp of boundary points: there may be duplicate points
          ir   = ioffr(iblk)*NDIM + 1
          call shape_deform(ibeg(i), jbeg(i), iend(i), jend(i), nhhp(i),
      1                     idim(iblk), jdim(iblk), r(ir),
-     2                     rw, drw, nwp, xw(1,i), idx(1,i))
+     2                     rw, drw, nwp, xw(1,i), idx(1,i), param_type)
       enddo
       print*,'Number of wall points (inc. duplicates) =',nwp
 

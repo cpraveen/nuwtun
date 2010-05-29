@@ -18,27 +18,34 @@ ODEF = deform.o       \
        readin.o       \
        rem_dup.o      \
        shape_deform.o \
-       shepard.o \
+       shepard.o      \
        test.o         \
        total_pts.o    \
-       wrtgrd.o
+       wrtgrd.o       \
+       kulfan.o       \
+       decas.o
 
 
 # Object files for deform_adj
-OADJ = deform_adj.o \
-       rbf_eval_b.o \
-       rbf_train_b.o \
-       rdp2d.o        \
-       readin.o \
-       readgrd.o \
-       readgrad.o \
-       shape_deform.o \
+OADJ = deform_adj.o     \
+       rbf_eval_b.o     \
+       rbf_train_b.o    \
+       rdp2d.o          \
+       readin.o         \
+       readgrd.o        \
+       readgrad.o       \
+       shape_deform.o   \
        shape_deform_b.o \
-       rem_dup.o \
-       test.o \
-       total_pts.o \
-       hickshenne.o \
-       hickshenne_b.o \
+       rem_dup.o        \
+       test.o           \
+       total_pts.o      \
+       hickshenne.o     \
+       hickshenne_b.o   \
+       kulfan.o         \
+       kulfan_b.o       \
+       decas.o          \
+       adStack.o        \
+       adBuffer.o
 
 all: $(DEFORM) $(DEFADJ) volume area area_x
 
@@ -76,6 +83,15 @@ totalarea_b.o: routines_area.f95
 						           routines_area.f95
 	@$(FC) -c $(FFLAGS) $(IFORTFLAGS) totalarea_b.f95
 
+kulfan_b.o: kulfan.f decas.f
+	$(TPN) -backward -vars    "x kulfan" \
+                    -outvars "x kulfan" \
+                    -head    kulfan    \
+                    -o       kulfan    \
+                             kulfan.f decas.f
+	@$(FC) -c $(FFLAGS) kulfan_b.f
+
+kulfan_b.o: kulfan.f decas.f
 # Generate *.o from *.f
 %.o: %.f
 	@echo "Compiling " $<
