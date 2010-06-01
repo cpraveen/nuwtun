@@ -4,6 +4,7 @@ c-----------------------------------------------------------------------------
       subroutine readin()
       implicit none
       include 'param.h'
+      include 'kulfan.h'
 
       integer fid, i, j
 
@@ -18,6 +19,12 @@ c-----------------------------------------------------------------------------
          write(*,10) blk(i), ibeg(i), jbeg(i), iend(i), jend(i), nhhp(i)
       enddo
       read(fid,*) param_type
+      if(param_type.eq.2)then ! Some kulfan parameters
+         read(fid,*) N1
+         read(fid,*) N2
+         read(fid,*) yte
+         write(*,'(" N1, N2, yte =",2e12.4,e24.14)') N1, N2, yte
+      endif
       close(fid)
 
       if(param_type.eq.1)then

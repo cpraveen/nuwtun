@@ -14,6 +14,7 @@ c-----------------------------------------------------------------------------
       implicit none
       include 'dim.h'
       include 'param.h'
+      include 'kulfan.h'
       integer total_pts
       real,allocatable:: r(:), dr(:), rw(:,:), drw(:,:), wt(:,:)
       integer,allocatable:: idx(:,:)
