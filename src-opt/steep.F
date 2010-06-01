@@ -50,7 +50,9 @@ c     Set cost function type
       write(*,*)
 
       it       = 0
-      x(it,:)  = 0.0e0
+      open(10, file='shape0.dat', status='old')
+      read(10,*)(x(it,i),i=1,nd)
+      close(10)
       step(it) = step0
 c     Compute cost function and its gradient
       call CostFunVal(icftyp, nd, x(it,:), f(it))
@@ -184,7 +186,7 @@ C
       write(*,*)(x(i),i=1,nd)
 
 c     write parameters to file
-      open(10, file='hicks.in')
+      open(10, file='shape.dat')
       write(10,'(e20.10)')(x(i),i=1,nd)
       close(10)
       print*,'Deforming grid ...'
