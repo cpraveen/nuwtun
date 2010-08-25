@@ -20,7 +20,7 @@ all: nuwtun_flo
 
 #Build the executable
 nuwtun_flo: $(OBJS) $(LIBS)
-	$(FC) -o $(PGM) $(OBJS) $(LIBS)
+	$(FC) $(LDFLAGS) -o $(PGM) $(OBJS) $(LIBS)
 
 #Just build the libraries
 libs: $(LIBS)

@@ -16,13 +16,15 @@ TARGETS=extract ext2cp plot2vtk_2d plot2vtk_3d ad_vs_fd mach_sweep \
 all: $(TARGETS)
 
 ad_vs_fd: ad_vs_fd.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
-	$(FC) -o ad_vs_fd ad_vs_fd.o ../src-adj/rhs/costfun.o ../src-adj/io/sicftyp.o
+	$(FC) $(LDFLAGS) -o ad_vs_fd ad_vs_fd.o \
+		                 ../src-adj/rhs/costfun.o \
+							  ../src-adj/io/sicftyp.o
 
 extract: extract.f95 
-	$(FC) $(F95FLAGS) extract.f95 -o extract
+	$(FC) $(LDFLAGS) $(F95FLAGS) extract.f95 -o extract
 
 ext2cp: ext2cp.f95 
-	$(FC) $(F95FLAGS) ext2cp.f95 -o ext2cp
+	$(FC) $(LDFLAGS) $(F95FLAGS) ext2cp.f95 -o ext2cp
 
 mglvls: mglvls.c
 	$(CC)  -o mglvls mglvls.c
@@ -32,6 +34,8 @@ alpha_sweep: alpha_sweep.f
 
 # Remove object, library and executable files
 clean:
-cleanall:
 	$(RM) -f $(TARGETS)
 	$(RM) -f *.o
+
+cleanall:
+	make clean

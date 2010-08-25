@@ -55,7 +55,7 @@ all:
 	@$(MAKE) nuwtun_adj
 
 nuwtun_adj: $(OBJS) $(LIBS) $(FLOLIB) $(HDIF)
-	$(FC) -o $(PGM) $(OBJS) $(LIBS) $(FLOLIB)
+	$(FC) $(LDFLAGS) -o $(PGM) $(OBJS) $(LIBS) $(FLOLIB)
 
 normal:
 	cd main; $(FC) $(FFLAGS) -c main.F

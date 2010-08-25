@@ -30,7 +30,8 @@ ifeq ($(FC),gfortran)
 endif
 
 ifeq ($(FC),pgf95)
-   FFLAGS = $(CFLAGS) -r8 $(CPPFLAGS)
+   FFLAGS = -fastsse -Mipa=fast,inline -r8 $(CPPFLAGS)
+   LDFLAGS = -Mipa=fast,inline
 endif
 
 # C compiler on Linux

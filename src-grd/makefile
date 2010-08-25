@@ -53,20 +53,20 @@ all: $(TARGETS)
 
 deform: $(ODEF)
 	@echo "Building   deform"
-	@$(FC) -o deform $(ODEF) $(LIBPATH) -llinpack -lblas
+	@$(FC) $(LDFLAGS) -o deform $(ODEF) $(LIBPATH) -llinpack -lblas
 
 deform_adj: $(OADJ)
 	@echo "Building   deform_adj"
-	@$(FC) -o deform_adj $(OADJ) $(LIBPATH) -llinpack -lblas
+	@$(FC) $(LDFLAGS) -o deform_adj $(OADJ) $(LIBPATH) -llinpack -lblas
 
 volume: volume.o
 	@echo "Building   volume"
-	@$(FC) -o volume volume.o $(LIBPATH)
+	@$(FC) $(LDFLAGS) -o volume volume.o $(LIBPATH)
 
 # Area computation routine
 area: area.o common_area.o routines_area.o
 	@echo "Building   area"
-	@$(FC) -o area area.o common_area.o routines_area.o $(LIBPATH)
+	@$(FC) $(LDFLAGS) -o area area.o common_area.o routines_area.o $(LIBPATH)
 
 area.o: common_area.o
 
@@ -75,7 +75,7 @@ OAREA = area_x.o common_area.o routines_area.o totalarea_b.o adBuffer.o \
 		  adStack.o
 area_x: $(OAREA)
 	@echo "Building   area_x"
-	@$(FC) -o area_x $(OAREA) $(LIBPATH)
+	@$(FC) $(LDFLAGS) -o area_x $(OAREA) $(LIBPATH)
 
 totalarea_b.o: routines_area.f95
 	$(TPN) -backward -vars    "r totarea" \
