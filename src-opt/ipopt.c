@@ -21,6 +21,7 @@ typedef struct problem {
    Index nc;          // number of constraints
    char obj[48];      // objective function
    char con[100][48]; // constraints
+   Number *x0;
    Number *xl, *xu;   // lower and upper bounds
    } Problem;
    
@@ -97,7 +98,7 @@ int main()
   init(); // Read parameters from ipopt.in file
 
   /* set the number of variables and allocate space for the bounds */
-  n=param.nd;
+  n = param.nd;
   x_L = (Number*)malloc(sizeof(Number)*n);
   x_U = (Number*)malloc(sizeof(Number)*n);
   /* set the values for the variable bounds */
@@ -151,14 +152,14 @@ int main()
   AddIpoptStrOption(nlp, "mu_strategy", "monotone");
   AddIpoptStrOption(nlp, "output_file", "ipopt.out");
   AddIpoptStrOption(nlp, "hessian_approximation", "limited-memory");
-  AddIpoptIntOption(nlp, "limited_memory_max_history", 6);
+  AddIpoptIntOption(nlp, "limited_memory_max_history", n);
   AddIpoptStrOption(nlp, "print_user_options", "yes");
   AddIpoptIntOption(nlp, "print_level", 5);
   AddIpoptIntOption(nlp, "max_iter", 30);
 
   /* allocate space for the initial point and set the values */
   x = (Number*)malloc(sizeof(Number)*n);
-  for(i=0; i<n; i++) x[i] = 0.0;
+  for(i=0; i<n; i++) x[i] = param.x0[i];
 
   /* allocate space to store the bound multipliers at the solution */
   mult_x_L = (Number*)malloc(sizeof(Number)*n);
@@ -208,25 +209,36 @@ void init(){
    FILE *fpt;
    int i;
    
+   printf("Reading ipopt parameters from ipopt.in ...\n");
    fpt = fopen("ipopt.in", "r");
+   assert(fpt!=NULL);
    fscanf(fpt,"%s", param.obj);
    fscanf(fpt,"%d", &param.nc);
    for(i=0; i<param.nc; i++) fscanf(fpt,"%s", param.con[i]);
    fscanf(fpt,"%d", &param.nd);
    param.xl = (Number*)malloc(sizeof(Number)*param.nd);
    param.xu = (Number*)malloc(sizeof(Number)*param.nd);
+   param.x0 = (Number*)malloc(sizeof(Number)*param.nd);
    for(i=0; i<param.nd; i++)
       fscanf(fpt,"%lf%lf", &param.xl[i], &param.xu[i]);
    fclose(fpt);
    
+   // Read initial set of design variables
+   printf("Reading initial parameters from shape0.dat ...\n");
+   fpt = fopen("shape0.dat", "r");
+   assert(fpt!=NULL);
+   for(i=0; i<param.nd; i++)
+      fscanf(fpt,"%lf", &param.x0[i]);
+   fclose(fpt);
+
    printf("Objective function    = %s\n", param.obj);
    printf("Number of constraints = %d\n", param.nc);
    for(i=0; i<param.nc; i++) 
-      printf("  Constraint[%d]       = %s\n", i+1, param.con[i]);
+      printf("\t Constraint[%d]       = %s\n", i+1, param.con[i]);
    printf("Number of design vars = %d\n", param.nd);
    for(i=0; i<param.nd; i++)
-      printf("  Variable[%2d] = %12.4e  %12.4e\n", 
-             i+1, param.xl[i], param.xu[i]);
+      printf("\t Variable[%2d] = %12.4e  %12.4e  %12.4e\n", 
+             i+1, param.xl[i], param.xu[i], param.x0[i]);
 
 }
 //=============================================================================
@@ -475,7 +487,7 @@ void solve_flo(Index n, Number *x, Result *res)
      add2db(x,dir);
      sprintf(mkdir,"cp -r templatedir %s", dir);
      system(mkdir);
-     sprintf(hicks,"%s/hicks.in", dir);
+     sprintf(hicks,"%s/shape.dat", dir);
      fpt = fopen(hicks, "w");
      for(i=0; i<n; i++) fprintf(fpt,"%20.10e\n", x[i]);
      fclose(fpt);
