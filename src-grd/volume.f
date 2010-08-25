@@ -1,11 +1,10 @@
       program volume
       implicit none
-      real, allocatable :: r(:), vol(:)
+      include 'volume.h'
+      real, allocatable :: r(:)
       integer, allocatable :: idim(:), jdim(:), kdim(:), ioffr(:)
       integer nblks
 
-      integer nvolmax, nsurfmax
-      parameter(nvolmax=10, nsurfmax=100)
       integer i, j, k, ioffrt, imem, ir, blk
       integer nvol, nsurf(nvolmax), iblk(nvolmax,nsurfmax), 
      1        imin(nvolmax,nsurfmax), jmin(nvolmax,nsurfmax),
@@ -33,8 +32,6 @@ c     read volume definition
          enddo
       enddo
       close(10)
-
-      allocate( vol(nvol) )
 
 c     read grid
       imem = 0
@@ -68,18 +65,8 @@ c     read each block of grid points
 
 c     compute volumes
       totvol = 0.0
-      do i=1,nvol
-         vol(i) = 0.0
-         do j=1,nsurf(i)
-            blk= iblk(i,j)
-            ir = ioffr(blk)*3 + 1
-            call surfvol(idim(blk),jdim(blk),kdim(blk),r(ir),
-     1                   imin(i,j),jmin(i,j),kmin(i,j),
-     2                   imax(i,j),jmax(i,j),kmax(i,j),vol(i))
-         enddo
-         totvol = totvol + vol(i)
-         print*,i,vol(i)
-      enddo
+      call totalvolume(nvol,nsurf,iblk,ioffr,idim,jdim,kdim,r,
+     1                 imin,jmin,kmin,imax,jmax,kmax,totvol)
       print*, 'VOL      ', totvol
 
       deallocate( idim )
@@ -87,7 +74,6 @@ c     compute volumes
       deallocate( kdim )
       deallocate( ioffr)
       deallocate( r    )
-      deallocate( vol  )
 
       stop
       end
@@ -107,6 +93,38 @@ c-----------------------------------------------------------------------------
 
       return
       end
+c-----------------------------------------------------------------------------
+c-----------------------------------------------------------------------------
+      subroutine totalvolume(nvol,nsurf,iblk,ioffr,idim,jdim,kdim,r,
+     1                       imin,jmin,kmin,imax,jmax,kmax,totvol)
+      implicit none
+      include 'volume.h'
+      integer ioffr(*), idim(*), jdim(*), kdim(*)
+      real    r(*)
+      integer nvol, nsurf(nvolmax), iblk(nvolmax,nsurfmax), 
+     1        imin(nvolmax,nsurfmax), jmin(nvolmax,nsurfmax),
+     2        kmin(nvolmax,nsurfmax), imax(nvolmax,nsurfmax),
+     3        jmax(nvolmax,nsurfmax), kmax(nvolmax,nsurfmax)
+      real    totvol
+
+      integer i, j, ir, blk
+      real    vol(nvol)
+
+      do i=1,nvol
+         vol(i) = 0.0
+         do j=1,nsurf(i)
+            blk= iblk(i,j)
+            ir = ioffr(blk)*3 + 1
+            call surfvol(idim(blk),jdim(blk),kdim(blk),r(ir),
+     1                   imin(i,j),jmin(i,j),kmin(i,j),
+     2                   imax(i,j),jmax(i,j),kmax(i,j),vol(i))
+         enddo
+         totvol = totvol + vol(i)
+      enddo
+
+      return
+      end
+
 c-----------------------------------------------------------------------------
 c     Computes surface integral
 c-----------------------------------------------------------------------------

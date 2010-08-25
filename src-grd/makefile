@@ -47,7 +47,9 @@ OADJ = deform_adj.o     \
        adStack.o        \
        adBuffer.o
 
-all: $(DEFORM) $(DEFADJ) volume area area_x
+TARGETS = $(DEFORM) $(DEFADJ) volume area area_x
+
+all: $(TARGETS)
 
 deform: $(ODEF)
 	@echo "Building   deform"
@@ -110,5 +112,6 @@ adStack.o: $(TAPENADE_HOME)/ADFirstAidKit/adStack.c
 
 clean:
 cleanall:
-	$(RM) -f $(ODEF) $(OADJ) $(DEFORM) $(DEFADJ)
-	$(RM) -f $(OAREA) *.mod *.msg *~
+	$(RM) -f *.o
+	$(RM) -f *.mod *.msg *~
+	$(RM) -f $(TARGETS)
