@@ -263,12 +263,13 @@ C
             PZ = PXI*S(JN,KN,IN,3,1)*S(JN,KN,IN,4,1) + 
      1           PET*S(JN,KN,IN,3,2)*S(JN,KN,IN,4,2) + 
      2           PZE*S(JN,KN,IN,3,3)*S(JN,KN,IN,4,3)
+            R  = Q(JBC,KBC,IBC,1)
             U  = Q(JBC,KBC,IBC,2)
             V  = Q(JBC,KBC,IBC,3) 
             W  = Q(JBC,KBC,IBC,4) 
             SP = SQRT(U**2 + V**2 + W**2) + 1.0E-8
             P1 = (PX*U + PY*V + PZ*W)/SP
-            P2 = MAX(0.0E0, P1)/SP**2
+            P2 = MAX(0.0E0, P1)/SP**2/R
             P3 = P2 * S(JM,KM,IM,4,IDIR)
 C             PRINT*
 C             PRINT*,'INJNKN ',IN,JN,KN
