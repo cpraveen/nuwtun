@@ -36,6 +36,9 @@ c     (x1,y1) = first point, (x2,y2) = second point on curve
          y1 = 0.0
          x2 = 0.0
          y2 = 0.0
+      elseif(param_type .eq. 3)then
+         print*,'shape_deform_b.f:  param_type=3 is not finished'
+         stop
       endif
       ln = sqrt( (x2-x1)**2 + (y2-y1)**2 )
       if(ln.eq.0.0 .and. nhhp.ne.0)then

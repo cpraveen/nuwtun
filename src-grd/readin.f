@@ -31,6 +31,8 @@ c-----------------------------------------------------------------------------
          print*,'Reading HICKS-HENNE parameters from shape.dat'
       elseif(param_type.eq.2)then
          print*,'Reading KULFAN parameters from shape.dat'
+      elseif(param_type.eq.3)then
+         print*,'Reading CLAMPED CUBIC SPLINE parameters from shape.dat'
       else
          print*,'Unknown parameterization type'
          stop

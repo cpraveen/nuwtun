@@ -1,3 +1,6 @@
+c param_type = 1, Hicks-Henne
+c              2, Kulfan
+c              3, Clamped cubic spline
       subroutine shape_deform(ibeg, jbeg, iend, jend, nhhp, idim, jdim,
      1                        r, rw, drw, nwp, xw, idx, param_type)
       implicit none
@@ -13,6 +16,9 @@
       integer i, j, nc, iinc, jinc
       real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t,
      1        nx, ny, h, dh, A, B, C, D
+c     For cubic spline
+      real    tau(nhhp+2), cc(4,nhhp+2)
+      real    ppvalu
       real    HicksHenne
       real    kulfan
 
@@ -33,6 +39,23 @@ c     (x1,y1) = first point, (x2,y2) = second point on curve
          y1 = 0.0
          x2 = 0.0
          y2 = 0.0
+      elseif(param_type .eq. 3)then
+         x1 = r(ibeg,jbeg,1)
+         y1 = r(ibeg,jbeg,2)
+         x2 = r(iend,jend,1)
+         y2 = r(iend,jend,2)
+         cc(1,1) = 0.0
+         tau(1) = 0.0
+         do i=1,nhhp
+            cc(1,i+1) = xw(i)
+            tau(i+1)  = (i*1.0)/(nhhp+1)
+         enddo
+         cc(1,nhhp+2) = 0.0
+         tau(nhhp+2)      = 1.0
+c        zero slope at end points: clamped spline
+         cc(2,1)      = 0.0
+         cc(2,nhhp+2) = 0.0
+         call cubspl(tau,cc,nhhp+2,1,1)
       endif
       print*,'   First  point =',x1,y1
       print*,'   Second point =',x2,y2
@@ -94,6 +117,10 @@ c           Solve for intersection point (xf,yf) = foot of perpendicular
                h = kulfan(nhhp, xw, t)
                drw(1,nwp)= 0.0
                drw(2,nwp)= h - yp
+            elseif(param_type .eq. 3)then
+               dh = ppvalu(tau,cc,nhhp+1,4,t,0)
+               drw(1,nwp)= dh*nx
+               drw(2,nwp)= dh*ny
             endif
 
 100         continue

@@ -23,7 +23,10 @@ ODEF = deform.o       \
        total_pts.o    \
        wrtgrd.o       \
        kulfan.o       \
-       decas.o
+       decas.o        \
+       cubspl.o       \
+       interv.o       \
+       ppvalu.o
 
 
 # Object files for deform_adj
@@ -44,6 +47,9 @@ OADJ = deform_adj.o     \
        kulfan.o         \
        kulfan_b.o       \
        decas.o          \
+       cubspl.o         \
+       interv.o         \
+       ppvalu.o         \
        adStack.o        \
        adBuffer.o
 
@@ -111,7 +117,9 @@ adStack.o: $(TAPENADE_HOME)/ADFirstAidKit/adStack.c
 	@echo "Compiling " $<; $(CC) -c $<
 
 clean:
-cleanall:
 	$(RM) -f *.o
 	$(RM) -f *.mod *.msg *~
 	$(RM) -f $(TARGETS)
+
+cleanall:
+	make clean
