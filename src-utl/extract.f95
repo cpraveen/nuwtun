@@ -45,6 +45,7 @@ program extract
          close(fid)
          stop
       else
+         ! p read above is actually p/pinf
          cp = 2.0d0*(1.0d0 - p)/mach**2/gamma ! actually -Cp
          write(oid,'(7e20.12)')x,y,z,cp,u,v,w
       endif
