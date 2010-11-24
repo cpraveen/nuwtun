@@ -406,6 +406,7 @@ C
       ITRSMX    = MXHIST + 1
       IFFORC    = INO
       IFRCPR    = IYES
+      NMOMENT   = 0
 C
 C     Control of FIX routines for positivity preservation
 C
@@ -621,6 +622,24 @@ C
          ENDIF
       ELSE IF (VAR .EQ. 'REFERENCE AREA') THEN
          AREARF = VALUE
+      ELSE IF (VAR .EQ. 'MOMENT') THEN
+         NMOMENT = INT(VALUE)
+         IF(NMOMENT.LE.0)THEN
+            WRITE (IOUT,'(1X,"NMOMENT IS NEGATIVE")')
+            INPERR = INPERR + 1
+         ENDIF
+         DO IMOM=1,NMOMENT
+            READ (INPUT,*,END=990,ERR=995) AXISNAME(IMOM),
+     1         AMOMAXIS(IMOM,1,:), AMOMAXIS(IMOM,2,:)
+            WRITE(IOUT,'(10X,A15,3E12.4)') AXISNAME(IMOM),
+     1         AMOMAXIS(IMOM,1,:)
+            WRITE(IOUT,'(25X,3E12.4)') AMOMAXIS(IMOM,2,:)
+            ALEN = SQRT((AMOMAXIS(IMOM,2,1)-AMOMAXIS(IMOM,1,1))**2 +
+     1                  (AMOMAXIS(IMOM,2,2)-AMOMAXIS(IMOM,1,2))**2 +
+     2                  (AMOMAXIS(IMOM,2,3)-AMOMAXIS(IMOM,1,3))**2)
+            AMOMAXIS(IMOM,3,:)=(AMOMAXIS(IMOM,2,:)-AMOMAXIS(IMOM,1,:))/
+     1                         ALEN
+         ENDDO
       ELSE IF (VAR .EQ. 'MULTIGRID LEVELS') THEN
          DO 54 ICFS = 1, NXCFS
             MGLVLS(ICFS) = MAX ((INT(VALUE) + 1 - ICFS), 1)

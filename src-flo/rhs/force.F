@@ -1,7 +1,7 @@
       SUBROUTINE FRCINT (ITURB, NBLKS, IDIM, JDIM, KDIM, 
      1                   IOFF,  IOFFS, IOFFQ, IOFFP,
      2                   Q, PROPS, S, RC, NXBCS, NBCS, IBCDAT, 
-     3                   FORCE, CL, CD)
+     3                   FORCE, CL, CD, FMOMENT)
 C
 C Routine to loop over all blocks and all surfaces integrating the forces
 C on the surface for the current grid level.  
@@ -72,6 +72,7 @@ C
      1          IBCDAT(10,NXBCS,NBLKS)
 C
       DIMENSION FORCE (3)
+      DIMENSION FMOMENT (*)
 C
       LOGICAL   VISCOS
 C
@@ -89,6 +90,12 @@ C
       FORCE(2) = 0.E0
       FORCE(3) = 0.E0
 C
+C 0.  Initialize moments to zero
+C
+      DO IMOM=1,NMOMENT
+         FMOMENT(IMOM) = 0.E0
+      ENDDO
+C
 C 1.  Calculate forces integrated over all blocks
 C
       DO 190 IBLK = 1, NBLKS
@@ -103,7 +110,7 @@ C
      2               (IBCTYP .EQ. IWALL .OR. IBCTYP .EQ. IWALFN)) ) THEN
                CALL FRCEL (IDIM(IBLK), JDIM(IBLK), KDIM(IBLK), 
      1                     Q(IQ), PROPS(IP), S(IS), RC(IR), 
-     2                     IBCDAT(1,IBC,IBLK), VISCOS, FORCE)
+     2                     IBCDAT(1,IBC,IBLK), VISCOS, FORCE, FMOMENT)
             ENDIF
   150    CONTINUE
   190 CONTINUE
@@ -139,7 +146,7 @@ C
 
 
       SUBROUTINE FRCEL (IDIM, JDIM, KDIM, Q, PROPS, S, RC, 
-     1                  IBCDAT, VISCOS, FORCE)
+     1                  IBCDAT, VISCOS, FORCE, FMOMENT)
 C
 C Routine to calculate the increment to the forces for the current surface
 C element.
@@ -183,6 +190,10 @@ C
       DIMENSION IBCDAT(10)
 C
       DIMENSION FORCE (3)
+C
+      DIMENSION FMOMENT (*)
+C
+      DIMENSION FMOM(3), RMOM(3)
 C
       LOGICAL   VISCOS
 C
@@ -269,9 +280,28 @@ C Calculate the pressure force
 C Minus sign since pressure acts opposite direction of face normal
 C
             FPRESS   = PW * S(JM,KM,IM,4,IDIR) * SGNM
-            FORCE(1) = FORCE(1) - FPRESS * S(JM,KM,IM,1,IDIR)
-            FORCE(2) = FORCE(2) - FPRESS * S(JM,KM,IM,2,IDIR)
-            FORCE(3) = FORCE(3) - FPRESS * S(JM,KM,IM,3,IDIR)
+            FX       = FPRESS * S(JM,KM,IM,1,IDIR)
+            FY       = FPRESS * S(JM,KM,IM,2,IDIR)
+            FZ       = FPRESS * S(JM,KM,IM,3,IDIR)
+            FORCE(1) = FORCE(1) - FX
+            FORCE(2) = FORCE(2) - FY
+            FORCE(3) = FORCE(3) - FZ
+
+            DO IMOM=1,NMOMENT
+C Moment arm
+               RMOM(1) = RC(JM,KM,IM,1) - AMOMAXIS(IMOM,1,1)
+               RMOM(2) = RC(JM,KM,IM,2) - AMOMAXIS(IMOM,1,2)
+               RMOM(3) = RC(JM,KM,IM,3) - AMOMAXIS(IMOM,1,3)
+C Moment arm x force
+               FMOM(1) = RMOM(2) * FZ - RMOM(3) * FY
+               FMOM(2) = RMOM(3) * FX - RMOM(1) * FZ
+               FMOM(3) = RMOM(1) * FY - RMOM(2) * FX
+C Dot product with moment axis
+               FMOMENT(IMOM) = FMOMENT(IMOM) + 
+     1                         FMOM(1) * AMOMAXIS(IMOM,3,1) +
+     2                         FMOM(2) * AMOMAXIS(IMOM,3,2) +
+     3                         FMOM(3) * AMOMAXIS(IMOM,3,3)
+            ENDDO
   210    CONTINUE
   220 CONTINUE
 C

@@ -6,6 +6,7 @@ PGM  = nuwtun_flo
 #Object files
 MAINF = $(wildcard main/*.F)
 OBJS  = $(patsubst %.F,%.o,$(MAINF))
+HDRS  = $(wildcard header/*.h)
 
 #Libraries
 LIBS = rhs/.lib.a      \
@@ -29,28 +30,28 @@ libs: $(LIBS)
 ##############################################################################
 #Rule to make individual .lib.a files
 ##############################################################################
-rhs/.lib.a: $(wildcard rhs/*.F)
+rhs/.lib.a: $(wildcard rhs/*.F) $(HDRS)
 	@cd rhs; $(MKLIB)
 #-----------------------------------------------------------------------------
-bc/.lib.a: $(wildcard bc/*.F)
+bc/.lib.a: $(wildcard bc/*.F) $(HDRS)
 	@cd bc; $(MKLIB)
 #-----------------------------------------------------------------------------
-explicit/.lib.a: $(wildcard explicit/*.F)
+explicit/.lib.a: $(wildcard explicit/*.F) $(HDRS)
 	@cd explicit; $(MKLIB)
 #-----------------------------------------------------------------------------
-implicit/.lib.a: $(wildcard implicit/*.F)
+implicit/.lib.a: $(wildcard implicit/*.F) $(HDRS)
 	@cd implicit; $(MKLIB)
 #-----------------------------------------------------------------------------
-io/.lib.a: $(wildcard io/*.F)
+io/.lib.a: $(wildcard io/*.F) $(HDRS)
 	@cd io; $(MKLIB)
 #-----------------------------------------------------------------------------
-turb/.lib.a: $(wildcard turb/*.F)
+turb/.lib.a: $(wildcard turb/*.F) $(HDRS)
 	@cd turb; $(MKLIB)
 #-----------------------------------------------------------------------------
-march/.lib.a: $(wildcard march/*.F)
+march/.lib.a: $(wildcard march/*.F) $(HDRS)
 	@cd march; $(MKLIB)
 #-----------------------------------------------------------------------------
-main/%.o: main/%.F
+main/%.o: main/%.F $(HDRS)
 	@echo "Compiling " main/$*.F; cd main; $(FC) $(FFLAGS) -c $*.F
 
 ##############################################################################

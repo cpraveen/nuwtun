@@ -488,3 +488,8 @@ C Data used to calculate indices
 C     IKD    : Kronecker Delta array (IKD_ij = 1 if i=j, = 0 if i not = j)
 C     ICY    : Cyclical array
 C
+C Data used to calculate moment
+C Nodes AMOMAXIS(I,1,1:3) and AMOMAXIS(I,2,1:3) define I'th axis about which 
+C moment is calculated
+      CHARACTER*80 AXISNAME(100)
+      COMMON /MOMDATA/ AMOMAXIS(100,3,3), NMOMENT, AXISNAME

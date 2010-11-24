@@ -9,8 +9,8 @@ CFLAGS   = -O3
 CPPFLAGS = -DCPU_TIME
 
 #Fortran compiler: g95, ifort, gfortran, pgf95
-FC       = ifort
-MPIFC    = mpif90
+FC       = gfortran
+MPIFC    = openmpif90
 
 # Flags for compileing .f95 files with ifort
 IFORTFLAGS =

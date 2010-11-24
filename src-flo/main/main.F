@@ -148,7 +148,8 @@ C     FORCE   -> Forces integrated in x, y, z directions
 C     RCNTR   -> Location to calculate point vortex and moments about
 C
       DIMENSION FORCE(3),
-     1          RCNTR(3)
+     1          RCNTR(3),
+     2          FMOMENT(100)
 C
 C     Data for diagnostic output
 C
@@ -1196,7 +1197,7 @@ C
      2                   IOFF(1,ILVL),  IOFFS(1,ILVL),
      3                   IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4                   Q, PROPS, S, R, NXBCS, NBCS, 
-     5                   IBCDAT(1,1,1,ILVL), FORCE, CL, CD)
+     5                   IBCDAT(1,1,1,ILVL), FORCE, CL, CD, FMOMENT)
          ENDIF
       ENDIF
 C
@@ -2156,7 +2157,8 @@ C
      2                               IOFF(1,ILVL),  IOFFS(1,ILVL),
      3                               IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4                               Q, PROPS, S, R, NXBCS, NBCS, 
-     5                               IBCDAT(1,1,1,ILVL), FORCE, CL, CD)
+     5                               IBCDAT(1,1,1,ILVL), FORCE, CL, CD
+     6                               FMOMENT)
                            ENDIF
 C
 C     Output only on LAST sub-iteration
