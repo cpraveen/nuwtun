@@ -240,6 +240,7 @@ C
       TINF   = 450.E0
       TWALL  = 1060.E0
       AREARF = 1.E0
+      ALENRF = 1.E0
 C
 C     Location of point vortex boundary condition and location for moments
 C
@@ -622,6 +623,8 @@ C
          ENDIF
       ELSE IF (VAR .EQ. 'REFERENCE AREA') THEN
          AREARF = VALUE
+      ELSE IF (VAR .EQ. 'REFERENCE LENGTH') THEN
+         ALENRF = VALUE
       ELSE IF (VAR .EQ. 'MOMENT') THEN
          NMOMENT = INT(VALUE)
          IF(NMOMENT.LE.0)THEN

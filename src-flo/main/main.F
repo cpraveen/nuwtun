@@ -2157,7 +2157,7 @@ C
      2                               IOFF(1,ILVL),  IOFFS(1,ILVL),
      3                               IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4                               Q, PROPS, S, R, NXBCS, NBCS, 
-     5                               IBCDAT(1,1,1,ILVL), FORCE, CL, CD
+     5                               IBCDAT(1,1,1,ILVL), FORCE, CL, CD,
      6                               FMOMENT)
                            ENDIF
 C
@@ -2167,17 +2167,20 @@ C
                               IF (IFRCPR .EQ. IYES) THEN
                                  IF (ITIMED .EQ. ISTDY) THEN
                                     WRITE (IOUT,2480) ITCUR, IT, CL, CD
-                                    WRITE (ICLCD,*) ITCUR, IT, CL, CD
+                                    WRITE (ICLCD,2486)ITCUR, IT, CL, CD,
+     1                                 (FMOMENT(IMOM),IMOM=1,NMOMENT)
                                  ELSE
                                     WRITE (IOUT,2485) ITCUR, IT, TIME, 
      1                                                CL, CD
-                                    WRITE (ICLCD,*) ITCUR, IT, TIME,
-     1                                              CL, CD
+                                    WRITE (ICLCD,2486) ITCUR, IT, TIME,
+     1                                              CL, CD, 
+     2                                   (FMOMENT(IMOM),IMOM=1,NMOMENT)
                                  ENDIF
                               ENDIF
  2480 FORMAT (' ','Iter =',2I8,' CL = ',1PE13.6,' CD = ',1PE13.6)
  2485 FORMAT (' ','Iter =',2I8,' Time =',1PE12.5,
      1                         ' CL = ',1PE13.6,' CD = ',1PE13.6)
+ 2486 FORMAT (2I8,100E15.6)
                            ENDIF
                         ENDIF
 C
@@ -2402,7 +2405,7 @@ C
 C
 C     Write global result
 C
-      CALL RESULT(ITCUR, R2NORM, CL, CD, APGINT)
+      CALL RESULT(ITCUR, R2NORM, CL, CD, APGINT, FMOMENT)
 C
 C     Calculate adverse pressure gradient integral
 C

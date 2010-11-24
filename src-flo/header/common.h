@@ -86,7 +86,7 @@ C     GAMM1 : Gamma - 1
 C     GSQM1 : (Gamma**2) - 1
 C
       COMMON /FLOW/   FSMACH, ALPHA, BETA, RE, PR, PRT, TINF, TWALL,
-     1                AREARF
+     1                AREARF, ALENRF
 C Flow definition quantities
 C     FSMACH : Free Stream Mach Number
 C     ALPHA  : Angle of attack relative to the x-axis
@@ -97,6 +97,7 @@ C     PRT    : Turbulent Prandtl number
 C     TINF   : Free Stream Temperature
 C     TWALL  : Wall Temperature
 C     AREARF : Wetted reference area used in calculation of coefficients
+C     ALENRF : Reference length used in calculation of moment coefficients
 C
       COMMON /QREF/   RHOINF, UINF, VINF, WINF, PREF, EINF, AINF, UREF
 C Non-Dimensional Free Stream Flow Quantities

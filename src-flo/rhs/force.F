@@ -124,6 +124,13 @@ C
       FORCE(2) = FORCE(2) * CONST
       FORCE(3) = FORCE(3) * CONST
 C
+C     Normalize moment
+C
+      CONST = CONST / ALENRF
+      DO IMOM=1,NMOMENT
+         FMOMENT(IMOM) = FMOMENT(IMOM) * CONST
+      ENDDO
+C
 C     C_L and C_D: Defined relative to the freestream velocity direction
 C
       PI     = ACOS(-1.E0)
