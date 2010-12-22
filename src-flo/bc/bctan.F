@@ -270,7 +270,7 @@ C
 C
 C     Apply inviscid wall boundary condition for given face
 C
-      SUBROUTINE BCTINV2(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+      SUBROUTINE BCTINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
      1                  IBCN2, IBCM, IC1, IC2, IC3, I2, I3, Q, S)
       INCLUDE '../header/common.h'
 C
@@ -327,7 +327,7 @@ C
 C     Apply inviscid wall boundary condition for given face
 C     using normal momentum equation
 C
-      SUBROUTINE BCTINV(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
+      SUBROUTINE BCTINV2(IDIM, JDIM, KDIM, IDIR, IBCPT, IBCPT2, IBCN, 
      1                  IBCN2, IBCM, IC1, IC2, IC3, I2, I3, Q, S)
       INCLUDE '../header/common.h'
 C
