@@ -11,6 +11,16 @@
      2        kmin(nvolmax,nsurfmax), imax(nvolmax,nsurfmax),
      3        jmax(nvolmax,nsurfmax), kmax(nvolmax,nsurfmax)
       real    totvol
+      character grid_format*32, grid_file*32
+
+      if(iargc() .ne. 2)then
+         print*,'Usage: volume grid_format grid_file'
+         print*,'       grid_format = plot3d or hyena'
+         stop
+      endif
+
+      call getarg(1, grid_format)
+      call getarg(2, grid_file)
 
 c     read volume definition
       write(*,*)'Reading volume.in'
@@ -41,8 +51,12 @@ c     read grid
       allocate( jdim(nblks) )
       allocate( kdim(nblks) )
       allocate( ioffr(nblks) )
-      write(*,*)'Reading grid.fmt'
-      open(10, file='grid.fmt', status='old')
+      write(*,*)'Reading grid file ', grid_file
+      open(10, file=grid_file, status='old')
+      if(grid_format.eq.'hyena')then
+         read(10,*) nblks
+         if(nblks.ne.1) stop "Error: cannot read multi-block grid"
+      endif
       do i=1,nblks
          read(10,*) idim(i), jdim(i), kdim(i)
          imem = imem + idim(i)*jdim(i)*kdim(i)
@@ -58,7 +72,14 @@ c     create offset array
 c     read each block of grid points
       do i=1,nblks
          ir = ioffr(i)*3 + 1
-         call rdp3d(10, idim(i), jdim(i), kdim(i), r(ir))
+         if(grid_format.eq.'plot3d')then
+            call rdp3d(10, idim(i), jdim(i), kdim(i), r(ir))
+         else if(grid_format.eq.'hyena')then
+            call rdhyena(10, idim(i), jdim(i), kdim(i), r(ir))
+         else
+            print*,'Error: Unknown grid format ', grid_format
+            stop
+         endif
       enddo
       close(10)
 
@@ -79,7 +100,7 @@ c     compute volumes
       end
 
 c-----------------------------------------------------------------------------
-c     Read one block of 3-d grid
+c     Read one block of 3-d plot3d grid
 c-----------------------------------------------------------------------------
       subroutine rdp3d(fid, idim, jdim, kdim, r)
       implicit none
@@ -90,6 +111,21 @@ c-----------------------------------------------------------------------------
       integer i, j, k, l
 
       read(fid,*) ((((r(i,j,k,l),i=1,idim),j=1,jdim),k=1,kdim),l=1,3)
+
+      return
+      end
+c-----------------------------------------------------------------------------
+c     Read one block of 3-d hyena grid
+c-----------------------------------------------------------------------------
+      subroutine rdhyena(fid, idim, jdim, kdim, r)
+      implicit none
+      include 'dim.h'
+      integer fid, idim, jdim, kdim
+      real    r(idim,jdim,kdim,3)
+
+      integer i, j, k, l
+
+      read(fid,*) ((((r(i,j,k,l),l=1,3),i=1,idim),j=1,jdim),k=1,kdim)
 
       return
       end
