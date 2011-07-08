@@ -11,7 +11,7 @@ endif
 
 # Executables to generate
 TARGETS=extract ext2cp plot2vtk_2d plot2vtk_3d ad_vs_fd mach_sweep \
-		  alpha_sweep mglvls
+		  alpha_sweep mglvls plot3d_scale
 
 all: $(TARGETS)
 
@@ -28,6 +28,9 @@ ext2cp: ext2cp.f95
 
 mglvls: mglvls.c
 	$(CC)  -o mglvls mglvls.c
+
+plot3d_scale: plot3d_scale.f
+	$(FC)  $(FFLAGS) -o plot3d_scale plot3d_scale.f
 
 alpha_sweep: alpha_sweep.f
 	$(MPIFC)  -o alpha_sweep alpha_sweep.f
