@@ -300,9 +300,11 @@ C Moment arm
                RMOM(2) = RC(JM,KM,IM,2) - AMOMAXIS(IMOM,1,2)
                RMOM(3) = RC(JM,KM,IM,3) - AMOMAXIS(IMOM,1,3)
 C Moment arm x force
-               FMOM(1) = RMOM(2) * FZ - RMOM(3) * FY
-               FMOM(2) = RMOM(3) * FX - RMOM(1) * FZ
-               FMOM(3) = RMOM(1) * FY - RMOM(2) * FX
+C Negative sign required since we need force on wing
+C See also computation of FORCE(*) above
+               FMOM(1) = -(RMOM(2) * FZ - RMOM(3) * FY)
+               FMOM(2) = -(RMOM(3) * FX - RMOM(1) * FZ)
+               FMOM(3) = -(RMOM(1) * FY - RMOM(2) * FX)
 C Dot product with moment axis
                FMOMENT(IMOM) = FMOMENT(IMOM) + 
      1                         FMOM(1) * AMOMAXIS(IMOM,3,1) +
