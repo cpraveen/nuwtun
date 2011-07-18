@@ -12,7 +12,9 @@ C
       integer, allocatable :: proc(:)
       integer   ifid, ifm, iter, i, imax, j, k
       integer   rank, ierr, nproc, n, remainder, n_elem
-      real, allocatable ::  alpha(:), C_l(:), C_d(:)
+      integer   stat
+      logical   has_C_m
+      real, allocatable ::  alpha(:), C_l(:), C_d(:), ap_grad(:), C_m(:)
       real      Cd, Cl
       real      rdummy
       real      alpha_min, alpha_max, dalpha
@@ -50,6 +52,8 @@ c     Check file exists
 
       allocate (alpha(0:imax), proc(0:imax), C_l(0:imax))
       allocate (C_d(0:imax), dir(0:imax))
+      allocate (ap_grad(0:imax))
+      allocate (C_m(0:imax))
 
 c     Loop over different angle of attack
       do i = 0, imax
@@ -114,6 +118,16 @@ c        Read solution
      +         ,rdummy
               read(ifid,*) sdummy, C_l(i)
               read(ifid,*) sdummy, C_d(i)
+              read(ifid,*) sdummy, ap_grad(i)
+              read(ifid,*,IOSTAT=stat) sdummy, C_m(i)
+              if(stat.gt.0)then
+                 print*,'Check file, something wrong'
+                 stop
+              else if(stat.lt.0)then
+                 has_C_m = .false.
+              else
+                 has_C_m = .true.
+              endif
               close(ifid)
           end if
       end do
@@ -123,6 +137,10 @@ c        Read solution
      +      ,ierr)
           call MPI_Bcast(C_l(i), 1, MPI_real, proc(i), MPI_comm_world
      +      ,ierr)
+          if(has_C_m) then
+             call MPI_Bcast(C_m(i), 1, MPI_real, proc(i), MPI_comm_world
+     +         ,ierr)
+          endif
       end do
       
       
@@ -130,7 +148,11 @@ c     Save Cl/Cd into file
       if (rank==0) then
          open(ifm, file="alpha.dat")
          do i = 0,imax
-            write(ifm,*) alpha(i), C_l(i), C_d(i)
+            if(has_C_m)then
+               write(ifm,*) alpha(i), C_l(i), C_d(i), C_m(i)
+            else
+               write(ifm,*) alpha(i), C_l(i), C_d(i)
+            endif
          end do
          close(ifm)
       end if
