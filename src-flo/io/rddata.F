@@ -497,7 +497,7 @@ C
 C     Solution Procedure
 C
       ELSE IF (VAR .EQ. 'SOLVER') THEN
-         READ (INPUT,*,END=990,ERR=995) SOLVER
+         READ (INPUT,*,END=990,ERR=995) SOLVER, VALUE
          IF (SOLVER .EQ. 'RK') THEN
             ISOLVR    = IRKN
             NSTAGE    = INT (VALUE)
