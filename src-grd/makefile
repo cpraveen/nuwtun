@@ -26,7 +26,10 @@ ODEF = deform.o       \
        decas.o        \
        cubspl.o       \
        interv.o       \
-       ppvalu.o
+       ppvalu.o       \
+       dgeco.o        \
+       dgefa.o        \
+       dgesl.o
 
 
 # Object files for deform_adj
@@ -50,6 +53,9 @@ OADJ = deform_adj.o     \
        cubspl.o         \
        interv.o         \
        ppvalu.o         \
+       dgeco.o          \
+       dgefa.o          \
+       dgesl.o          \
        adStack.o        \
        adBuffer.o
 
@@ -57,13 +63,23 @@ TARGETS = $(DEFORM) $(DEFADJ) volume area area_x
 
 all: $(TARGETS)
 
+# Compile linpack files
+dgeco.o: dgeco.f
+	$(FC) -O3 -c dgeco.f
+
+dgefa.o: dgefa.f
+	$(FC) -O3 -c dgefa.f
+
+dgesl.o: dgesl.f
+	$(FC) -O3 -c dgesl.f
+
 deform: $(ODEF)
 	@echo "Building   deform"
-	@$(FC) $(LDFLAGS) -o deform $(ODEF) $(LIBPATH) -llinpack -lblas
+	@$(FC) $(LDFLAGS) -o deform $(ODEF) $(LIBPATH) -lblas
 
 deform_adj: $(OADJ)
 	@echo "Building   deform_adj"
-	@$(FC) $(LDFLAGS) -o deform_adj $(OADJ) $(LIBPATH) -llinpack -lblas
+	@$(FC) $(LDFLAGS) -o deform_adj $(OADJ) $(LIBPATH) -lblas
 
 volume: volume.o
 	@echo "Building   volume"
