@@ -1285,7 +1285,8 @@ C
       DIMENSION Q     (0:JDIM+2,0:KDIM+2,0:IDIM+2,NQ),
      1          PROPS (NPPTS,NP),
      2          S     (0:JDIM+1,0:KDIM+1,0:IDIM+1,4,3),
-     3          DTJ   (JDIM,KDIM,IDIM)
+     3          VOL   (0:JDIM+1,0:KDIM+1,0:IDIM+1),
+     4          DTJ   (JDIM,KDIM,IDIM)
 C
       DIMENSION DQP   (MXSECT,NQ),
      1          DQM   (MXSECT,NQ),
