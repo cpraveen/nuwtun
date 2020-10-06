@@ -187,6 +187,10 @@ C
      2                S(J,K-1,I,3,3)*S(J,K-1,I,4,3) ) *
      3              ( R(J,K,I,3) - R(J-1,K-1,I-1,3) ) 
                VOL(J,K,I) = (DX + DY + DZ) / 3.E0
+               IF(VOL(J,K,I).le.0.0E0)THEN
+                  PRINT*,'I,J,K,VOL = ',I,J,K,VOL(J,K,I)
+                  STOP 'Volume is not positive !!!'
+               ENDIF
  760        CONTINUE
  780     CONTINUE
  800  CONTINUE

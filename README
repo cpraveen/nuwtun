@@ -45,4 +45,49 @@ can be read.
 
 Calculix: Free software, can read both 2-d and 3-d files, only formatted, can
 read grid, solution and function files. It is quite good for 2-D.
+-------------------------------------------------------------------------------
+Running flow solver
 
+Compile
+
+cd $NUWTUN_HOME
+make flo
+
+Run
+
+$NUWTUN_HOME/src-flo/nuwtun_flo < flo.in > flo.log 2>&1 &
+
+Monitor the run with tail
+
+tail -f flo.log
+
+Some output files:
+
+fort.17: residual history
+fort.18: cl,cd history
+fort.19: some global results, useful for optimization
+
+Plot convergence history (requires gnuplot)
+
+gnuplot $NUWTUN_HOME/src-utl/nwthist.gnu
+
+This creates files clcd.eps and res.eps
+
+-------------------------------------------------------------------------------
+Postprocessing
+
+The output is in plot3d format which can be viewed using Calculix cgx.
+
+There are some programs in src-utl to process the output.
+
+extract: This reads flo.log to extract some surface data.
+ext2cp: Run this after running extract
+plot2vtk_2d: Writes a vtk file for 2d (use Visit to see vtk file)
+plot2vtk_3d: Writes a vtk file for 3d (use Visit to see vtk file)
+
+Run make inside this directory to compile all the programs.
+-------------------------------------------------------------------------------
+Grid deformation tools
+
+src-grd has radial-basis function based deformation tools for shape and grid.
+See the README file inside this directory.

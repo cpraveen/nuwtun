@@ -1197,7 +1197,8 @@ C
      2                   IOFF(1,ILVL),  IOFFS(1,ILVL),
      3                   IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4                   Q, PROPS, S, R, NXBCS, NBCS, 
-     5                   IBCDAT(1,1,1,ILVL), FORCE, CL, CD, FMOMENT)
+     5                   IBCDAT(1,1,1,ILVL), FORCE, CL, CD,
+     6                   CD_PRES, CD_VISC, FMOMENT)
          ENDIF
       ENDIF
 C
@@ -2158,7 +2159,7 @@ C
      3                               IOFFQ(1,ILVL), IOFFP(1,ILVL),
      4                               Q, PROPS, S, R, NXBCS, NBCS, 
      5                               IBCDAT(1,1,1,ILVL), FORCE, CL, CD,
-     6                               FMOMENT)
+     6                               CD_PRES, CD_VISC, FMOMENT)
                            ENDIF
 C
 C     Output only on LAST sub-iteration
@@ -2168,12 +2169,13 @@ C
                                  IF (ITIMED .EQ. ISTDY) THEN
                                     WRITE (IOUT,2480) ITCUR, IT, CL, CD
                                     WRITE (ICLCD,2486)ITCUR, IT, CL, CD,
+     1                                  CD_PRES, CD_VISC,
      1                                 (FMOMENT(IMOM),IMOM=1,NMOMENT)
                                  ELSE
                                     WRITE (IOUT,2485) ITCUR, IT, TIME, 
      1                                                CL, CD
                                     WRITE (ICLCD,2486) ITCUR, IT, TIME,
-     1                                              CL, CD, 
+     1                                    CL, CD, CD_PRES, CD_VISC,
      2                                   (FMOMENT(IMOM),IMOM=1,NMOMENT)
                                  ENDIF
                               ENDIF
@@ -2403,9 +2405,6 @@ C
 C
       ENDIF
 C
-C     Write global result
-C
-      CALL RESULT(ITCUR, R2NORM, CL, CD, APGINT, FMOMENT)
 C
 C     Calculate adverse pressure gradient integral
 C
@@ -2484,6 +2483,11 @@ C 16.   Close output and finish
 C
   999 CONTINUE
       CLOSE (IOUT)
+C
+C     Write global result
+C
+      CALL RESULT(ITCUR, R2NORM, CL, CD, CD_PRES, CD_VISC, APGINT,
+     1            FMOMENT)
 C
 C     Finished with ISAAC run.
 C

@@ -1,7 +1,7 @@
       SUBROUTINE FRCINT (ITURB, NBLKS, IDIM, JDIM, KDIM, 
      1                   IOFF,  IOFFS, IOFFQ, IOFFP,
      2                   Q, PROPS, S, RC, NXBCS, NBCS, IBCDAT, 
-     3                   FORCE, CL, CD, FMOMENT)
+     3                   FORCE, CL, CD, CD_PRES, CD_VISC, FMOMENT)
 C
 C Routine to loop over all blocks and all surfaces integrating the forces
 C on the surface for the current grid level.  
@@ -73,6 +73,8 @@ C
 C
       DIMENSION FORCE (3)
       DIMENSION FMOMENT (*)
+      DIMENSION FORCEP(3)
+      DIMENSION FORCEV(3)
 C
       LOGICAL   VISCOS
 C
@@ -86,15 +88,18 @@ C
 C
 C 0.  Initialize forces to zero
 C
-      FORCE(1) = 0.E0
-      FORCE(2) = 0.E0
-      FORCE(3) = 0.E0
 C
 C 0.  Initialize moments to zero
 C
       DO IMOM=1,NMOMENT
          FMOMENT(IMOM) = 0.E0
       ENDDO
+      FORCEP(1) = 0.E0
+      FORCEP(2) = 0.E0
+      FORCEP(3) = 0.E0
+      FORCEV(1) = 0.E0
+      FORCEV(2) = 0.E0
+      FORCEV(3) = 0.E0
 C
 C 1.  Calculate forces integrated over all blocks
 C
@@ -110,7 +115,8 @@ C
      2               (IBCTYP .EQ. IWALL .OR. IBCTYP .EQ. IWALFN)) ) THEN
                CALL FRCEL (IDIM(IBLK), JDIM(IBLK), KDIM(IBLK), 
      1                     Q(IQ), PROPS(IP), S(IS), RC(IR), 
-     2                     IBCDAT(1,IBC,IBLK), VISCOS, FORCE, FMOMENT)
+     2                     IBCDAT(1,IBC,IBLK), VISCOS, FORCEP, FORCEV,
+     3                     FMOMENT)
             ENDIF
   150    CONTINUE
   190 CONTINUE
@@ -120,9 +126,6 @@ C     C_f = F / (1/2 rho_inf U_inf^2 Area_ref) where Area_ref is the
 C                                              reference area of the body
 C
       CONST    = 2.E0 / (FSMACH * FSMACH * AREARF)
-      FORCE(1) = FORCE(1) * CONST
-      FORCE(2) = FORCE(2) * CONST
-      FORCE(3) = FORCE(3) * CONST
 C
 C     Normalize moment
 C
@@ -130,18 +133,31 @@ C
       DO IMOM=1,NMOMENT
          FMOMENT(IMOM) = FMOMENT(IMOM) * CONST
       ENDDO
+      FORCEP(1) = FORCEP(1) * CONST
+      FORCEP(2) = FORCEP(2) * CONST
+      FORCEP(3) = FORCEP(3) * CONST
+      FORCEV(1) = FORCEV(1) * CONST
+      FORCEV(2) = FORCEV(2) * CONST
+      FORCEV(3) = FORCEV(3) * CONST
+
+      FORCE(1)  = FORCEP(1) + FORCEV(1)
+      FORCE(2)  = FORCEP(2) + FORCEV(2)
+      FORCE(3)  = FORCEP(3) + FORCEV(3)
 C
 C     C_L and C_D: Defined relative to the freestream velocity direction
 C
       PI     = ACOS(-1.E0)
       ALPHAR = ALPHA * PI / 180.E0
       IF (THREED) THEN
-         CL  = FORCE(3) * COS(ALPHAR) - FORCE(1) * SIN(ALPHAR)
-         CD  = FORCE(1) * COS(ALPHAR) + FORCE(3) * SIN(ALPHAR)
+         CL      = FORCE (3) * COS(ALPHAR) - FORCE (1) * SIN(ALPHAR)
+         CD_PRES = FORCEP(1) * COS(ALPHAR) + FORCEP(3) * SIN(ALPHAR)
+         CD_VISC = FORCEV(1) * COS(ALPHAR) + FORCEV(3) * SIN(ALPHAR)
       ELSE
-         CL  = FORCE(2) * COS(ALPHAR) - FORCE(1) * SIN(ALPHAR)
-         CD  = FORCE(1) * COS(ALPHAR) + FORCE(2) * SIN(ALPHAR)
+         CL      = FORCE (2) * COS(ALPHAR) - FORCE (1) * SIN(ALPHAR)
+         CD_PRES = FORCEP(1) * COS(ALPHAR) + FORCEP(2) * SIN(ALPHAR)
+         CD_VISC = FORCEV(1) * COS(ALPHAR) + FORCEV(2) * SIN(ALPHAR)
       ENDIF
+      CD = CD_PRES + CD_VISC
 C
 C Finished calculating forces
 C
@@ -153,7 +169,7 @@ C
 
 
       SUBROUTINE FRCEL (IDIM, JDIM, KDIM, Q, PROPS, S, RC, 
-     1                  IBCDAT, VISCOS, FORCE, FMOMENT)
+     1                  IBCDAT, VISCOS, FORCEP, FORCEV, FMOMENT)
 C
 C Routine to calculate the increment to the forces for the current surface
 C element.
@@ -196,7 +212,8 @@ C
 C
       DIMENSION IBCDAT(10)
 C
-      DIMENSION FORCE (3)
+      DIMENSION FORCEP(3)
+      DIMENSION FORCEV(3)
 C
       DIMENSION FMOMENT (*)
 C
@@ -290,9 +307,9 @@ C
             FX       = FPRESS * S(JM,KM,IM,1,IDIR)
             FY       = FPRESS * S(JM,KM,IM,2,IDIR)
             FZ       = FPRESS * S(JM,KM,IM,3,IDIR)
-            FORCE(1) = FORCE(1) - FX
-            FORCE(2) = FORCE(2) - FY
-            FORCE(3) = FORCE(3) - FZ
+            FORCEP(1) = FORCEP(1) - FX
+            FORCEP(2) = FORCEP(2) - FY
+            FORCEP(3) = FORCEP(3) - FZ
 
             DO IMOM=1,NMOMENT
 C Moment arm
@@ -413,12 +430,12 @@ C
 C
 C Calculate the Shear force
 C
-                  CNST     = S(JM,KM,IM,4,IDIR) * SGNM
-                  FORCE(1) = FORCE(1) + CNST*(SIGXX*S(JM,KM,IM,1,IDIR)
+                  CNST      = S(JM,KM,IM,4,IDIR) * SGNM
+                  FORCEV(1) = FORCEV(1) + CNST*(SIGXX*S(JM,KM,IM,1,IDIR)
      1              +SIGXY*S(JM,KM,IM,2,IDIR)+SIGXZ*S(JM,KM,IM,3,IDIR))
-                  FORCE(2) = FORCE(2) + CNST*(SIGXY*S(JM,KM,IM,1,IDIR)
+                  FORCEV(2) = FORCEV(2) + CNST*(SIGXY*S(JM,KM,IM,1,IDIR)
      1              +SIGYY*S(JM,KM,IM,2,IDIR)+SIGYZ*S(JM,KM,IM,3,IDIR))
-                  FORCE(3) = FORCE(3) + CNST*(SIGXZ*S(JM,KM,IM,1,IDIR)
+                  FORCEV(3) = FORCEV(3) + CNST*(SIGXZ*S(JM,KM,IM,1,IDIR)
      1              +SIGYZ*S(JM,KM,IM,2,IDIR)+SIGZZ*S(JM,KM,IM,3,IDIR))
   310          CONTINUE
   320       CONTINUE
