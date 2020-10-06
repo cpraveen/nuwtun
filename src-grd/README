@@ -1,17 +1,34 @@
+# RBF based grid deformation tool
+
+Compile the deformation program
+
+make deform
+
+For adjoint based optimization, Tapenade tool is required. You can get it from here
+
+http://www-sop.inria.fr/tropics/tapenade/downloading.html
+
+deform.f requires three input files.
+1) shape.in
+2) shape.dat
+3) grid.0
 -------------------------------------------------------------------------------
-param.in: Description of moving and fixed surfaces
+shape.in: Description of moving and fixed surfaces
 
 Number_of_surfaces
 Block    IBeg  JBeg  IEnd  JEnd  NParam
 Block    IBeg  JBeg  IEnd  JEnd  NParam
 .
 .
+param_type (see shape_deform.f)
+<extra parameters>
 
-
-NParam = Number of Hicks-Henne parameters for that surface. 
+NParam = Number of parameters for that surface. 
 If the surfaces should be fixed, then put NParam=0
 
 Note: Make sure that IEnd >= IBeg and JEnd >= JBeg
+-------------------------------------------------------------------------------
+shape.dat: List of shape parameters for each surface
 -------------------------------------------------------------------------------
 grid.0: Base grid file in plot3d format
 

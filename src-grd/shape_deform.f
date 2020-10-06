@@ -1,6 +1,7 @@
 c param_type = 1, Hicks-Henne
 c              2, Kulfan
 c              3, Clamped cubic spline
+c              4, cubic bump for RAE5243
       subroutine shape_deform(ibeg, jbeg, iend, jend, nhhp, idim, jdim,
      1                        r, rw, drw, nwp, xw, idx, param_type)
       implicit none
@@ -16,6 +17,8 @@ c              3, Clamped cubic spline
       integer i, j, nc, iinc, jinc
       real    x1, y1, x2, y2, ln, xp, yp, xf, yf, l, t,
      1        nx, ny, h, dh, A, B, C, D
+c     For cubic bump
+      real    xx1, xx2, xx3, xx4, r1, r2, zz
 c     For cubic spline
       real    tau(nhhp+2), cc(4,nhhp+2)
       real    ppvalu
@@ -56,6 +59,13 @@ c        zero slope at end points: clamped spline
          cc(2,1)      = 0.0
          cc(2,nhhp+2) = 0.0
          call cubspl(tau,cc,nhhp+2,1,1)
+      elseif(param_type .eq. 4)then
+         xx1 = xw(1)
+         xx2 = xw(2)
+         xx3 = xw(3)
+         xx4 = xw(4)
+         r1  = xx2
+         r2  = xx3 - xx2
       endif
       print*,'   First  point =',x1,y1
       print*,'   Second point =',x2,y2
@@ -121,6 +131,21 @@ c           Solve for intersection point (xf,yf) = foot of perpendicular
                dh = ppvalu(tau,cc,nhhp+1,4,t,0)
                drw(1,nwp)= dh*nx
                drw(2,nwp)= dh*ny
+            elseif(param_type .eq. 4)then
+               if(xp.le.xx1-xx2)then
+                  dh = 0.0
+               elseif(xp.gt.xx1-xx2 .and. xp.le.xx1)then
+                  zz         = (xp-(xx1-xx2))/xx2
+                  dh = xx4 * zz**2 * (3.0 - 2.0 * zz)
+               elseif(xp.gt.xx1 .and. xp.lt.xx1+r2)then
+                  zz         = (xp-xx1)/(xx3 - xx2)
+                  dh = xx4*(1.0 - 3.0*zz**2 + 2.0*zz**3)
+               else
+                  dh = 0.0
+               endif
+c              displacement along y only, (nx,ny) are not needed
+               drw(1,nwp) = 0.0
+               drw(2,nwp) = dh
             endif
 
 100         continue

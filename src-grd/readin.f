@@ -33,6 +33,8 @@ c-----------------------------------------------------------------------------
          print*,'Reading KULFAN parameters from shape.dat'
       elseif(param_type.eq.3)then
          print*,'Reading CLAMPED CUBIC SPLINE parameters from shape.dat'
+      elseif(param_type.eq.4)then
+         print*,'Reading CUBIC BUMP parameters from shape.dat'
       else
          print*,'Unknown parameterization type'
          stop

@@ -100,19 +100,17 @@ area_x: $(OAREA)
 	@$(FC) $(LDFLAGS) -o area_x $(OAREA) $(LIBPATH)
 
 totalarea_b.o: routines_area.f95
-	$(TPN) -backward -vars    "r totarea" \
-		              -outvars "r totarea" \
-						  -head    totalarea \
-						  -o       totalarea \
-						           routines_area.f95
-	@$(FC) -c $(FFLAGS) $(IFORTFLAGS) totalarea_b.f95
+	$(TPN) -backward \
+			 -head "totalarea(r,totarea)/(r,totarea)" \
+			 -o    totalarea \
+			routines_area.f95
+	@$(FC) -c $(FFLAGS) $(IFORTFLAGS) totalarea_b.f90
 
 kulfan_b.o: kulfan.f decas.f
-	$(TPN) -backward -vars    "x kulfan" \
-                    -outvars "x kulfan" \
-                    -head    kulfan    \
-                    -o       kulfan    \
-                             kulfan.f decas.f
+	$(TPN) -backward \
+          -head "kulfan(x,kulfan)/(x,kulfan)"    \
+          -o    kulfan    \
+          kulfan.f decas.f
 	@$(FC) -c $(FFLAGS) kulfan_b.f
 
 kulfan_b.o: kulfan.f decas.f
