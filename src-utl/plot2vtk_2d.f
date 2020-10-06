@@ -26,7 +26,9 @@ C     Check gfile, qfile for the input files
       parameter(gamma=1.4)
 
       if(iargc().ne.1)then
-         print*,'Specify one argument'
+         print*,'Specify one argument: base file name'
+         print*,'If solution is in rae.g.fmt and rae.q.fmt, then'
+         print*,'Run as: plot2vtk_2d rae'
          stop
       endif
 

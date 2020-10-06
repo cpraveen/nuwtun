@@ -15,7 +15,7 @@ program extract
    real(kind=kind(1.0d0)) :: x(npmax), y(npmax), z(npmax), cp(npmax)
    real(kind=kind(1.0d0)) :: x1, y1, z1, cp1
    real(kind=kind(1.0d0)) :: xmin, xmax, chord
-   character(len=56) :: dir, f
+   character(len=56) :: dir, f, fname
    integer :: iargc
 
    narg = iargc()
@@ -35,8 +35,9 @@ program extract
    do i=1,nfile
       print*,'----------------------------------------'
       call getarg(i+1, f)
-      print*,'Processing file ', 'fort.'//TRIM(f)
-      open(fid, file='fort.'//TRIM(f), status='old')
+      fname = 'fort.'//TRIM(f)
+      print*,'Processing file ', TRIM(fname)
+      open(fid, file=TRIM(fname), status='old')
 
       np = 0
 
@@ -75,7 +76,8 @@ program extract
       enddo
       chord = xmax - xmin
       write(*,'(" xmin, xmax, chord =",3e15.5)') xmin, xmax, chord
-      open(fid,file='fort.'//TRIM(f)//'.dat')
+      fname = 'fort.'//TRIM(f)//'.dat'
+      open(fid,file=TRIM(fname))
       do j=1,np
          if(dir == 'x')then
             write(fid,'(2e20.10)') (x(j)-xmin)/chord, cp(j)
@@ -86,6 +88,7 @@ program extract
          endif
       enddo
       close(fid)
+      print*,'Wrote file ',TRIM(fname)
    enddo
 
 end

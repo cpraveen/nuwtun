@@ -9,8 +9,8 @@ set out 'clcd.eps'
 p 'fort.18' u 1:3 t 'C_l' w l lw 2 axis x1y1, \
   'fort.18' u 1:4 t 'C_d' w l lw 2 axis x1y2
 
-set term x11
-set out
+#set term x11
+#set out
 
 unset y2label
 unset y2tics
@@ -26,5 +26,5 @@ p 'fort.17' u 1:3 t 'Density' w l lw 2, \
   'fort.17' u 1:6 t 'z-momen' w l lw 2, \
   'fort.17' u 1:7 t 'Energy ' w l lw 2
 
-set term x11
-set out
+#set term x11
+#set out
