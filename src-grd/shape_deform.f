@@ -60,6 +60,12 @@ c        zero slope at end points: clamped spline
          cc(2,nhhp+2) = 0.0
          call cubspl(tau,cc,nhhp+2,1,1)
       elseif(param_type .eq. 4)then
+c        these are not really needed for cubic bump
+         x1 = r(ibeg,jbeg,1)
+         y1 = r(ibeg,jbeg,2)
+         x2 = r(iend,jend,1)
+         y2 = r(iend,jend,2)
+c        bump parameters
          xx1 = xw(1)
          xx2 = xw(2)
          xx3 = xw(3)

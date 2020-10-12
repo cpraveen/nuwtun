@@ -38,3 +38,7 @@ IDIM  JDIM
 .
 x coordinates
 y coordinates
+-------------------------------------------------------------------------------
+After running deform, you can plot the files fort.50 and fort.51 to view initial and final mesh.
+
+gnuplot> p 'fort.50' w l,'fort.51' w l

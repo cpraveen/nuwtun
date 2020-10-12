@@ -76,14 +76,14 @@ This creates files clcd.eps and res.eps
 -------------------------------------------------------------------------------
 Postprocessing
 
-The output is in plot3d format which can be viewed using Calculix cgx.
+The output is in plot3d format which can be viewed using Calculix cgx or Paraview.
 
 There are some programs in src-utl to process the output.
 
 extract: This reads flo.log to extract some surface data.
 ext2cp: Run this after running extract
-plot2vtk_2d: Writes a vtk file for 2d (use Visit to see vtk file)
-plot2vtk_3d: Writes a vtk file for 3d (use Visit to see vtk file)
+plot2vtk_2d: Writes a vtk file for 2d (use Visit/Paraview to see vtk file)
+plot2vtk_3d: Writes a vtk file for 3d (use Visit/Paraview to see vtk file)
 
 Run make inside this directory to compile all the programs.
 -------------------------------------------------------------------------------
