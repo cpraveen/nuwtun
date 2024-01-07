@@ -83,7 +83,7 @@ c     Create partition table for distributing alpha
 
 c     Create directories for running cfd
       do i = 0,imax
-          write(dir(i),'(a,i3.3,a)'),'RUN',i
+          write(dir(i), '(a,i3.3,a)') 'RUN',i
       end do
 
 c     Create individual directory for each processor
