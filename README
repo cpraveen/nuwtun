@@ -91,3 +91,8 @@ Grid deformation tools
 
 src-grd has radial-basis function based deformation tools for shape and grid.
 See the README file inside this directory.
+
+-------------------------------------------------------------------------------
+Origin: https://codeberg.org/cpraveen/nuwtun
+Mirror: https://git.sr.ht/~cpraveen/nuwtun
+Mirror: https://github.com/cpraveen/nuwtun
