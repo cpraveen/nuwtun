@@ -2,10 +2,10 @@
 
 ## Contents
 
-`src-flo `: Flow solver files
-`src-adj `: Adjoint solver files, NOT FINISHED YET
-`examples`: Example test cases
-`docs    `: Manual, license, etc.
+* `src-flo `: Flow solver files
+* `src-adj `: Adjoint solver files, NOT FINISHED YET
+* `examples`: Example test cases
+* `docs    `: Manual, license, etc.
 
 ## Compiling
 
@@ -52,9 +52,9 @@ tail -f flo.log
 
 Some output files:
 
-`fort.17`: residual history
-`fort.18`: cl,cd history
-`fort.19`: some global results, useful for optimization
+* `fort.17`: residual history
+* `fort.18`: cl,cd history
+* `fort.19`: some global results, useful for optimization
 
 Plot convergence history (requires gnuplot)
 
@@ -84,6 +84,6 @@ Run make inside this directory to compile all the programs.
 
 ---
 
-`Origin`: https://codeberg.org/cpraveen/nuwtun
-`Mirror`: https://git.sr.ht/~cpraveen/nuwtun
-`Mirror`: https://github.com/cpraveen/nuwtun
+* `Origin`: https://codeberg.org/cpraveen/nuwtun
+* `Mirror`: https://git.sr.ht/~cpraveen/nuwtun
+* `Mirror`: https://github.com/cpraveen/nuwtun
